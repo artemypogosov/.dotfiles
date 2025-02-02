@@ -30,7 +30,7 @@ bind "set completion-ignore-case on"
 ###########
 
 ## ls
-alias ls='ls --color=auto'
+alias ls='ls --color=auto --hyperlink=auto "$@"'
 alias ll='ls -la'
 alias ls.="ls -A | egrep '^\.'"
 
