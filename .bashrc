@@ -1,18 +1,17 @@
-#
-# ~/.bashrc
-#
-
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+# -- Set variables
 export HISTCONTROL=ignoreboth:erasedups
-
-# Default editor
-
 export EDITOR='emacs'
 export VISUAL='emacs'
+# Doom emacs [use 'doom <command>' to run commands]
+export PATH="$HOME/.emacs.d/bin:$PATH"
+# Cutefix
+export CF_TITLE=false
+~/.local/bin/cutefetch random
 
-# Shell prompt template
+# -- Shell prompt template
 PS1='[\u@\h \W]\$ '
 
 if [ -d "$HOME/.bin" ] ;
@@ -23,66 +22,50 @@ if [ -d "$HOME/.local/bin" ] ;
   then PATH="$HOME/.local/bin:$PATH"
 fi
 
-# Ignore upper and lowercase when TAB completion
+# -- Ignore upper and lowercase when TAB completion
 bind "set completion-ignore-case on"
 
-### ALIASES
-###########
-
-## ls
+# -- Aliases
 alias ls='ls --color=auto --hyperlink=auto "$@"'
 alias ll='ls -la'
-alias ls.="ls -A | egrep '^\.'"
-
-
-## Colorize the grep command output for ease of use (good for log files)
+alias ls.="ls -A | grep '^\.'"
 alias grep='grep --color=auto'
-alias egrep='egrep --color=auto'
-alias fgrep='fgrep --color=auto'
-
-## Readable output
 alias df='df -h'
-
-## Free
 alias free="free -th"
-
-## Userlist
 alias userlist="cut -d: -f1 /etc/passwd"
 
-## Aliases for software managment
-## Passing two --refresh or -y flags will force a refresh of all package lists even if they appear to be up to date.
+# Aliases for software managment
+# Passing two -y flags will force a refresh of all package lists even if they appear to be up to date.
 alias update='sudo pacman -Syyu'
 
-## Cleanup orphaned packages
+# Cleanup orphaned packages
 alias cleanup='sudo pacman -Rns $(pacman -Qtdq)'
-
-## ps
 alias psgrep="ps aux | grep -v grep | grep -i -e VSZ -e"
 
-## Add new fonts
+# Add new fonts
 alias update-fc='sudo fc-cache -fv'
 
-## Switch between bash and zsh
+# Switch between bash and zsh
 alias tobash="sudo chsh $USER -s /bin/bash && echo 'Now log out.'"
 alias tozsh="sudo chsh $USER -s /bin/zsh && echo 'Now log out.'"
 
-## Hardware info --short
+# Hardware info --short
 alias hw="hwinfo --short"
 
-## Get fastest mirrors in your neighborhood
-#alias mirror="sudo reflector -f 30 -l 30 --number 10 --verbose --save /etc/pacman.d/mirrorlist"
-#alias mirrord="sudo reflector --latest 30 --number 10 --sort delay --save /etc/pacman.d/mirrorlist"
-#alias mirrors="sudo reflector --latest 30 --number 10 --sort score --save /etc/pacman.d/mirrorlist"
-#alias mirrora="sudo reflector --latest 30 --number 10 --sort age --save /etc/pacman.d/mirrorlist"
-
-## Our experimental - best option for the moment
-#alias mirrorx="sudo reflector --age 6 --latest 20  --fastest 20 --threads 5 --sort rate --protocol https --save /etc/pacman.d/mirrorlist"
-#alias mirrorxx="sudo reflector --age 6 --latest 20  --fastest 20 --threads 20 --sort rate --protocol https --save /etc/pacman.d/mirrorlist"
-
-## Mounting the folder Public for exchange between host and guest on virtualbox
+# Mounting the folder Public for exchange between host and guest on virtualbox
 alias vbm="sudo /usr/local/bin/arcolinux-vbox-share"
 
-#shopt
+# -- Recent Installed Packages
+alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl"
+alias riplong="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -3000 | nl"
+
+# -- Search content with ripgrep
+alias rg="rg --sort path"
+
+# -- Get the error messages from journalctl
+alias jctl="journalctl -p 3 -xb"
+
+# -- Shopt
 shopt -s autocd # change to named directory
 shopt -s cdspell # autocorrects cd misspellings
 shopt -s cmdhist # save multi-line commands in history as single line
@@ -90,30 +73,6 @@ shopt -s dotglob
 shopt -s histappend # do not overwrite history
 shopt -s expand_aliases # expand aliases
 
-
-#Recent Installed Packages
-alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl"
-alias riplong="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -3000 | nl"
-
-#iso and version used to install ArcoLinux
-alias iso="cat /etc/dev-rel | awk -F '=' '/ISO/ {print $2}'"
-
-#search content with ripgrep
-alias rg="rg --sort path"
-
-#get the error messages from journalctl
-alias jctl="journalctl -p 3 -xb"
-
-# Quick open config files
-alias nb="$EDITOR ~/.dotfiles/bashrc"
-alias nz="$EDITOR ~/.dotfiles/zshrc"
-alias oxmonad="$EDITOR ~/.dotfiles/xmonad/xmonad.hs"
-
-#systeminfo
-alias probe="sudo -E hw-probe -all -upload"
-
-#give the list of all installed desktops - xsessions desktops
-alias xs="ls /usr/share/xsessions"
 
 # # ex = EXtractor for all kinds of archives
 # # usage: ex <file>
@@ -141,13 +100,3 @@ ex ()
     echo "'$1' is not a valid file"
   fi
 }
-
-# Run fm6000
-fm6000 -r -c "random"
-
-# Temp fix for layouts
-setxkbmap us
-
-# Doom emacs [use 'doom <command>' to run commands]
- export PATH="$HOME/.emacs.d/bin:$PATH"
-
