@@ -1,0 +1,120 @@
+#+title: Kitty Config
+#+property: header-args :tangle kitty.conf
+
+* TABLE OF CONTENTS :toc:
+- [[#fonts][FONTS]]
+- [[#cursor][CURSOR]]
+- [[#scrollback][SCROLLBACK]]
+- [[#mouse][MOUSE]]
+- [[#sound][SOUND]]
+- [[#tabs][TABS]]
+- [[#theme][THEME]]
+- [[#shortcuts][SHORTCUTS]]
+- [[#session][SESSION]]
+- [[#other][OTHER]]
+
+* FONTS
+#+begin_src org
+font_family Noto Sans Mono
+font_size 12
+#+end_src
+* CURSOR
+#+begin_src org
+#cursor #FF0000
+
+#:The cursor shape can be one of block, beam, underline.
+cursor_shape beam
+
+#: Defines the text cursor shape when the OS window is not focused.
+#: The unfocused cursor shape can be one of block, beam, underline,
+#: hollow and unchanged (leave the cursor shape as it is).
+# cursor_shape_unfocused hollow
+
+#: The thickness of the beam cursor (in pts).
+cursor_beam_thickness 7
+
+#: Blink interval
+cursor_blink_interval 0
+#+end_src
+* SCROLLBACK
+#+begin_src org
+#: Number of lines of history to keep in memory for scrolling back.
+scrollback_lines 5000
+
+#: The opacity of the scrollback indicator
+scrollback_indicator_opacity 0.5
+#+end_src
+* MOUSE
+#+begin_src org
+#: 'Unclutter' will hide cursor after 10s
+mouse_hide_wait 0
+
+#: The color and style for highlighting URLs on mouse-over. url_style
+#: can be one of: none, straight, double, curly, dotted, dashed.
+# url_color #0087bd
+url_style straight
+
+#: Remove spaces at the end of lines when copying to clipboard.
+# strip_trailing_spaces never
+#+end_src
+* SOUND
+#+begin_src org
+#: The audio bell. Useful to disable it in environments that require
+#: silence.
+enable_audio_bell no
+#+end_src
+* TABS
+#+begin_src org
+#: fade, slant, separator, powerline, custom, hidden
+tab_bar_style powerline
+
+#: angled, slanted, round
+tab_powerline_style angled
+
+#: Tab bar colors and styles.
+# active_tab_foreground   #000
+# active_tab_background   #eee
+# active_tab_font_style   bold-italic
+# inactive_tab_foreground #444
+# inactive_tab_background #999
+# inactive_tab_font_style normal
+
+#: Background color for the tab bar. Defaults to using the terminal
+#: background color.
+# tab_bar_background none
+#+end_src
+* THEME
+#+begin_src org
+include themes/gruvbox_dark.conf
+# foreground #dddddd
+# background #000000
+
+#: The foreground and background colors.
+
+# background_opacity 1.0
+
+
+# background_blur 0
+#+end_src
+* SHORTCUTS
+#+begin_src org
+map ctrl+shift+j next_tab
+map ctrl+shift+k previous_tab
+
+map ctrl+shift+r set_tab_title
+
+map kitty_mod+delete clear_terminal reset active
+map ctrl+l clear_terminal to_cursor_scroll active
+
+map ctrl+shift+backspace change_font_size all 0
+
+map kitty_mod+f5 load_config_file
+#+end_src
+* SESSION
+#+begin_src org
+startup_session session.conf
+#+end_src
+* OTHER
+#+begin_src org
+text_composition_strategy legacy
+#+end_src
