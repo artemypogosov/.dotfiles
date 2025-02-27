@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # If an explicit layout is provided as an argument, use it. Otherwise, select the next layout from
-# the set [us, ru].
+# the set [us, ua].
 if [[ -n "$1" ]]; then
     setxkbmap $1
 else
