@@ -1,0 +1,11 @@
+[LIBRARY]
+library_width: 300
+border_width: 2
+desktop_start_dir: ~/Pictures
+markup: <span foreground="#B8BB26">
+
+[EDIT]
+autosave_images: yes
+
+[ALIASES]
+markb: mark_between
