@@ -1,0 +1,406 @@
+#!/usr/bin/env bash
+#
+# cutefetch by rayes
+# https://github.com/rayes0/cutefetch
+# A cute and minimal fetch script that can display different animals
+
+# Inspired by elenapan's bunnyfetch (https://github.com/elenapan/dotfiles/blob/master/bin/bunnyfetch)
+# Some code is taken from https://github.com/Luvella/bunnyfetch.sh/blob/master/bunnyfetch.sh
+# ASCII Art is modified from Christopher Johnson's ASCII Art Collection: https://asciiart.website
+
+LC_ALL=C
+LANG=C
+
+print_help() {
+	cat <<-'EOF'
+	Usage:
+	 cutefetch [ANIMAL]
+
+	Defaults to bunny if no animal specified.
+	
+	Avaliable animals:
+	 bunny
+	 kitten
+	 puppy
+	 owl
+	 fish
+	 pika
+	 random (uses a random animal from the above list)
+	 none (no animal, only displays system info)
+	
+	Options:
+	 -h, --help, help          Print this message
+	 -c, --config, config      Print configuration options
+	 -s, --screenshot-mode     Clear the screen and hide the cursor before printing, useful for screenshots
+
+	EOF
+	exit 0
+}
+
+print_config() {
+	cat <<-'EOF'
+	Configuration:
+	  cutefetch can be configured with the following environment variables:
+	  
+	CF_DEFAULT_ANIMAL=(ANIMAL)
+	  Sets the animal displayed by default if none are specified (default: bunny)
+
+	CF_MONOCHROME=(true|false)
+	  Renders output with only the fg and bg colors (default: false)
+
+	CF_BOLD=(true|false)
+	  Whether or not to use bold for label text (default: true)
+	
+	CF_ITALIC=(true|false)
+	  Whether or not to use italic for info text (default: false)
+	
+	CF_ITALIC_LABELS=(true|false)
+	  Whether or not to use italic for label text (default: false)
+	
+	CF_TITLE=(true|false)
+	  Whether or not to display a title line (default: true)
+
+	CF_LABELS=(upper|lower|title)
+	  Whether to display labels as uppercase, lowercase, or titlecase (default: upper)
+
+	EOF
+	exit 0
+}
+
+# System Info
+
+os() {
+    if [[ -f /etc/os-release ]]; then
+	    . /etc/os-release
+	    echo "$NAME $VERSION_ID"
+	elif type lsb_release >/dev/null 2>&1; then
+		echo "$(lsb_release -si) $(lsb_release -sr)"
+	elif [[ -f /etc/lsb-release ]]; then
+	    . /etc/lsb-release
+	    echo "$DISTRIB_ID $DISTRIB_RELEASE"
+	elif [[ -f /etc/debian_version ]]; then
+	    echo "Debian (cat /etc/debian_version)"
+	elif [[ -f /etc/redhat-release ]]; then
+		. /etc/redhat-release
+	    echo "$NAME $VERSION_ID"
+	elif [[ -n "$(ls /etc/*-release)" ]]; then
+		for f in /etc/*-release; do
+			echo $(< "$f")
+		done
+	else # fallback to uname for some bsd folks or others who don't have it for some reason
+	    echo "$(uname -s) $(uname -r)"
+	fi
+}
+kernel() {
+    uname -r | cut -d'-' -f 1
+}
+wm() {
+    # Wayland stuff is stolen from neofetch
+	if [[ -O "${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY:-wayland-0}" ]]; then
+        if tmp_pid="$(lsof -t "${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY:-wayland-0}" 2>&1)" ||
+        	tmp_pid="$(fuser   "${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY:-wayland-0}" 2>&1)"; then
+        	echo "$(ps -p "${tmp_pid}" -ho comm=)"
+        else
+			wm=$(ps "${ps_flags[@]}" | grep -m 1 -o -F \
+                               -e arcan \
+                               -e asc \
+                               -e clayland \
+                               -e dwc \
+                               -e fireplace \
+                               -e gnome-shell \
+                               -e greenfield \
+                               -e grefsen \
+                               -e kwin \
+                               -e lipstick \
+                               -e maynard \
+                               -e mazecompositor \
+                               -e motorcar \
+                               -e orbital \
+                               -e orbment \
+                               -e perceptia \
+                               -e rustland \
+                               -e sway \
+                               -e ulubis \
+                               -e velox \
+                               -e wavy \
+                               -e way-cooler \
+                               -e wayfire \
+                               -e wayhouse \
+                               -e westeros \
+                               -e westford \
+                               -e weston)
+        	fi
+	else
+       echo $GDMSESSION
+	fi
+}
+shell() {
+	basename ${SHELL}
+}
+user() {
+	whoami
+}
+name() {
+	hostname
+}
+
+get_time() {
+		uptime | sed -E 's/^[^,]*up *//; s/mins/minutes/; s/hrs?/hours/;
+		s/([[:digit:]]+):0?([[:digit:]]+)/\1h,\2m/;
+		s/^1 hours/1 hour/; s/ 1 hours/ 1 hour/;
+		s/min,/minutes,/; s/ 0 minutes,/ less than a minute,/; s/ 1 minutes/ 1 minute/;
+		s/  / /; s/, *[[:digit:]]* users?.*//'
+}
+# Uptime, modified from https://gist.github.com/ioagel/7f72863b40ed3d7c3b1d60a4d1a081c1
+if uptime -p > /dev/null 2>&1; then
+	UP_SET_OR_EMPTY=$(uptime -p | awk -F 'up ' '{print $2}')
+    CUSTOM_TIME=$(get_time)
+	up() {
+        if [ "$CUSTOM_TIME" = '0 minutes' ]; then
+          echo 'less than a minute'
+        else
+        echo $CUSTOM_TIME
+        fi
+        }
+else
+	up() {
+		uptime | sed -E 's/^[^,]*up *//; s/mins/minutes/; s/hrs?/hours/;
+		s/([[:digit:]]+):0?([[:digit:]]+)/\1h, \2m/;
+		s/^1 hours/1 hour/; s/ 1 hours/ 1 hour/;
+		s/min,/minutes,/; s/ 0 minutes,/ less than a minute,/; s/ 1 minutes/ 1 minute/;
+		s/  / /; s/, *[[:digit:]]* users?.*//'
+	}
+fi
+
+# Colors and formatting
+n=$'\033[0m' # Normal text
+
+b=""
+l=""
+s=""
+[ "${CF_BOLD:-true}" = 'true' ] && b=$'\033[1m' # Bold text
+[ "${CF_ITALIC:-false}" = 'true' ] && l=$'\033[3m' # Italic text
+[ "${CF_ITALIC_LABELS:-false}" = 'true' ] && s=$'\033[3m' # Label Italic text
+
+MONOCHROME="${CF_MONOCHROME:-false}"
+if [ "$MONOCHROME" = 'false' ]; then
+	c=3 cb=4
+	for j in c cb; do
+		for i in {0..7}; do
+		printf -v $j$i %b "\033[${!j}${i}m"
+	done
+	done
+fi
+
+# Dynamic underline
+TITLE="${CF_TITLE:-true}"
+if [ "$TITLE" = 'true' ]; then
+	title_num="$(user)$(name)"
+	length=$(expr ${#title_num} + 21)
+	line="$(printf -v spaces '%*s' $length ''; printf '%s\n' ${spaces// /-})"
+	cmd='cat'
+else
+	cmd="tail -n +3"
+fi
+
+# Labels
+LCASE="${CF_LABELS:-upper}"
+usr=User
+hostnml=Hostname
+osl=OS
+wml=WM
+kernl=Kernel
+lshell=Shell
+utime=Uptime
+if [ "$LCASE" = 'upper' ]; then
+	usr=${usr^^}
+	hostnml=${hostnml^^}
+	osl=${osl^^}
+	wml=${wml^^}
+	kernl=${kernl^^}
+	lshell=${lshell^^}
+	utime=${utime^^}
+fi
+if [ "$LCASE" = 'lower' ]; then
+	usr=${usr,,}
+	hostnml=${hostnml,,}
+	osl=${osl,,}
+	wml=${wml,,}
+	kernl=${kernl,,}
+	lshell=${lshell,,}
+	utime=${utime,,}
+fi
+
+output() {
+    tput rmam
+    if [[ "$screenmode" == "clear" ]]; then
+        tput civis
+        clear
+    fi
+}
+finish() {
+	tput smam
+	tput cvvis
+	exit 0
+}
+post()  {
+    if [[ "$screenmode" == "clear" ]]; then
+		trap finish EXIT
+		unset screenmode
+        sleep infinity &
+        wait
+    else
+        tput smam
+        exit 0
+    fi
+}
+
+# Animals
+none() {
+    output
+	$cmd <<-EOF
+	  $c4${b}${s} $usr$c6 ~ $n$l$(user)$n  $c4${b}${s} $hostnml$c6 ~ $n$l$(name)$n
+	   $c5$line
+	  $c2${b}${s} $osl$n        $l$(os)$n
+	  $c3${b}${s} $wml$n        $l$(wm)$n
+	  $c4${b}${s} $kernl$n    $l$(kernel)$n
+	  $c5${b}${s} $lshell$n     $l$(shell)$n
+	  $c6${b}${s} $utime$n    $l$(up)$n
+
+	EOF
+}
+bunny() {
+    output
+	$cmd <<-EOF
+	  $c4${b}$s $usr$c6 ~ $n$l$(user)$n  $c4${b}$s $hostnml$c6 ~ $n$l$(name)$n
+	   $c5$line
+
+	             $c2${b}$s $osl$n        ${l}$(os)$n
+	   (\\ /)     $c3${b}$s $wml$n        ${l}$(wm)$n
+	   ( . .)    $c4${b}$s $kernl$n    ${l}$(kernel)$n
+	   c$n($c4"$n)($c4"$n)   $c5${b}$s $lshell$n     ${l}$(shell)$n
+	             $c6${b}$s $utime$n    ${l}$(up)$n
+
+	EOF
+}
+kitten() {
+    output
+	$cmd <<-EOF
+	  $c4${b}$s $usr$c6 ~ $n${l}$(user)$n  $c4${b}$s $hostnml$c6 ~ $n${l}$(name)$n
+	   $c5$line
+
+	                $c2${b}$s $osl$n        ${l}$(os)$n
+	    ${c4}\\ $n   /\\     $c3${b}$s $wml$n        ${l}$(wm)$n
+	    ${c4} )$n  ( ')    $c4${b}$s $kernl$n    ${l}$(kernel)$n
+	    ${c4}( $n /  )     $c5${b}$s $lshell$n     ${l}$(shell)$n
+	    ${c4} \\$n(__)$c4\\     $c6${b}$s $utime$n    ${l}$(up)$n
+
+	EOF
+}
+owl() {
+    output
+	$cmd <<-EOF
+	  $c4${b}$s $usr$c6 ~ $n${l}$(user)$n  $c4${b}$s $hostnml$c6 ~ $n${l}$(name)$n
+	   $c5$line
+
+	                  $c2${b}$s $osl$n        ${l}$(os)$n
+	      ${c4}.___,       $c3${b}$s $wml$n        ${l}$(wm)$n
+	   ${c3}___(${n}'${c3}v${n}'${c3})___    $c4${b}$s $kernl$n    ${l}$(kernel)$n
+	   ${c2}\`"-\\${n}._.${c2}/-"'    $c5${b}$s $lshell$n     ${l}$(shell)$n
+	       ${c4}^ ^        $c6${b}$s $utime$n    ${l}$(up)$n
+
+	EOF
+}
+fish() {
+	output
+	$cmd <<-EOF
+	  $c4${b}$s $usr$c6 ~ $n${l}$(user)$n  $c4${b}$s $hostnml$c6 ~ $n${l}$(name)$n
+	   $c5$line
+
+	     ${c4}\\ ${n}  '  o       $c2${b}$s $osl$n        ${l}$(os)$n
+	     ${c4}/\\    \\ ${n} '     $c3${b}$s $wml$n        ${l}$(wm)$n
+	   ${c3}>=)'${c4}>   /${c4}\\ ${n}  ~   $c4${b}$s $kernl$n    ${l}$(kernel)$n
+	     ${c4}\\/ ${c3} >=)'${c4}>      $c5${b}$s $lshell$n     ${l}$(shell)$n
+	   ' ${c4}/     \\${c4}/       $c6${b}$s $utime$n    ${l}$(up)$n
+	       o ${c4}  / ${n}  '
+
+	EOF
+}
+pika() {
+	output
+	$cmd <<-EOF
+	  $c4${b}$s $usr$c6 ~ $n${l}$(user)$n  $c4${b}$s $hostnml$c6 ~ $n${l}$(name)$n
+	   $c5$line
+
+	   ${c2}(\\___/) ${c3}/___7   $c2${b}$s $osl$n        ${l}$(os)$n
+	   ${c2}(${c5}o${n}^_^${c5}o${c2}) ${c3}Z__7    $c3${b}$s $wml$n        ${l}$(wm)$n
+	    ${c2}(${c3}"${n}_${c3}"${c2})${c3}=Z_7      $c4${b}$s $kernl$n    ${l}$(kernel)$n
+	    ${c2}(/ \\)          $c5${b}$s $lshell$n     ${l}$(shell)$n
+	                   $c6${b}$s $utime$n    ${l}$(up)$n
+	EOF
+}
+puppy() {
+	output
+	$cmd <<-EOF
+	  $c5${b}$s $usr$c6 ~ $n${l}$(user)$n  $c4${b}$s $hostnml$c6 ~ $n${l}$(name)$n
+	   $c5$line
+
+	   ${c3}     __     ${c2}${b}$s $osl$n        ${l}$(os)$n
+	   ${c3}(___()${n}'${c3}\`;   $c3${b}$s $wml$n        ${l}$(wm)$n
+	   ${c3}/${n},    ${c3}/${c4}\`    $c4${b}$s $kernl$n    ${l}$(kernel)$n
+	   ${c3}\\\\${c2}"--${c3}\\\\     $c5${b}$s $lshell$n     ${l}$(shell)$n
+	               $c6${b}$s $utime$n    ${l}$(up)$n
+
+	EOF
+}
+
+# Parse arguments and run functions
+[[ "$#" -eq 0 ]] && ${CF_DEFAULT_ANIMAL:-bunny} && exit 0
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -s|--screenshot-mode)
+            screenmode=clear
+            shift
+            ;;
+	    -h|--help|help)
+	    	print_help ;;
+	    -c|--config|config)
+	    	print_config ;;
+	    bunny)
+	    	bunny
+			shift ;;
+	    kitten)
+	    	kitten
+			shift ;;
+	    owl)
+	    	owl
+			shift ;;
+	    fish)
+	    	fish
+			shift ;;
+	    pika)
+	    	pika
+			shift ;;
+	    puppy)
+	    	puppy
+			shift ;;
+	    none)
+	    	none
+			shift ;;
+	    random)
+	    	animals=(bunny kitten owl fish pika puppy)
+	    	
+	    	num=${#animals[@]}
+	    	chosen=$(($RANDOM % $num))
+	    	${animals[$chosen]}
+			shift ;;
+	    *)
+			cat <<-'EOF'
+			Invalid animal. See 'cutefetch -h' for help.
+
+			EOF
+			exit 1
+            ;;
+    esac
+done
+post
