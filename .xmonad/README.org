@@ -5,7 +5,8 @@
 - [[#imports][IMPORTS]]
 - [[#vars][VARS]]
 - [[#autostart][AUTOSTART]]
-- [[#windows-manipulation][WINDOWS MANIPULATION]]
+- [[#scratchpads][SCRATCHPADS]]
+- [[#manage-hook][MANAGE HOOK]]
 - [[#windows-spacing][WINDOWS SPACING]]
 - [[#layout][LAYOUT]]
 - [[#shortcuts][SHORTCUTS]]
@@ -26,7 +27,7 @@ import XMonad.Util.Run (spawnPipe)
 import XMonad.Util.EZConfig (removeKeysP, mkNamedKeymap)
 import XMonad.Util.Cursor
 import XMonad.Util.NamedActions
---import XMonad.Util.NamedScratchpad (use for kitty as replacement for guake)
+import XMonad.Util.NamedScratchpad
 
 -- ACTIONS
 import XMonad.Actions.CopyWindow (kill1)
@@ -121,7 +122,21 @@ myStartupHook = do
   setWMName "LG3D"
 #+end_src
 
-* WINDOWS MANIPULATION
+* SCRATCHPADS
+#+begin_src haskell
+myScratchPads :: [NamedScratchpad]
+myScratchPads = [NS "terminal" spawnTerm findTerm manageTerm]
+        where
+          spawnTerm = "kitty"
+          findTerm = (className =? "kitty")
+          manageTerm = customFloating $ W.RationalRect l t w h
+                where
+                  h = 0.9
+                  w = 0.9
+                  t = 0.95 -h
+                  l = 0.95 -w
+#+end_src
+* MANAGE HOOK
 #+begin_src haskell
 -- window manipulations
 myManageHook = composeAll . concat $
@@ -133,7 +148,7 @@ myManageHook = composeAll . concat $
     , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo "dev"   | x <- my2Shifts]
     , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo "chat"  | x <- my3Shifts]
     , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo "music" | x <- my4Shifts]
-    ]
+    , [namedScratchpadManageHook myScratchPads]]
   where
     doShiftAndGo = doF . liftM2 (.) W.greedyView W.shift
     myCFloats = ["confirm", "file_progress", "download", "error", "notification"
@@ -178,36 +193,30 @@ myLayoutHook = refocusLastLayoutHook $ avoidStruts $ mkToggle (NBFULL ?? NOBORDE
 #+begin_src haskell
 myKeys c = mkNamedKeymap c $
   -- General
-  [ ("M-C-r",                  addName "Recompile XMonad"       $ spawn "xmonad --recompile")
-  , ("M-S-r",                  addName "Restart XMonad"         $ spawn "xmonad --restart")
-  , ("M-S-q",                  addName "Quit XMonad"            $ io exitSuccess)
-  , ("M-S-c",                  addName "Kill focused window"    $ kill1)
-  , ("M-S-a c",                addName "Kill all windows on WS" $ killAll)]
+  [ ("M-C-r",                  addName "Recompile XMonad"         $ spawn "xmonad --recompile")
+  , ("M-S-r",                  addName "Restart XMonad"           $ spawn "xmonad --restart")
+  , ("M-S-q",                  addName "Quit XMonad"              $ io exitSuccess)
+  , ("M-S-c",                  addName "Kill focused window"      $ kill1)
+  , ("M-S-a c",                addName "Kill all windows on WS"   $ killAll)]
 
   ^++^ -- Layout
-  [ ("M-S-m",                  addName "Swap focused W with master W"         $ windows W.swapMaster)
-  , ("M-m",                    addName "Toggle full screen mode [no borders]" $ sendMessage (MT.Toggle NBFULL) >> sendMessage ToggleStruts)
-  , ("M-<Tab>",                addName "Change layout"                        $ sendMessage NextLayout)]
+  [ ("M-S-m",                  addName "Swap focused W with master W" $ windows W.swapMaster)
+  , ("M-m",                    addName "Toggle full screen mode"      $ sendMessage (MT.Toggle NBFULL) >> sendMessage ToggleStruts)
+  , ("M-<Tab>",                addName "Change layout"                $ sendMessage NextLayout)]
 
-  ^++^ -- Favorite programs
-  [ ("M-S-<Return>",           addName "Launch Rofi"          $ spawn "rofi -show drun")
-  , ("M-<Return>",             addName "Launch myTerminal"    $ spawn myTerminal)
- -- , ("M-b b",                  addName "Launch myBrowser"     $ spawn (myBrowser))
-  , ("M-f f",                  addName "Launch myFileManager" $ spawn (myFileManager))
- -- , ("M-h h",                  addName "Launch htop"          $ spawn (myTerminal ++ " -e htop"))
- -- , ("M-r r",                  addName "Launch ranger"        $ spawn (myTerminal ++ " -e ranger"))
+  ^++^ -- Programs
+  [ ("M-S-<Return>",           addName "Launch Rofi"               $ spawn "rofi -show drun")
+  , ("M-<Return>",             addName "Launch myTerminal"         $ spawn myTerminal)
+  , ("C-<Escape>",             addName "Show/hide NamedScratchpad" $ namedScratchpadAction myScratchPads "terminal")
+  , ("M-r r",                  addName "Launch ranger"             $ spawn (myTerminal ++ " -e ranger"))
+  , ("M-f f",                  addName "Launch myFileManager"      $ spawn (myFileManager))
   ]
 
-  ^++^ -- Custom
+  ^++^ -- System
   [ ("M-<Space>",              addName "Switch keyboard layout" $ spawn "/home/artemy/.scripts/layout-switcher.sh")
   , ("M-<End>",                addName "Zzz..."                 $ spawn "systemctl suspend")
   , ("M-<Escape>",             addName "Lock screen"            $ spawn "betterlockscreen --lock dimblur")
-  , ("M-r",                    addName "ru"                     $ spawn "setxkbmap ru")]
-
-  ---h^++^ -- Floating windows
-  --[ ("M-f",                    addName "Toggle float layout"      $ sendMessage (T.Toggle "float"))
-  --, ("M-t",                    addName "Sink a floating window"   $ withFocused $ windows . W.sink)
-  --, ("M-S-t",                  addName "Sink all floated windows" $ sinkAll)]
+  , ("M-r u",                    addName "ru"                     $ spawn "setxkbmap ru")]
 
   ^++^ -- Doom Emacs
   [ ("M-d d",                  addName "Emacsclient"         $ spawn (myEmacs))
@@ -233,11 +242,7 @@ myKeys c = mkNamedKeymap c $
 
   , ("<XF86MonBrightnessUp>",   addName "Brightness level up"   $ spawn "brightnessctl set +5%")
   , ("<XF86MonBrightnessDown>", addName "Brightness level down" $ spawn "brightnessctl set 5%-")]
-  where nonNSP = WSIs (return (\ws -> W.tag ws /= "NSP"))
 #+end_src
-
-#+RESULTS:
-
 * EVENT HOOK
 #+begin_src haskell
 myEventHook = refocusLastEventHook <+> hintsEventHook
