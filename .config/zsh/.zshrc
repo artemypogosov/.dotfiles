@@ -3,12 +3,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# -- Set variables
-export EDITOR='emacs'
-export VISUAL='emacs'
-export PATH="$HOME/.emacs.d/bin:$PATH"
 # Cutefish
-export CF_TITLE=false
 ~/.local/bin/cutefetch random
 
 # -- Aliases
@@ -102,6 +97,8 @@ if [ -d "$HOME/.local/bin" ] ;
   then PATH="$HOME/.local/bin:$PATH"
 fi
 
+POWERLEVEL9K_CONFIG_FILE=~/.config/zsh/p10k.zsh
+
 # -- Plugins
 source ~/.dotfiles/.config/zsh/powerlevel10k/powerlevel10k.zsh-theme
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -113,5 +110,5 @@ ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 bindkey '^ ' autosuggest-accept
 bindkey '^t' autosuggest-toggle
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# To customize prompt, run `p10k configure` or edit ~/p10k.zsh.
+[[ ! -f ~/.config/zsh/p10k.zsh ]] || source ~/.config/zsh/p10k.zsh
