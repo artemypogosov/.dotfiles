@@ -15,7 +15,6 @@ galculator
 google-chrome
 gpick
 kitty
-leiningen
 lightdm
 lightdm-gtk-greeter
 lightdm-gtk-greeter-settings
@@ -48,3 +47,7 @@ xmonad
 xmonad-contrib
 zathura
 zathura-pdf-poppler
+zsh
+zsh-completions
+zsh-syntax-highlighting
+zsh-autosuggestions
