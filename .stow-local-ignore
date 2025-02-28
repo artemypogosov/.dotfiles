@@ -5,3 +5,5 @@ misc
 LICENSE
 ^/.*\.org
 packages-list
+setup.sh
+computer.txt
