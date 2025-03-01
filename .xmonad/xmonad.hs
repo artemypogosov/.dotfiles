@@ -97,6 +97,8 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 myStartupHook :: X ()
 myStartupHook = do
   spawnOnce "$HOME/.scripts/init-us.sh"
+  spawnOnce "setxkbmap -option caps:escape"
+  spawnOnce "xset r rate 400 50"
   setWMName "LG3D"
 
 myScratchPads :: [NamedScratchpad]
