@@ -26,11 +26,11 @@ lightdm
 lightdm-gtk-greeter
 lightdm-gtk-greeter-settings
 lsof
+lxappearance
 lxqt-powermanagement
 nitrogen
 npm
 neovim
-nwg-look
 openvpn
 p7zip
 pcmanfm
@@ -61,3 +61,5 @@ zsh-syntax-highlighting
 zsh-autosuggestions
 lxpolkit
 inetutils
+fd
+ripgrep

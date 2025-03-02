@@ -5,8 +5,6 @@ gruvbox-icon-theme
 gruvbox-material-gtk-theme-git
 gruvbox-material-icon-theme-git
 htim
-nerd-fonts-mononoki
-nerd-fonts-ubuntu-mono
 otf-font-awesome-5
 picom-ftlabs-git
 pavucontrol-gtk2
