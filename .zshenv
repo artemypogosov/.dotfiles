@@ -1,4 +1,5 @@
 # -- Set variables
+export XCURSOR_THEME="Adwaita"
 export EDITOR='emacs'
 export VISUAL='emacs'
 export PATH="$HOME/.emacs.d/bin:$PATH"
