@@ -56,4 +56,3 @@
 (package! lsp-haskell)
 (package! haskell-mode)
 
-(package! telega)

@@ -30,7 +30,7 @@
 ;; ‘font-lock-keyword-face’ – for keywords with special significance like ‘setq’ in elisp.
 
 (setq doom-font (font-spec :family "Source Code Pro" :size  15)
-      doom-variable-pitch-font (font-spec :family "UbuntuMono Nerd Font" :size 15)
+      doom-variable-pitch-font (font-spec :family "Ubuntu" :size 15)
       doom-big-font (font-spec :family "Source Code Pro" :size 20))
 
 (after! doom-themes
