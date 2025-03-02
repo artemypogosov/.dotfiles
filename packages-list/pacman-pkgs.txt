@@ -60,3 +60,4 @@ zsh-completions
 zsh-syntax-highlighting
 zsh-autosuggestions
 lxpolkit
+inetutils
