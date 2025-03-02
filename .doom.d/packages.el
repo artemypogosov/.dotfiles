@@ -50,6 +50,7 @@
 ;(unpin! t)
 
 
+(package! evil-tutor)
 (package! org-roam)
 (package! windresize)
 
