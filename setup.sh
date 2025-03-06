@@ -58,10 +58,10 @@ echo
 
             echo "1. Add '--lock dimblur' in /usr/lib/systemd/system/betterlockscreen@.service" 
             echo "2. Set 'kitty.desktop' to NoDisplay=true in .local/share/applications/" 
-	    echo "3. cp -a ~/.etckeeper/lightdm/. /etc/lightdm/"
-	    echo "4. Open 'lightdm-gtk-greeter-settings' and set background depending on [PC or laptop]"
-	    echo "5. cp ~/.etckeeper/systemd/logind.conf.d/do-not-suspend.conf. /etc/systemd/logind.conf.d/"
-
+	        echo "3. cp -a ~/.etckeeper/lightdm/. /etc/lightdm/"
+	        echo "4. Open 'lightdm-gtk-greeter-settings' and set background depending on [PC or laptop]"
+            echo "5. Setup powermanagement [suspend on lid close, look at tray power icon]"
+            sleep 3
             echo "=== Ready! ===";;
         * )
             echo "Exit."
