@@ -4,7 +4,4 @@
 misc
 LICENSE
 ^/.*\.org
-packages-list
-setup.sh
-computer.txt
-keyboard-fix.sh
+other
