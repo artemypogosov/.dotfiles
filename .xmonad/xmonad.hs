@@ -97,8 +97,7 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 myStartupHook :: X ()
 myStartupHook = do
   spawnOnce "$HOME/.scripts/init-us.sh"
-  spawnOnce "setxkbmap -option caps:escape"
-  spawnOnce "xset r rate 400 50"
+  spawn "$HOME/.dotfiles/keyboard-fix.sh"
   setWMName "LG3D"
 
 myScratchPads :: [NamedScratchpad]
@@ -113,16 +112,12 @@ myScratchPads = [NS "terminal" spawnTerm findTerm manageTerm]
                   t = 0.95 -h
                   l = 0.95 -w
 
--- window manipulations
 myManageHook = composeAll . concat $
     [ [isDialog       --> doCenterFloat]
     , [className =? c --> doCenterFloat | c <- myCFloats]
     , [title     =? t --> doFloat       | t <- myTFloats]
     , [resource  =? i --> doIgnore      | i <- myIgnores]
 --  , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo "web"   | x <- my1Shifts]
-    , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo "dev"   | x <- my2Shifts]
-    , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo "chat"  | x <- my3Shifts]
-    , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo "music" | x <- my4Shifts]
     , [namedScratchpadManageHook myScratchPads]]
   where
     doShiftAndGo = doF . liftM2 (.) W.greedyView W.shift
@@ -132,9 +127,6 @@ myManageHook = composeAll . concat $
     myTFloats = ["Downloads", "Save As..."]
     myIgnores = ["desktop_window"]
  -- my1Shifts = ["Google-chrome", "qutebrowser"]
-    my2Shifts = ["Emacs", "idea"]
-    my3Shifts = ["telegram-desktop"]
-    my4Shifts = ["Spotify"]
 
 -- If fewer than two windows. So a single window has no gaps.
 mySpacing :: Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
@@ -162,30 +154,30 @@ myLayoutHook = refocusLastLayoutHook $ avoidStruts $ mkToggle (NBFULL ?? NOBORDE
 
 myKeys c = mkNamedKeymap c $
   -- General
-  [ ("M-C-r",                  addName "Recompile XMonad"         $ spawn "xmonad --recompile")
-  , ("M-S-r",                  addName "Restart XMonad"           $ spawn "xmonad --restart")
-  , ("M-S-q",                  addName "Quit XMonad"              $ io exitSuccess)
-  , ("M-S-c",                  addName "Kill focused window"      $ kill1)
-  , ("M-S-a c",                addName "Kill all windows on WS"   $ killAll)]
+  [ ("M-C-r",                  addName "Recompile XMonad"               $ spawn "xmonad --recompile")
+  , ("M-S-r",                  addName "Restart XMonad"                 $ spawn "xmonad --restart")
+  , ("M-S-q",                  addName "Quit XMonad"                    $ io exitSuccess)
+  , ("M-S-c",                  addName "Kill focused window"            $ kill1)
+  , ("M-S-a c",                addName "Kill all windows on workspace"  $ killAll)]
 
   ^++^ -- Layout
-  [ ("M-S-m",                  addName "Swap focused W with master W" $ windows W.swapMaster)
+  [ ("M-<Tab>",                addName "Change layout"                $ sendMessage NextLayout)
+  , ("M-S-m",                  addName "Swap focused W with master W" $ windows W.swapMaster)
   , ("M-m",                    addName "Toggle full screen mode"      $ sendMessage (MT.Toggle NBFULL) >> sendMessage ToggleStruts)
-  , ("M-<Tab>",                addName "Change layout"                $ sendMessage NextLayout)]
+  ]
 
   ^++^ -- Programs
   [ ("M-S-<Return>",           addName "Launch Rofi"               $ spawn "rofi -show drun")
   , ("M-<Return>",             addName "Launch myTerminal"         $ spawn myTerminal)
   , ("C-<Escape>",             addName "Show/hide NamedScratchpad" $ namedScratchpadAction myScratchPads "terminal")
   , ("M-r r",                  addName "Launch ranger"             $ spawn (myTerminal ++ " -e ranger"))
-  , ("M-f f",                  addName "Launch myFileManager"      $ spawn (myFileManager))
-  ]
+  , ("M-f f",                  addName "Launch myFileManager"      $ spawn (myFileManager))]
 
   ^++^ -- System
-  [ ("M-<Space>",              addName "Switch keyboard layout" $ spawn "/home/artemy/.scripts/layout-switcher.sh")
+  [ ("M-<Space>",              addName "Switch keyboard layout" $ spawn "$HOME/.scripts/layout-switcher.sh")
   , ("M-<End>",                addName "Zzz..."                 $ spawn "systemctl suspend")
   , ("M-<Escape>",             addName "Lock screen"            $ spawn "betterlockscreen --lock dimblur")
-  , ("M-r u",                    addName "ru"                     $ spawn "setxkbmap ru")]
+  , ("M-r u",                  addName "ru"                     $ spawn "setxkbmap ru")
 
   ^++^ -- Doom Emacs
   [ ("M-d d",                  addName "Emacsclient"         $ spawn (myEmacs))

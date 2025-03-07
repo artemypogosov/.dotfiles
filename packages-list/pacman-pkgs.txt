@@ -63,3 +63,4 @@ lxpolkit
 inetutils
 fd
 ripgrep
+ttf-ubuntu-font-family
