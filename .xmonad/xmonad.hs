@@ -97,7 +97,7 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 myStartupHook :: X ()
 myStartupHook = do
   spawnOnce "$HOME/.scripts/init-us.sh"
-  spawn "$HOME/.dotfiles/keyboard-fix.sh"
+  spawn "$HOME/.dotfiles/other/keyboard-fix.sh"
   setWMName "LG3D"
 
 myScratchPads :: [NamedScratchpad]
@@ -120,7 +120,7 @@ myManageHook = composeAll . concat $
 --  , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo "web"   | x <- my1Shifts]
     , [namedScratchpadManageHook myScratchPads]]
   where
-    doShiftAndGo = doF . liftM2 (.) W.greedyView W.shift
+--    doShiftAndGo = doF . liftM2 (.) W.greedyView W.shift
     myCFloats = ["confirm", "file_progress", "download", "error", "notification"
                , "toolbar", "Oracle VM VirtualBox Manager", "jetbrains-idea"
                , "Arandr", "Galculator"]
@@ -163,8 +163,7 @@ myKeys c = mkNamedKeymap c $
   ^++^ -- Layout
   [ ("M-<Tab>",                addName "Change layout"                $ sendMessage NextLayout)
   , ("M-S-m",                  addName "Swap focused W with master W" $ windows W.swapMaster)
-  , ("M-m",                    addName "Toggle full screen mode"      $ sendMessage (MT.Toggle NBFULL) >> sendMessage ToggleStruts)
-  ]
+  , ("M-m",                    addName "Toggle full screen mode"      $ sendMessage (MT.Toggle NBFULL) >> sendMessage ToggleStruts)]
 
   ^++^ -- Programs
   [ ("M-S-<Return>",           addName "Launch Rofi"               $ spawn "rofi -show drun")
@@ -177,7 +176,7 @@ myKeys c = mkNamedKeymap c $
   [ ("M-<Space>",              addName "Switch keyboard layout" $ spawn "$HOME/.scripts/layout-switcher.sh")
   , ("M-<End>",                addName "Zzz..."                 $ spawn "systemctl suspend")
   , ("M-<Escape>",             addName "Lock screen"            $ spawn "betterlockscreen --lock dimblur")
-  , ("M-r u",                  addName "ru"                     $ spawn "setxkbmap ru")
+  , ("M-r u",                  addName "ru"                     $ spawn "setxkbmap ru")]
 
   ^++^ -- Doom Emacs
   [ ("M-d d",                  addName "Emacsclient"         $ spawn (myEmacs))
