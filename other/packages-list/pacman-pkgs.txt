@@ -9,7 +9,6 @@ darktable
 docker
 docker-compose
 downgrade
-dropbox
 dunst
 emacs
 file-roller
