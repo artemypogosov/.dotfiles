@@ -3,4 +3,4 @@
 max=$(brightnessctl m)
 current=$(brightnessctl g)
 result=$(($current * 100 / $max))
-echo $result
+echo "$result%"
