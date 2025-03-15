@@ -1,49 +1,31 @@
 Config {
-       --- APPEARANCE
-       --------------
+       --- [APPEARANCE]
        font = "Ubuntu Bold 11",
-       additionalFonts = ["Mononoki Nerd Font 10", "Font Awesome 5 Free Solid 10" , "Font Awesome 5 Brands 10"],
+       additionalFonts = ["Mononoki Nerd Font 10", "Font Awesome 5 Free Solid 10", "Font Awesome 5 Brands 10"],
        bgColor = "#282828",
        fgColor = "#928374",
        alpha = 200,
        position = Static { xpos = 11 , ypos = 8, width = 2538, height = 30 },
 
-       --- GENERAL
-       -----------
+       --- [GENERAL]
        lowerOnStart     = False,
        allDesktops      = True,
        persistent       = True,
        overrideRedirect = True,
-       iconRoot         = ".xmonad/xpm" -- default: ".",
 
-       --- COMMANDS TO RUN EVERY N SECONDS (1S = 10, 1H = 36000)
-       ---------------------------------------------------------
+       --- [COMMANDS TO RUN EVERY N SECONDS (1S = 10, 1H = 36000)]
        commands = [
 
-       --- PRINTS OUT THE LEFT SIDE ITEMS SUCH AS WORKSPACES, LAYOUT, ETC.
-       -------------------------------------------------------------------
+       --- [PRINTS OUT THE LEFT SIDE ITEMS SUCH AS WORKSPACES, LAYOUT, etc.]
        Run UnsafeStdinReader,
 
-       -- TIME AND DATE
-       ----------------
+       -- [TIME AND DATE]
        Run Date "%b %_d - %H:%M " "date" 50,
 
-       -- KEYBOARD LAYOUT
-       ------------------
-       Run Kbd [("us", "US"), ("ru", "RU"), ("ua", "UA")],
+       -- [KEYBOARD LAYOUT]
+       Run Kbd [("us", "US"), ("ua", "UA"), ("ru", "RU")],
 
-       -- NETWORK
-       ----------
-       Run Network "enp5s0" ["-t"       , "<fn=1>\xf0ab</fn>  <rx>  <fn=1>\xf0aa</fn>  <tx>",
-                             "-S"       , "True",
-                             "-L"       , "1024",
-                             "-H"       , "102400",
-                             "--low"    , "#b3afc2",
-                             "--normal" , "orange",
-                             "--high"   , "red"] 10,
-
-       -- CPU USAGE
-       ------------
+       -- [CPU USAGE]
        Run Cpu [ "-t"       , "C:  [ <total>% ]",
                  "-L"       , "25",
                  "-H"       , "75",
@@ -51,8 +33,7 @@ Config {
                  "--normal" , "#fe8019",
                  "--high"   , "#cc241d"] 20,
 
-       -- CPU TEMPERATURE
-       ------------------
+       -- [CPU TEMPERATURE]
        Run MultiCoreTemp ["-t", "T:  [ <avg>°C ]",
                           "-L", "50",
                           "-H", "80",
@@ -61,8 +42,7 @@ Config {
                           "-h", "red",
                           "--", "--mintemp", "20", "--maxtemp", "100"] 50,
 
-       -- RAM USAGE
-       ------------
+       -- [RAM USAGE]
        Run Memory ["-t"       , "R: [ <usedratio>% ]",
                    "-L"       , "50",
                    "-H"       , "90",
@@ -70,22 +50,19 @@ Config {
                    "--normal" , "#fe8019",
                    "--high"   , "#cc241d"] 20,
 
-       -- SPOTIFY
-       ----------
+       -- [SPOTIFY]
        Run Mpris2 "spotify" [ "-t"        , "<artist> - <title>",
                              "--nastring" , "",
                              "-T"         , "50",
                              "-E"         , "..."] 10,
 
-       -- VOLUME LEVEL
-       ---------------
+       -- [VOLUME]
        Run Volume "default" "Master" [ "-t"     , "<volume>% <status>",
                                        "--"     ,
                                        "--onc"  , "#b8bb26",
                                        "--offc" , "#cc241d"] 5,
 
-       -- RUN SCRIPT TO CHECK FOR PACMAN AND AUR [YAY] UPDATES
-       -------------------------------------------------------
+       -- [RUN SCRIPT TO CHECK FOR PACMAN AND AUR UPDATES]
        Run Com ".local/bin/pacupdate" [] "pacupdate" 36000],
 
        sepChar  = "%",

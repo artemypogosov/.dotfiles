@@ -1,0 +1,89 @@
+Config {
+       --- [APPEARANCE]
+       font = "Ubuntu Bold 11",
+       additionalFonts = ["Mononoki Nerd Font 10", "Font Awesome 5 Free Solid 10", "Font Awesome 5 Brands 10"],
+       bgColor = "#282828",
+       fgColor = "#928374",
+       alpha = 200,
+       position = Static { xpos = 11 , ypos = 8, width = 1900, height = 30 },
+
+       --- [GENERAL]
+       lowerOnStart     = False,
+       allDesktops      = True,
+       persistent       = True,
+       overrideRedirect = True,
+
+       --- [COMMANDS TO RUN EVERY N SECONDS (1S = 10, 1H = 36000)]
+       commands = [
+
+       -- [TIME AND DATE]
+       Run Date "%b %_d - %H:%M " "date" 50,
+
+       -- [KEYBOARD LAYOUT]
+       Run Kbd [("us", "US"), ("ua", "UA"), ("ru", "RU")],
+
+       -- [CPU USAGE]
+       Run Cpu [  "-t"       , "C: [<total>%]",
+                  "-L"       , "25",
+                  "-H"       , "75",
+                  "--low"    , "#928374",
+                  "--normal" , "#fe8019",
+                  "--high"   , "#cc241d"] 20,
+
+       -- [RAM USAGE]
+       Run Memory [  "-t"       , "R: [<usedratio>%]",
+                     "-L"       , "50",
+                     "-H"       , "90",
+                     "--low"    , "#928374",
+                     "--normal" , "#fe8019",
+                     "--high"   , "#cc241d"] 20,
+
+       -- [SPOTIFY]
+       Run Mpris2 "spotify" [ "-t", "<artist> - <title>",
+                              "--nastring" , "",
+                              "-T"         , "35",
+                              "-E"         , "..."] 10,
+
+       -- [VOLUME]
+       Run Volume "default" "Master" [ "-t"     , "<volume>% <status>",
+                                       "--"     ,
+                                       "--onc"  , "#b8bb26",
+                                       "--offc" , "#cc241d"] 5,
+
+       -- [RUN SCRIPT TO CHECK FOR PACMAN AND AUR UPDATES]
+       Run Com ".local/bin/pacupdate" [] "pacupdate" 36000,
+
+       -- [BATTERY]
+       Run Battery [ "-t"                , "<left>% <acstatus> ",
+                     "--"                ,
+                     "-L"                , "18", -- 20% of 90W battery
+                     "-H"                , "72", -- 80% of 90W battery
+                     "-h"                , "#98971a",
+                     "-m"                , "#d79921",
+                     "-l"                , "#cc241d",
+                     "-i"                , "<fc=#a3be8c><fn=2></fn></fc>",
+                     "-o"                , "",
+                     "-O"                , "<fc=#98971a><fn=2></fn></fc>",
+                     "--highs"           , "<fc=#98971a><fn=2> </fn></fc>",
+                     "--mediums"         , "<fc=#d79921><fn=2> </fn></fc>",
+                     "--lows"            , "<fc=#cc241d><fn=2> </fn></fc>",
+                     "--on-icon-pattern" , "",
+                     "-A"                , "15"] 50,
+
+       Run MultiCoreTemp ["-t", "T: [ <avg>°C ]",
+                          "-L", "50",
+                          "-H", "80",
+                          "-l", "lightblue",
+                          "-n", "gray",
+                          "-h", "red",
+                          "--", "--mintemp", "20", "--maxtemp", "100"] 50,
+       -- [BRIGHTNESS]
+       Run Com ".local/bin/brightness" [] "brightness" 10,
+
+       -- [PRINTS OUT THE LEFT SIDE ITEMS SUCH AS WORKSPACES, LAYOUT, etc.]
+       Run UnsafeStdinReader
+          ],
+        sepChar  = "%",
+        alignSep = "}{",
+        template = "   %UnsafeStdinReader% }<action=`alacritty -e calcurse`>%date%</action>{%mpris2%   %default:Master%  B: %brightness%  |  %multicoretemp%  %cpu%  %memory%  |  U: <action=`alacritty -e sudo pacman -Syu`>%pacupdate%</action>  :  %kbd%  :  %battery%"
+       }
