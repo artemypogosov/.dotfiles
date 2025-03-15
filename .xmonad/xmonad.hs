@@ -230,7 +230,7 @@ main = do
    , ppHiddenNoWindows = xmobarColor "#928374" ""                  -- Hidden workspaces (no windows)
    , ppVisible         = xmobarColor "#98971a" ""                  -- Visible but not current workspace
    , ppUrgent          = xmobarColor "#C45500" "" . wrap "!" "!"   -- Urgent workspace
-   , ppSep             =  "<fc=#888> <fn=1>|</fn> </fc>"           -- Separator character
+   , ppSep             = "<fc=#888> <fn=1>|</fn> </fc>"            -- Separator character
    , ppExtras          = [windowCount]
    , ppOrder           = \(ws:l:t:wc) -> [ws, l, head wc, t]
    , ppOutput          = hPutStrLn xmproc
