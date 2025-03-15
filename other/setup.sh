@@ -13,11 +13,11 @@ echo
 
             echo "=== Installing programms... [pacman + yay] ===" 
             pacman -S - < packages-list/pacman-pkgs.txt 
-	    yay -S - < packages-list/yay-pkgs.txt
+	        yay -S - < packages-list/yay-pkgs.txt
 
             echo "=== Downloading .etckeeper repo ==="
             git clone https://github.com/artemypogosov/.etckeeper ~/.etckeeper &&
-	    systemctl enable lightdm.service &&
+	        systemctl enable lightdm.service &&
 
             echo "=== Downloading wallpapers ===" 
   	    if [ ! -d ~/Pictures/wallpapers ]; then
@@ -41,7 +41,10 @@ echo
 
             echo "=== Setup shell ==="
             chsh -s /bin/zsh &&
-	    
+
+            # Setup cursor theme
+            xrdb -merge ~/.Xresources
+
   	    if [ ! -d ~/.cache/zsh ]; then
             	mkdir ~/.cache/zsh 
             	touch ~/.cache/zsh/history 
@@ -58,8 +61,8 @@ echo
 
             echo "1. Add '--lock dimblur' in /usr/lib/systemd/system/betterlockscreen@.service" 
             echo "2. Set 'kitty.desktop' to NoDisplay=true in .local/share/applications/" 
-	        echo "3. cp -a ~/.etckeeper/lightdm/. /etc/lightdm/"
-	        echo "4. Open 'lightdm-gtk-greeter-settings' and set background depending on [PC or laptop]"
+            echo "3. cp -a ~/.etckeeper/lightdm/. /etc/lightdm/"
+	    echo "4. Open 'lightdm-gtk-greeter-settings' and set background depending on [PC or laptop]"
             echo "5. Setup powermanagement [suspend on lid close, look at tray power icon]"
             sleep 3
             echo "=== Ready! ===";;
