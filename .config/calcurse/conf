@@ -2,3 +2,5 @@ notification.command=notify-send -t 300000 -a "Calendar event" "$(calcurse -n)"
 daemon.enable=yes
 notification.warning=300
 notification.notifyall=yes
+
+appearance.layout=1
