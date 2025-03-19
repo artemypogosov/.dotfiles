@@ -96,7 +96,7 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 
 myStartupHook :: X ()
 myStartupHook = do
-  spawnOnce "$HOME/.scripts/init-us.sh"
+  spawnOnce "$XDG_CONFIG_HOME/scripts/init-us.sh"
   spawn "$HOME/.dotfiles/other/keyboard-fix.sh"
   setWMName "LG3D"
 
@@ -173,7 +173,7 @@ myKeys c = mkNamedKeymap c $
   , ("M-f f",                  addName "Launch myFileManager"      $ spawn (myFileManager))]
 
   ^++^ -- System
-  [ ("M-<Space>",              addName "Switch keyboard layout" $ spawn "$HOME/.scripts/layout-switcher.sh")
+  [ ("M-<Space>",              addName "Switch keyboard layout" $ spawn "$XDG_CONFIG_HOME/scripts/layout-switcher.sh")
   , ("M-<End>",                addName "Zzz..."                 $ spawn "systemctl suspend")
   , ("M-<Escape>",             addName "Lock screen"            $ spawn "betterlockscreen --lock dimblur")
   , ("M-r u",                  addName "ru"                     $ spawn "setxkbmap ru")]
@@ -192,7 +192,7 @@ myKeys c = mkNamedKeymap c $
 
   ^++^ -- Multimedia
   [ ("<XF86AudioMute>",        addName "Mute audio"   $ spawn "amixer set Master toggle")
-  , ("<XF86AudioMicMute>",     addName "Mute mic"     $ spawn "$HOME/.scripts/toggle-mic.sh")
+  , ("<XF86AudioMicMute>",     addName "Mute mic"     $ spawn "$XDG_CONFIG_HOME/scripts/toggle-mic.sh")
   , ("<XF86AudioLowerVolume>", addName "Lower volume" $ spawn "amixer -q sset Master 5%-")
   , ("<XF86AudioRaiseVolume>", addName "Raise volume" $ spawn "amixer -q sset Master 5%+")
 
@@ -209,7 +209,7 @@ myEventHook = refocusLastEventHook <+> hintsEventHook
 
 main :: IO ()
 main = do
-  xmproc <- spawnPipe "xmobar $HOME/.config/xmobar/xmobarrc"
+  xmproc <- spawnPipe "xmobar $XDG_CONFIG_HOME/xmobar/xmobarrc"
   xmonad $ ewmhFullscreen $ addDescrKeys ((mod4Mask, xK_F1), xMessage) myKeys $ docks  def  {
     terminal              = myTerminal
   , modMask               = myModMask
