@@ -2,3 +2,8 @@
 build-x86_64-linux
 xmonad-x86_64-linux
 xmonad.errors
+.config/calcurse/.calcurse.pid
+.config/calcurse/apts
+.config/calcurse/keys
+.config/calcurse/notes/
+.config/calcurse/todo
