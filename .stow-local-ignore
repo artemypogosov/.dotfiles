@@ -5,3 +5,5 @@ misc
 LICENSE
 ^/.*\.org
 other
+setup.sh
+.gitignore
