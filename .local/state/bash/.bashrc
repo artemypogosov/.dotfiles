@@ -3,6 +3,7 @@
 
 # -- Set variables
 export HISTCONTROL=ignoreboth:erasedups
+export HISTFILE="$XDG_STATE_HOME"/bash/history
 export EDITOR='emacs'
 export VISUAL='emacs'
 # Doom emacs [use 'doom <command>' to run commands]
