@@ -4,24 +4,28 @@
 
 ---@type ChadrcConfig
 local M = {}
+local custom = require "custom.git"
+local modules = custom.modules
+require('custom.telescope').setup()
+
 
 M.base46 = {
-	theme = "gruvbox",
-    theme_toggle = { "gruvbox", "gruvbox_light" },
+  theme = "gruvbox",
+  theme_toggle = { "gruvbox", "gruvbox_light" },
 }
 
 M.nvdash = { load_on_startup = true }
 
- M.ui = {
-   statusline = {
-     theme = "vscode",
-     separator_style = "default",
-     order = { "mode", "f" , "%=", "lsp_msg", "%=", "lsp", "git" },
-     modules = {
-       f = "%F",
-       --git = "%GitBranch"
-     }
-   },
- }
+M.ui = {
+  statusline = {
+    theme = "vscode",
+    separator_style = "default",
+    order = { "mode", "f" , "%=", "lsp_msg", "%=", "lsp", "git" },
+    modules = {
+      f = "%F",
+      git = modules.statusline.git_custom,
+    }
+  },
+}
 
 return M

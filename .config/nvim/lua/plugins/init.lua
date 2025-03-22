@@ -13,13 +13,22 @@ return {
     end,
   },
 
-  -- {
-  -- 	"nvim-treesitter/nvim-treesitter",
-  -- 	opts = {
-  -- 		ensure_installed = {
-  -- 			"vim", "lua", "vimdoc",
-  --      "html", "css"
-  -- 		},
-  -- 	},
-  -- },
-}
+  "nvim-lua/plenary.nvim",
+
+  {
+    "nvchad/ui",
+    config = function()
+      require "nvchad"
+    end
+  },
+
+  {
+    "nvchad/base46",
+    lazy = true,
+    build = function()
+      require("base46").load_all_highlights()
+    end,
+  },
+
+  -- Optional, needed for theme switcher
+  "nvzone/volt", }
