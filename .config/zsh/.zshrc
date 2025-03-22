@@ -48,6 +48,8 @@ alias jctl="journalctl -p 3 -xb"
 alias psgrep="ps aux | grep -v grep | grep -i -e VSZ -e"
 alias wget="wget --hsts-file='$XDG_CACHE_HOME/wget-hsts'"
 
+alias vim="nvim"
+
 # Test webcam
 alias webcam="ffplay /dev/video0"
 
