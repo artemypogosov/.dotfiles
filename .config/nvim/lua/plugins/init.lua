@@ -16,6 +16,25 @@ return {
   "nvim-lua/plenary.nvim",
 
   {
+    'nvim-orgmode/orgmode',
+    lazy = true,
+    event = 'VeryLazy',
+    ft = { 'org' },
+    config = function()
+      -- Setup orgmode
+      require('orgmode').setup({
+        org_agenda_files = '~/Org/**/*',
+        org_default_notes_file = '~/Org/Code.org',
+      })
+    end,
+  },
+
+  {
+    "nvim-telescope/telescope-file-browser.nvim",
+    dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
+  },
+
+  {
     "nvchad/ui",
     config = function()
       require "nvchad"

@@ -5,7 +5,7 @@ local git_custom = function()
   local branch = handle:read("*a"):gsub("\n", "")  -- Get the branch name
   handle:close()
 
-  return branch ~= "" and " " .. branch or ""
+  return branch ~= "" and " " .. branch .. " " or ""
 end
 
 M.modules = {

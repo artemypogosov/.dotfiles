@@ -3,11 +3,18 @@
 -- Please read that file to know all available options :( 
 
 ---@type ChadrcConfig
-local M = {}
-local custom = require "custom.git"
-local modules = custom.modules
 require('custom.telescope').setup()
+require("telescope").load_extension "file_browser"
 
+local M = {}
+local git_modules = require ("custom.git").modules 
+
+-- Change a directory when opening a file
+vim.api.nvim_create_autocmd("BufEnter", {
+  callback = function()
+    vim.cmd("silent! cd %:p:h")
+  end
+})
 
 M.base46 = {
   theme = "gruvbox",
@@ -18,13 +25,24 @@ M.nvdash = { load_on_startup = true }
 
 M.ui = {
   statusline = {
-    theme = "vscode",
+    theme = "vscode_colored",
     separator_style = "default",
-    order = { "mode", "f" , "%=", "lsp_msg", "%=", "lsp", "git" },
+    order = { "f", "file_status", "%=", "lsp_msg", "%=", "lsp", "git" },
     modules = {
-      f = "%F",
-      git = modules.statusline.git_custom,
+      f = " %F",
+      git = git_modules.statusline.git_custom,
+      file_status = function()
+        return vim.bo.modified and " [+]" or ""
+      end,
     }
+  },
+  -- lazyload it when there are 1+ buffers
+  tabufline = {
+    enabled = true,
+    lazyload = true,
+    order = { "treeOffset", "buffers", "tabs", "btns" },
+    modules = nil,
+    bufwidth = 21,
   },
 }
 

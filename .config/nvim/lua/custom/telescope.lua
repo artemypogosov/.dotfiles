@@ -2,6 +2,15 @@ local M = {}
 
 M.setup = function()
   require('telescope').setup {
+    extensions = {
+      file_browser = {
+        respect_gitignore = false,
+        hidden = true,
+        grouped = true,
+        select_buffer = true,
+        cwd_to_path = true, -- This makes it use the selected folder as cwd
+      }
+    },
     defaults = {
       -- Set the cwd dynamically based on the current working directory
       cwd = vim.fn.getcwd(),
@@ -19,7 +28,7 @@ M.setup = function()
         }
       },
     },
-  }
+}
 end
 
 return M
