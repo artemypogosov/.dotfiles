@@ -37,6 +37,7 @@ export CF_TITLE=false
 ### ALIASES ###
 ###############
 
+alias rm="rm -I"
 alias ls='ls --color=auto --hyperlink=auto "$@"'
 alias ll='ls -la'
 alias ls.="ls -A | grep '^\.'"
