@@ -7,7 +7,7 @@ require('custom.telescope').setup()
 require("telescope").load_extension "file_browser"
 
 local M = {}
-local git_modules = require ("custom.git").modules 
+local git_modules = require ("custom.git").modules
 
 -- Change a directory when opening a file
 vim.api.nvim_create_autocmd("BufEnter", {
