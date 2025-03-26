@@ -1,6 +1,12 @@
 require "nvchad.options"
 
--- add yours here!
+local opt = vim.opt
+local o = vim.o
+local g = vim.g
 
--- local o = vim.o
--- o.cursorlineopt ='both' -- to enable cursorline!
+o.number= true
+o.relativenumber = false
+
+opt.ignorecase = false
+opt.whichwrap = "<,>,[,],b,s"
+opt.termguicolors = true
