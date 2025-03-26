@@ -1,37 +1,23 @@
 return {
+  ---------------------
+  -- DEFAULT PLUGINS --
+  ---------------------
+  "nvim-lua/plenary.nvim",
+
+  -- Optional, needed for theme switcher
+  "nvzone/volt",
+
   {
     "stevearc/conform.nvim",
     -- event = 'BufWritePre', -- uncomment for format on save
     opts = require "configs.conform",
   },
 
-  -- These are some examples, uncomment them if you want to see them work!
   {
     "neovim/nvim-lspconfig",
     config = function()
       require "configs.lspconfig"
     end,
-  },
-
-  "nvim-lua/plenary.nvim",
-
-  {
-    'nvim-orgmode/orgmode',
-    lazy = true,
-    event = 'VeryLazy',
-    ft = { 'org' },
-    config = function()
-      -- Setup orgmode
-      require('orgmode').setup({
-        org_agenda_files = '~/Org/**/*',
-        org_default_notes_file = '~/Org/Code.org',
-      })
-    end,
-  },
-
-  {
-    "nvim-telescope/telescope-file-browser.nvim",
-    dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
   },
 
   {
@@ -49,5 +35,50 @@ return {
     end,
   },
 
-  -- Optional, needed for theme switcher
-  "nvzone/volt", }
+  ----------------
+  -- MY PLUGINS --
+  ----------------
+  {
+    "nvim-telescope/telescope-file-browser.nvim",
+    lazy = true,
+    dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
+  },
+
+  {
+    'nvim-orgmode/orgmode',
+    lazy = true,
+    event = 'VeryLazy',
+    ft = { 'org' },
+    config = function()
+      -- Setup orgmode
+      require('orgmode').setup({
+          org_agenda_files = '~/Org/**/*',
+          org_default_notes_file = '~/Org/Code.org',
+                              })
+    end,
+  },
+
+  {
+    'nvim-telescope/telescope-fzf-native.nvim',
+    lazy = true,
+    event = "BufRead",
+    build = 'make',
+    dependencies = { "nvim-telescope/telescope.nvim" },
+    config = function()
+      require("telescope").load_extension("fzf")
+    end,
+  },
+
+  {
+    "folke/todo-comments.nvim",
+    lazy = true,
+    event = "BufRead",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    --opts = {
+    --  signs = false,
+    --  highlight = {
+    --    keyword = "fg",
+    --  }
+    --}
+  },
+}
