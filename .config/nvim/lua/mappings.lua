@@ -37,7 +37,7 @@ map("n", "<leader>wiw", ":vertical resize 150<CR>", { desc = "Increase width" })
 map("n", "<leader><Tab>n", ":tabnew<CR>",   { desc = "New workspace"})
 map("n", "<leader><Tab>d", ":tabclose<CR>", { desc = "Kill workspace" })
 map("n", "<leader><Tab>l", ":tabnext<CR>",  { desc = "Next workspace" })
-map("n", "<leader><Tab>h", ":tabNext<CR>",  { deskc = "Prev workspace" })
+map("n", "<leader><Tab>h", ":tabNext<CR>",  { desc = "Prev workspace" })
 
 -- BUFFERS
 map("n", "<leader>bn", ":enew<CR>", { desc = "New buffer" })
