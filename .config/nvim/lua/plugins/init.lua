@@ -1,3 +1,10 @@
+local info    = "#B8BB26"
+local warning = "#FE8019"
+local hint    = "#F9F5D7"
+local error   = "#FB4934"
+local test    = "#D3869B"
+local default = "#7C3AED"
+
 return {
   ---------------------
   -- DEFAULT PLUGINS --
@@ -53,8 +60,7 @@ return {
       -- Setup orgmode
       require('orgmode').setup({
           org_agenda_files = '~/Org/**/*',
-          org_default_notes_file = '~/Org/Code.org',
-                              })
+          org_default_notes_file = '~/Org/Code.org',})
     end,
   },
 
@@ -74,11 +80,38 @@ return {
     lazy = true,
     event = "BufRead",
     dependencies = { "nvim-lua/plenary.nvim" },
-    --opts = {
-    --  signs = false,
-    --  highlight = {
-    --    keyword = "fg",
-    --  }
-    --}
+    opts = {
+      signs = false,
+      highlight = {
+        keyword = "fg",
+      },
+      keywords = {
+        FIX = {
+          icon = " ", -- icon used for the sign, and in search results
+
+          color = error, -- can be a hex color, or a named color (see below)
+          alt = { "FIXME", "BUG", "FIXIT", "ISSUE" }, -- a set of other keywords that all map to this FIX keywords
+        },
+        TODO = { icon = " ", color = info },
+        HACK = { icon = " ", color = warning },
+        WARN = { icon = " ", color = warning, alt = { "WARNING", "XXX" } },
+        NOTE = { icon = " ", color = hint, alt = { "INFO" } },
+        TEST = { icon = "T",  color = test, alt = { "TESTING", "PASSED", "FAILED" } },
+        PERF = { icon = " ", alt = { "OPTIM", "PERFORMANCE", "OPTIMIZE" } },
+      },
+    }
   },
+
+  {
+    "justinmk/vim-sneak",
+    event = "VeryLazy",
+  },
+
+  {
+    "szw/vim-maximizer",
+    keys = {
+      { "<leader>wm", "<cmd>MaximizerToggle<CR>", desc = "Maximize window" }
+    }
+  }
+
 }
