@@ -45,10 +45,24 @@ M.nvdash = {
   },
 
   buttons = {
-    { txt = "  Find File", keys = "SPC f f", cmd = "Telescope find_files" },
-    { txt = "  Recent Files", keys = "SPC f o", cmd = "Telescope oldfiles" },
-    { txt = "󰈭  Find Word", keys = "SPC f w", cmd = "Telescope live_grep" },
+    { txt = "Find File",    keys = "ff", cmd = "Telescope find_files follow=true no_ignore=true hidden=true" },
+    { txt = "Recent Files", keys = "fr", cmd = "Telescope oldfiles previewer=false" },
+    { txt = "Org Agenda",   keys = "oa", cmd = "Org agenda" },
     -- TODO: complete list
+
+    { txt = "─", hl = "NvDashFooter", no_gap = true, rep = true },
+
+    {
+      txt = function()
+        local stats = require("lazy").stats()
+        local ms = math.floor(stats.startuptime) .. " ms"
+        return " Loaded " .. stats.loaded .. "/" .. stats.count .. " plugins in " .. ms
+      end,
+      hl = "NvDashFooter",
+      no_gap = true,
+    },
+
+    { txt = "─", hl = "NvDashFooter", no_gap = true, rep = true },
   },
 }
 
