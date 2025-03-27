@@ -40,6 +40,9 @@ map("n", "<leader><Tab>l", ":tabnext<CR>",  { desc = "Next workspace" })
 map("n", "<leader><Tab>h", ":tabNext<CR>",  { desc = "Prev workspace" })
 
 -- BUFFERS
+map("n", "<leader>bj", ":bprev<CR>", { desc = "Prev buffer" })
+map("n", "<leader>bk", ":bnext<CR>", { desc = "Next buffer" })
+
 map("n", "<leader>bn", ":enew<CR>", { desc = "New buffer" })
 map("n", "<leader>bh", ":new<CR>",  { desc = "New horizontal buffer" })
 map("n", "<leader>bv", ":vnew<CR>", { desc = "New vertical buffer" })
@@ -60,9 +63,7 @@ map("n", "<leader>ga", ":Telescope git_commits<CR>",             { desc = "Branc
 
 
 -- LSP
-map("n", "<leader>lfb", function()
-      require("conform").format { lsp_fallback = true }
-end, { desc = "Format buffer" })
+map("n", "<leader>lfb", function() require("conform").format { lsp_fallback = true } end, { desc = "Format buffer" })
 
 map("n", "<leader>lR",  require "nvchad.lsp.renamer", { desc = "Rename var" })
 map("n", "<leader>lA",  vim.lsp.buf.code_action,      { desc = "LSP Action" })
@@ -73,9 +74,6 @@ map("n", "<leader>ld", ":Telescope lsp_definitions<CR>",      { desc = "Definiti
 map("n", "<leader>lr", ":Telescope lsp_references<CR>",       { desc = "References" })
 map("n", "<leader>li", ":Telescope lsp_implementations<CR>",  { desc = "Implementations" })
 map("n", "<leader>lt", ":Telescope lsp_type_definitions<CR>", { desc = "Type definitions" })
-
-
--- FIXME: fix TODOs colors in NvChad
 
 -- To-Do
 map("n", "<leader>ftt",  ":TodoTelescope keywords=TODO<CR>",      { desc = "List all TODOS" })
@@ -109,3 +107,5 @@ vim.keymap.del("n", "<leader>fb")
 vim.keymap.del("n", "<leader>fh")
 vim.keymap.del("n", "<leader>fm")
 vim.keymap.del("n", "<leader>fa")
+vim.keymap.del("n", "<leader>fw")
+vim.keymap.del("n", "<leader>fz")
