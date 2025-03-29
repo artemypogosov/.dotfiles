@@ -13,7 +13,7 @@ M.setup = function()
         hidden = true,
         grouped = true,
         select_buffer = true,
-        -- This makes it use the selected folder as cwd
+        -- Use the selected folder as cwd
         cwd_to_path = true,
       },
       fzf = {
@@ -25,6 +25,10 @@ M.setup = function()
     },
     defaults = {
       cwd = vim.fn.getcwd(),
+      layout_config = {
+        width = 0.6,
+        height = 0.5,
+    },
       preview = true,
       file_ignore_patterns = {
         ".git/*", ".java/*", ".cache/*", ".local/share/*", "Downloads/Installed/*",
@@ -34,15 +38,14 @@ M.setup = function()
     pickers = {
       find_files = {
         find_command = {'rg', '--files', '--hidden', '-g', '!.git'},
-        layout_config = {
-          height = 0.70
-        }
       },
     },
   }
 
   -- Load extensions safely
   pcall(telescope.load_extension, "file_browser")
+  pcall(telescope.load_extension, "bookmarks")
+  pcall(telescope.load_extension, "workspaces")
 end
 
 return M

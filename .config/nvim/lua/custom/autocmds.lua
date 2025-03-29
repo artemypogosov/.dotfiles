@@ -17,3 +17,8 @@ vim.api.nvim_create_autocmd("DiagnosticChanged", {
     end
   end,
 })
+
+vim.api.nvim_create_autocmd("FocusLost", {
+    pattern = "*",
+    command = "silent! update",  -- Saves only if there are changes
+})
