@@ -5,13 +5,17 @@ fi
 
 ~/.local/bin/cutefetch random
 
+
+#export LC_TIME="en_US.UTF-8"
+
 ###############
 ### ALIASES ###
 ###############
 
 alias rm="rm -I"
-alias ls='ls --color=auto --hyperlink=auto "$@"'
-alias ll='ls -la'
+alias cp="cp -vi"
+alias ls='ls -h --color=auto --hyperlink=auto "$@"'
+alias ll='ls -lah'
 alias ls.="ls -A | grep '^\.'"
 alias grep="grep --color=auto"
 alias df="df -h"
