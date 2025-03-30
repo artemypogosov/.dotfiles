@@ -28,3 +28,5 @@ export PATH="$HOME/.emacs.d/bin:$PATH"
 
 # Cutefish
 export CF_TITLE=false
+
+export LC_TIME="en_US.UTF-8"
