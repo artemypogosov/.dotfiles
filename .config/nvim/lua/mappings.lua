@@ -27,9 +27,9 @@ vim.keymap.del("n", "<leader>pt")
 vim.keymap.del("n", "<leader>gt")
 
 -- FIND FILES
-map("n", "<leader>ff", ":Telescope file_browser previewer=false path=%:p:h select_buffer=true<CR>", { desc = "Find file" })
+map("n", "<leader>ff", ":Telescope file_browser previewer=false<CR>", { desc = "Find file" })
 map("n", "<leader>fF", ":Telescope git_files<CR>", { desc = "Find git files in project" })
-map("n", "<leader>fd", ":Telescope find_files follow=true no_ignore=true hidden=true<CR>", { desc = "Find file in dir" })
+map("n", "<leader>fd", ":Telescope find_files previewer=false<CR>", { desc = "Find file in dir" })
 map("n", "<leader>fr", ":Telescope oldfiles previewer=false <CR>",      { desc = "Recent files" })
 
 map("n", "<leader>fD", function()
