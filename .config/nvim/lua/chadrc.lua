@@ -2,7 +2,7 @@
 -- https://github.com/NvChad/ui/blob/v3.0/lua/nvconfig.lua
 -- Please read that file to know all available options :(
 
----@type ChadrcConfig
+--@type ChadrcConfig
 require("custom.telescope").setup()
 require "custom.autocmds"
 
@@ -10,7 +10,7 @@ local M = {}
 local git_modules = require("custom.git").modules
 
 -- Saves window-local options in a session (when session are used)
-vim.opt.ssop:append { "localoptions" }
+--vim.opt.ssop:append { "localoptions" }
 
 M.base46 = {
   theme = "gruvbox",
@@ -50,7 +50,7 @@ M.nvdash = {
   buttons = {
     { txt = "Find File", keys = "ff", cmd = "Telescope file_browser previewer=false path=%:p:h select_buffer=true"},
     { txt = "Recent Files", keys = "fr", cmd = "Telescope oldfiles previewer=false" },
-    { txt = "Open project", keys = "fr", cmd = "Telescope workspaces<CR>" },
+    { txt = "Open project", keys = "fp", cmd = "Telescope workspaces<CR>" },
     { txt = "Org Agenda", keys = "oa", cmd = "Org agenda" },
     { txt = "─", hl = "NvDashFooter", no_gap = true, rep = true },
     {
