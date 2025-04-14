@@ -50,7 +50,7 @@ case "$choice" in
     case "$choice" in
       y|Y )
         nitrogen --set-zoom-fill ~/Pictures/wallpapers/dual-monitor/stray.png
-        betterlockscreen -u ~/Pictures/wallpapers/dual-monitor/stray.png --span --display 3;;
+        betterlockscreen -u ~/Pictures/wallpapers/dual-monitor/stray.png --span --display 2;;
       n|N )
         nitrogen --set-zoom-fill ~/Pictures/wallpapers/stray.png
         betterlockscreen -u ~/Pictures/wallpapers/stray.png;;
@@ -81,7 +81,7 @@ case "$choice" in
     echo "=== RECOMMENDED MANUAL STEPS ==="
     echo "================================"
 
-    echo "1. Add '--lock dimblur' in /usr/lib/systemd/system/betterlockscreen@.service"
+    echo "1. Add '--lock dimblur' and optional '--display 2' in /usr/lib/systemd/system/betterlockscreen@.service"
     echo "2. Set 'kitty.desktop' to NoDisplay=true in .local/share/applications/"
     echo "3. cp -a ~/config/etckeeper/lightdm/. /etc/lightdm/"
     echo "4. Open 'lightdm-gtk-greeter-settings' and set background depending on [PC or laptop]"
