@@ -26,10 +26,15 @@
 ;; with the `:disable' property:
 ;(package! builtin-package :disable t)
 
-(package! lsp-haskell)
-(package! haskell-mode)
-
+;; General
 (package! evil-tutor)
 (package! windresize)
+(package! drag-stuff)
+(package! imenu-list)
 
-;(package! org-roam)
+;; Org
+(package! org-fancy-priorities)
+(package! org-superstar)
+
+;; Disabled
+(package! woman :disable t)

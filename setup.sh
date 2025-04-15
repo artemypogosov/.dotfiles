@@ -1,10 +1,10 @@
-#!/usr/bin/env sh
+#!/bin/bash
 
 cat other/computer.txt
 echo "The recommendation is to run setup.sh from an active XMonad instance."
 echo 
 
-read -p "Start setup? (y/n)? " choice
+read -r -p "Start setup? (y/n)? " choice
 case "$choice" in
   y|Y )
     echo "======================"
@@ -46,7 +46,7 @@ case "$choice" in
     echo "=== Setup wallpapers ==="
     systemctl enable betterlockscreen@$USER &&
 
-    read -p "Are you running a dual-monitor setup? (y/n)? " choice
+    read -r -p "Are you running a dual-monitor setup? (y/n)? " choice
     case "$choice" in
       y|Y )
         nitrogen --set-zoom-fill ~/Pictures/wallpapers/dual-monitor/stray.png
@@ -86,6 +86,7 @@ case "$choice" in
     echo "3. cp -a ~/config/etckeeper/lightdm/. /etc/lightdm/"
     echo "4. Open 'lightdm-gtk-greeter-settings' and set background depending on [PC or laptop]"
     echo "5. Setup powermanagement [suspend on lid close, look at tray power icon]"
+    echo "6. cp ~/.dotfiles/other/.pws ~/.emacs.d/.local/etc/ispell/.pws  (.pws - dictionary file for Emacs (syntax +aspell))"
     sleep 3
     echo "=== Ready! ===";;
   * )
