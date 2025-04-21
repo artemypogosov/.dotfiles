@@ -22,8 +22,8 @@ export LESSHISTFILE=-
 export MYSQL_HISTFILE=/dev/null
 
 export XCURSOR_THEME="Adwaita"
-export EDITOR="nvim"
-export VISUAL="nvim"
+export EDITOR=nvim
+export VISUAL=nvim
 export PATH="$HOME/.emacs.d/bin:$PATH"
 
 # Cutefish
