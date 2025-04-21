@@ -69,3 +69,5 @@ zsh
 zsh-autosuggestions
 zsh-completions
 zsh-syntax-highlighting
+aspell
+aspell-en
