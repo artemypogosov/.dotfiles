@@ -175,7 +175,8 @@ myKeys c = mkNamedKeymap c $
   ^++^ -- System
   [ ("M-<Space>",              addName "Switch keyboard layout" $ spawn "$XDG_CONFIG_HOME/scripts/layout-switcher.sh")
   , ("M-<End>",                addName "Zzz..."                 $ spawn "systemctl suspend")
-  , ("M-<Escape>",             addName "Lock screen"            $ spawn "betterlockscreen --lock dimblur")
+
+  , ("M-<Escape>",             addName "Lock screen"            $ spawn "betterlockscreen --lock dimblur --display 2") --display 2)
   , ("M-r u",                  addName "ru"                     $ spawn "setxkbmap ru")]
 
   ^++^ -- Doom Emacs
