@@ -37,9 +37,9 @@ return {
     event = "VeryLazy",
     config = function()
       require("illuminate").configure({
-          modes_allowlist = { "n" }, -- only enable in normal mode
-          min_count_to_highlight = 2
-       })
+        modes_allowlist = { "n" }, -- only enable in normal mode
+        min_count_to_highlight = 2
+      })
     end,
   },
 
@@ -68,9 +68,9 @@ return {
           g = false
         },
       },
-        icons = {
-          mappings = false
-        }
+      icons = {
+        mappings = false
+      }
     },
   },
 
@@ -81,8 +81,19 @@ return {
     config = function()
       -- Setup orgmode
       require('orgmode').setup({
-          org_agenda_files = '~/Org/**/*',
-          org_default_notes_file = '~/Org/Code.org',})
+        org_agenda_files = '~/Org/**/*',
+        org_default_notes_file = '~/Org/Code.org',})
     end,
+  },
+
+  {
+    "NeogitOrg/neogit",
+    event = 'VeryLazy',
+    dependencies = {
+      "nvim-lua/plenary.nvim",         -- required
+      "sindrets/diffview.nvim",        -- optional - Diff integration
+      -- Only one of these is needed.
+      "nvim-telescope/telescope.nvim", -- optional
+    },
   }
 }

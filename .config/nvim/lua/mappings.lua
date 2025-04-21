@@ -4,30 +4,9 @@ local base46 = require("base46")
 local bm = require "bookmarks"
 local map = vim.keymap.set
 
--- KEYMAP REMOVAL
-vim.keymap.del("n", "<leader>b")
-vim.keymap.del("n", "<leader>x")
-vim.keymap.del("n", "<leader>n")
-vim.keymap.del("n", "<leader>/")
-vim.keymap.del("n", "<leader>h")
-vim.keymap.del("n", "<leader>v")
-vim.keymap.del("n", "<C-n>")
-vim.keymap.del("n", "<leader>e")
-vim.keymap.del("n", "<leader>ch")
-vim.keymap.del("n", "<leader>cm")
-vim.keymap.del("n", "<leader>fo")
-vim.keymap.del("n", "<leader>fb")
-vim.keymap.del("n", "<leader>fh")
-vim.keymap.del("n", "<leader>fm")
-vim.keymap.del("n", "<leader>fa")
-vim.keymap.del("n", "<leader>fw")
-vim.keymap.del("n", "<leader>fz")
-vim.keymap.del("n", "<leader>ma")
-vim.keymap.del("n", "<leader>pt")
-vim.keymap.del("n", "<leader>gt")
-
 -- FIND FILES
 map("n", "<leader>ff", ":Telescope file_browser previewer=false<CR>", { desc = "Find file" })
+map("n", "<leader>.", ":Telescope file_browser previewer=false<CR>", { desc = "Find file" })
 map("n", "<leader>fF", ":Telescope git_files<CR>", { desc = "Find git files in project" })
 map("n", "<leader>fd", ":Telescope find_files previewer=false<CR>", { desc = "Find file in dir" })
 map("n", "<leader>fr", ":Telescope oldfiles previewer=false <CR>",      { desc = "Recent files" })
@@ -44,8 +23,8 @@ map("n", "<leader>pp", ":Telescope workspaces<CR>", { desc = "Find project" })
 map("n", "<leader>pa", ":WorkspacesAdd ", { desc = "Add project" })
 map("n", "<leader>pA", ":WorkspacesAddDir ", { desc = "Add projects dir" })
 map("n", "<leader>pr", ":WorkspacesRename   ", { desc = "Rename project" })
-map("n", "<leader>pl", ":WorkspacesList  ", { desc = "List workspaces" })
-map("n", "<leader>pL", ":WorkspacesListDirs  ", { desc = "List projects' dirs" })
+map("n", "<leader>pl", ":WorkspacesList<CR>", { desc = "List workspaces" })
+map("n", "<leader>pL", ":WorkspacesListDirs<CR>", { desc = "List projects' dirs" })
 map("n", "<leader>pd", ":WorkspacesRemove  ", { desc = "Remove project" })
 map("n", "<leader>pD", ":WorkspacesRemoveDir  ", { desc = "Remove dir" })
 
@@ -53,9 +32,6 @@ map("n", "<leader>pD", ":WorkspacesRemoveDir  ", { desc = "Remove dir" })
 map("n", "<leader>th",  ":Nvdash<CR>", { desc = "Nvdash" })
 map("n", "<leader>tt",  ":NvimTreeToggle<CR>",  { desc = "Toggle sidebar" })
 map("n", "<leader>tf",  ":NvimTreeFocus<CR>",   { desc = "Focus  sidebar" })
-map("n", "<leader>tT",  base46.toggle_theme,    { desc = "Toggle theme" })
-map("n", "<leader>ts",  ":set spell<CR>",    { desc = "Enable spellcheck" })
-map("n", "<leader>tS",  ":set nospell<CR>",  { desc = "Disable spellcheck" })
 map("n", "<leader>tz",  ":ZenMode<CR>", { desc = "Zen mode" })
 
 -- WINDOWS
@@ -83,25 +59,24 @@ map("n", "<leader>wm",  ":MaximizerToggle<CR>",     { desc = "Maximize window" }
 map("n", "<leader>wih", ":resize 40<CR>",           { desc = "Increase height" })
 map("n", "<leader>wiw", ":vertical resize 150<CR>", { desc = "Increase width" })
 
--- TABS
+-- WORKSPACES
 map("n", "<leader><Tab>N", ":tabnew<CR>",   { desc = "New workspace"  })
 map("n", "<leader><Tab>D", ":tabclose<CR>", { desc = "Kill workspace" })
-map("n", "<leader><Tab>n", ":tabnext<CR>",  { desc = "Next workspace" })
-map("n", "<leader><Tab>p", ":tabNext<CR>",  { desc = "Prev workspace" })
+map("n", "<leader><Tab>]", ":tabnext<CR>",  { desc = "Next workspace" })
+map("n", "<leader><Tab>[", ":tabNext<CR>",  { desc = "Prev workspace" })
 
 -- BUFFERS
 map("n", "<leader>bb", ":Telescope buffers previewer=false <CR>", { desc = "Switch buffer" })
+map("n", "<leader>,", ":Telescope buffers previewer=false <CR>", { desc = "Switch buffer" })
 
 map("n", "<leader>bN", ":enew<CR>", { desc = "New buffer" })
 map("n", "<leader>bH", ":new<CR>",  { desc = "New horizontal buffer" })
 map("n", "<leader>bV", ":vnew<CR>", { desc = "New vertical buffer" })
+map("n", "<leader>b]", ":bnext<CR>", { desc = "Next buffer" }) -- tab
+map("n", "<leader>b[", ":bprev<CR>", { desc = "Prev buffer" }) -- shift + tab
+map("n", "<leader>bk", ":bd<CR>", { desc = "Kill buffer" })
 
-map("n", "<leader>bn", ":bnext<CR>", { desc = "Next buffer" }) -- tab
-map("n", "<leader>bp", ":bprev<CR>", { desc = "Prev buffer" }) -- shift + tab
-
-map("n", "<leader>bd", ":bd<CR>", { desc = "Kill buffer" })
-
-map("n", "<leader>bD",
+map("n", "<leader>bK",
     function()
       local answer = vim.fn.input("Delete all buffers? (y/n): ")
       if answer:lower() == "y" then
@@ -109,10 +84,10 @@ map("n", "<leader>bD",
       end
     end, { desc = "Kill all buffers" })
 
-map("n", "<leader>bk", ":%bd|e#<CR>", { desc = "Kill all buffers except current" })
+map("n", "<leader>bD", ":%bd|e#<CR>", { desc = "Kill all buffers except current" })
 
 
--- SEARCH TEXT
+-- SEARCH
 map("n", "<leader>sb", ":Telescope current_buffer_fuzzy_find previewer=false <CR>", { desc = "Search in buffer" })
 
 -- GIT
@@ -136,11 +111,11 @@ map("n", "<leader>li", ":Telescope lsp_implementations<CR>",  { desc = "Implemen
 map("n", "<leader>lt", ":Telescope lsp_type_definitions<CR>", { desc = "Type definitions" })
 
 -- Bookmarks
-map("n", "mm", bm.bookmark_toggle,    { desc = "Show bookmarks" })
-map("n", "mn", bm.bookmark_next,      { desc = "Show bookmarks" })
-map("n", "mp", bm.bookmark_prev,      { desc = "Show bookmarks" })
-map("n", "mc", bm.bookmark_clean,     { desc = "Show bookmarks" })
-map("n", "mC", bm.bookmark_clear_all, { desc = "Show bookmarks" })
+map("n", "mm", bm.bookmark_toggle,    { desc = "Set bookmark" })
+map("n", "m]", bm.bookmark_next,      { desc = "Next bookmark" })
+map("n", "m[", bm.bookmark_prev,      { desc = "Prev bookmark" })
+map("n", "mc", bm.bookmark_clean,     { desc = "Clean all bookmarks" })
+map("n", "mC", bm.bookmark_clear_all, { desc = "Clear ALL bookmarks" })
 map("n", "mf", ":Telescope bookmarks list previewer=false<CR>", { desc = "Show bookmarks" })
 
 -- To-Do
@@ -153,5 +128,30 @@ map("v", "<C-/>", ":norm gcc<CR>", { desc = "Toggle multiline comment"})
 
 -- HELP
 map("n", "<leader>hs", ":Telescope spell_suggest<CR>", { desc = "Spelling suggestions" })
+map("n", "<leader>ht",  base46.toggle_theme,    { desc = "Toggle theme" })
+map("n", "<leader>hs",  ":set spell<CR>",    { desc = "Enable spellcheck" })
+map("n", "<leader>hS",  ":set nospell<CR>",  { desc = "Disable spellcheck" })
 
 -- ctrl+wd (lsp diagnostic on the cursor) --> not able to bind it to map()
+
+-- KEYMAP REMOVAL
+vim.keymap.del("n", "<leader>b")
+vim.keymap.del("n", "<leader>x")
+vim.keymap.del("n", "<leader>n")
+vim.keymap.del("n", "<leader>/")
+vim.keymap.del("n", "<leader>h")
+vim.keymap.del("n", "<leader>v")
+vim.keymap.del("n", "<C-n>")
+vim.keymap.del("n", "<leader>e")
+vim.keymap.del("n", "<leader>ch")
+vim.keymap.del("n", "<leader>cm")
+vim.keymap.del("n", "<leader>fo")
+vim.keymap.del("n", "<leader>fb")
+vim.keymap.del("n", "<leader>fh")
+vim.keymap.del("n", "<leader>fm")
+vim.keymap.del("n", "<leader>fa")
+vim.keymap.del("n", "<leader>fw")
+vim.keymap.del("n", "<leader>fz")
+vim.keymap.del("n", "<leader>ma")
+vim.keymap.del("n", "<leader>pt")
+vim.keymap.del("n", "<leader>gt")

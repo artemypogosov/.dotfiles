@@ -48,9 +48,9 @@ M.nvdash = {
   },
 
   buttons = {
-    { txt = "Find File", keys = "ff", cmd = "Telescope file_browser previewer=false path=%:p:h select_buffer=true"},
+--    { txt = "Find File", keys = "ff", cmd = "Telescope file_browser previewer=false path=%:p:h select_buffer=true"},
     { txt = "Recent Files", keys = "fr", cmd = "Telescope oldfiles previewer=false" },
-    { txt = "Open project", keys = "fp", cmd = "Telescope workspaces<CR>" },
+    { txt = "Open Project", keys = "fp", cmd = "Telescope workspaces<CR>" },
     { txt = "Org Agenda", keys = "oa", cmd = "Org agenda" },
     { txt = "─", hl = "NvDashFooter", no_gap = true, rep = true },
     {
