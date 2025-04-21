@@ -16,7 +16,12 @@
      "34cf3305b35e3a8132a0b1bdf2c67623bc2cb05b125f8d7d26bd51fd16d547ec"
      "014cb63097fc7dbda3edf53eb09802237961cbb4c9e9abd705f23b86511b0a69"
      "0325a6b5eea7e5febae709dab35ec8648908af12cf2d2b569bedc8da0a3a81c1"
-     "48042425e84cd92184837e01d0b4fe9f912d875c43021c3bcb7eeb51f1be5710" default)))
+     "48042425e84cd92184837e01d0b4fe9f912d875c43021c3bcb7eeb51f1be5710" default))
+ '(org-agenda-files
+   '("/home/artemy/Org/basic.org" "/home/artemy/Org/Code.org"
+     "/home/artemy/Org/English.org" "/home/artemy/Org/Notebook.org"
+     "/home/artemy/Org/To-Do.org"))
+ '(safe-local-variable-values '((eval progn (pp-buffer) (indent-buffer)))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
