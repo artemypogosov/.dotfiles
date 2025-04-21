@@ -1,11 +1,12 @@
 [alias]
-	st = status
-	go = checkout
-	br = branch
-	com = commit
+	st   = status
+  s    = status --short
+	go   = checkout
+	br   = branch
+	com  = commit
 	last = "log -1"
 [user]
-	email = artem.pogosov@precisionformedicine.com
 	name  =  Artem Pogosov
+	email = artemypogosov@gmail.com
 [core]
-	editor = emacs
+	editor = nvim
