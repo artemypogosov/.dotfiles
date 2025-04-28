@@ -75,7 +75,6 @@
 ;; 'rainbow-mode' - inline preview of hex code colors
 (global-auto-revert-mode t)
 (global-display-fill-column-indicator-mode 1)
-(rainbow-mode)
 (indent-bars-mode -1)
 ;; (indent-tabs-mode t)
 
@@ -162,16 +161,24 @@
 ;; 'HOLD'      - hold (wait) on purpose
 ;; 'DONE'      - ready
 ;; 'CANCELLED' - no longer needed
+
+(defconst my/org-root-dir "~/Org"
+  "Root directory for all my Org-related files.")
+
 (after! org
-  (setq org-directory "~/Org"
-        org-agenda-files '("~/Org/Agenda/Personal" "~/Org/Agenda/Work")
+  (setq org-directory my/org-root-dir
+        ;; Location of .orgids
+        org-id-locations-file (concat my/org-root-dir "/.orgids")
+        org-agenda-files '("agenda/personal" "agenda/work" "quick.org")
         org-fancy-priorities-list '("" "" "")
         org-superstar-headline-bullets-list '( "●" "○" "⟁"  "⟐" "✿")
         org-tag-alist '(;; Affiliation
                         ("personal" . ?P) ("work" . ?W)
                         ;; Projects...
                         ;; Activities
-                        ("shopping" . ?S) ("gym" . ?G) ("birthday" . ?B) ("repetitive" . ?R))
+                        ("shopping" . ?S) ("gym" . ?G) ("birthday" . ?B)
+                        ;; Other
+                        ("wishlist" . ?L)  ("repeated" . ?R))
         org-todo-keywords '((sequence "TODO(t)" "STARTED(s!)" "WAIT(w)" "HOLD(h)" "|" "DONE(d!)" "CANCELLED(c)"))
         org-todo-keyword-faces '(("TODO"      :foreground "#afb224" :underline t)
                                  ("DONE"      :foreground "#665c54" :underline t)
@@ -185,19 +192,63 @@
   '(org-level-1 :foreground "#83a598" :inherit outline-1 :height 1.2)
   '(org-level-2 :foreground "#e7ab36" :inherit outline-2 :height 1.1)
   '(org-level-3 :foreground "#d3869b" :inherit outline-3 :height 1.05)
-  '(org-level-4 :foreground "#f47266" :inherit outline-4 :height 1.025)
-  '(org-level-5 :foreground "#e78a4e" :inherit outline-5 :height 1.0125))
+  '(org-level-4 :foreground "#89b482" :inherit outline-4 :height 1.025)
+  '(org-level-5 :foreground "#f28534" :inherit outline-5 :height 1.0125))
 
 ;; org-deadline-warning-days
 (setq org-agenda-custom-commands
-      '(("u" "Untagged Tasks" tags-todo "-{.*}")
-        ("A" "Custom agenda"
-         (
-          ;; (tags "customtag"
-          ;;       ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-          ;;        (org-agenda-overriding-header "Tasks marked with customtag:")))
-          (agenda "")
-          (alltodo "")))))
+      '(("p" "Personal"
+         ((agenda "" ((org-agenda-files '("agenda/personal"))))
+          (tags-todo "personal" ((org-agenda-overriding-header "Personal Tasks:")))
+          (tags-todo "-{.*}" ((org-agenda-overriding-header "Untagged Tasks:")))))
+
+        ("w" "Work"
+         ((agenda "" ((org-agenda-files '("agenda/work"))))
+          (tags-todo "work" ((org-agenda-overriding-header "Work tasks:")))
+          (tags-todo "-{.*}" ((org-agenda-overriding-header "Untagged Tasks:")))))
+
+        ("i" "Inbox"
+         ((agenda "" ((org-agenda-files '("inbox.org"))))
+          (todo "" ((org-agenda-files '("inbox.org"))
+                      (org-agenda-overriding-header "Inbox notes:"))))) ))
+
+(after! org
+  (setq org-roam-directory my/org-root-dir
+        org-roam-capture-templates
+        '(("d" "Default" plain
+           "%?"
+           :if-new (file+head "notes/${slug}.org" "#+title: ${title}\n")
+           :unnarrowed t)
+
+          ("L" "Linux" plain
+           "%?"
+           :if-new (file+head "computer_science/linux/${slug}.org"
+                              "#+title: ${title}\n")
+           :unnarrowed t)
+
+          ("l" "Linux Cheatsheets" plain
+           "%?"
+           :if-new (file+head "computer_science/linux/cheatsheets/${slug}.org"
+                              "#+title: ${title}\n")
+           :unnarrowed t)
+
+          ("p" "Programming" plain
+           "%?"
+           :if-new (file+head "computer_science/programming/${slug}.org"
+                              "#+title: ${title}\n")
+           :unnarrowed t)
+
+          ("n" "Network" plain
+           "%?"
+           :if-new (file+head "computer_science/network/${slug}.org"
+                              "#+title: ${title}\n")
+           :unnarrowed t)
+
+          ("e" "English" plain
+           "%?"
+           :if-new (file+head "english/${slug}.org"
+                              "#+title: ${title}\n")
+           :unnarrowed t))))
 
 (after! org
   (add-hook 'org-mode-hook (lambda ()
@@ -206,38 +257,6 @@
                              (org-fancy-priorities-mode)
                              (add-hook 'after-save-hook 'org-babel-tangle nil t))))
 
-(after! org
-  (setq org-roam-directory "~/Org"
-        org-roam-capture-templates
-        '(("d" "Default" plain
-           "%?"
-           :if-new (file+head "Notes/${slug}.org" "#+title: ${title}\n")
-           :unnarrowed t)
-
-          ("l" "Linux" plain
-           "%?"
-           :if-new (file+head "Computer Science/Linux/${slug}.org"
-                              "#+title: ${title}\n")
-           :unnarrowed t)
-
-          ("p" "Programming" plain
-           "%?"
-           :if-new (file+head "Computer Science/Programming/${slug}.org"
-                              "#+title: ${title}\n")
-           :unnarrowed t)
-
-          ("n" "Network" plain
-           "%?"
-           :if-new (file+head "Computer Science/Network/${slug}.org"
-                              "#+title: ${title}\n")
-           :unnarrowed t)
-
-          ("e" "English" plain
-           "%?"
-           :if-new (file+head "English/${slug}.org"
-                              "#+title: ${title}\n")
-           :unnarrowed t))))
-
 (add-hook 'org-mode-hook
           (lambda ()
             (setq prettify-symbols-alist '(("#+begin_src"   . "»")
@@ -245,6 +264,10 @@
                                            ("#+begin_quote" . "❝")
                                            ("#+end_quote"   . "❞")))
             (prettify-symbols-mode 1)))
+
+(use-package! rainbow-mode
+  :defer t
+  :hook ((css-mode scss-mode sass-mode html-mode web-mode emacs-lisp-mode org-mode) . rainbow-mode))
 
 (use-package! drag-stuff
   ;; Use :defer 't in order to lazy load the package
@@ -262,8 +285,15 @@
   (define-key evil-normal-state-map (kbd "M-j") #'drag-stuff-down)
   (define-key evil-normal-state-map (kbd "M-k") #'drag-stuff-up))
 
- (after! spell-fu
-   (setq spell-fu-idle-delay 1))  ; default is 0.25
+(after! spell-fu
+  (setq spell-fu-idle-delay 1) ; default is 0.25
+  (setq-default spell-fu-word-regexp "\\b\\([A-Za-z]+\\(['’][A-Za-z]+\\)?\\)\\b"))
+
+(dimmer-configure-org)
+(dimmer-configure-magit)
+(dimmer-configure-which-key)
+(dimmer-configure-company-box)
+(dimmer-mode t)
 
 ;; (after! flycheck
 ;;   (flycheck-add-mode 'javascript-eslint 'js-mode)
@@ -274,8 +304,11 @@
 ;; (add-hook 'rjsx-mode-hook #'flycheck-mode)
 ;; (add-hook 'web-mode-hook #'flycheck-mode)
 
+;; (add-hook 'tide-mode-hook #'tide-hl-identifier-mode)
+;; (setq tide-hl-identifier-mode t)
+
 ;; (custom-set-faces!
-;;   '(tide-hl-identifier-face :underline t :background nil))
+;; '(tide-hl-identifier-face :underline t :background nil))
 
 ;; 'dirvish' - extends 'dired'
 (after! dirvish
@@ -284,14 +317,13 @@
         dirvish-quick-access-entries
         '(("h" "~/" "Home")
           ("t"  "~/.local/share/Trash/" "Trashes")
-          ("o" "~/Org" "Org")
+          ("o" my/org-root-dir "Org")
           ("d" "~/Downloads" "Downloads")
           ("pi" "~/Pictures" "Pictures")
           ("pr" "~/Projects" "Projects"))))
 
 (defun my/substitute (mode)
  (interactive)
- (message "=====> Argument passed: %s" mode)
   (save-excursion
     (let ((original-pos (point))
           (expression (cond
@@ -323,12 +355,19 @@
        :desc "Toggle imenu sidebar" "s" #'imenu-list-smart-toggle))
 
 (map! :leader
+      :prefix "h"
+      "l" #'devdocs-lookup)
+
+(map! :leader
       :prefix "w"
       "M" #'maximize-window)
 
 (map! :leader
+      :prefix "p"
+      "S" #'projectile-replace)
+
+(map! :leader
       :prefix "b"
-      :desc "Clear all jump-bookmarks" "z" #'better-jumper-clear-jumps
       :desc "Bookmark list" "m" #'bookmark-bmenu-list)
 
 (map! :leader
@@ -336,16 +375,18 @@
       :desc "Delete workspace" "k" #'+workspace/kill
       :desc "Delete saved workspace" "K" #'+workspace/delete)
 
-(map! :leader :prefix "q" :desc "Quit Emacs and ask to save" "Q" #'evil-quit-all)
+(map! :leader
+      :prefix "q"
+      :desc "Quit Emacs and ask to save" "Q" #'evil-quit-all)
 
 (map! :leader
       :prefix "h"
-      "a" #'apropos-documentation
-      "w" #'+default/man-or-woman)
+      :desc "Find text in documentation" "a" #'apropos-documentation
+      :desc "Man page" "w" #'+default/man-or-woman)
 
 (map! :leader
-      (:prefix ("g" . "git")
-       :desc "Open file in remote repo" "O" #'+vc/browse-at-remote))
+      :prefix ("g" . "git")
+       :desc "Open file in remote repo" "O" #'+vc/browse-at-remote)
 
 (after! evil
   (define-key evil-normal-state-map (kbd "C-s") #'save-buffer)
@@ -361,177 +402,179 @@
   (define-key evil-normal-state-map (kbd "C-/") #'my/comment-line-and-next)
   (define-key evil-insert-state-map (kbd "C-/") #'my/comment-line-and-next))
 
-(after! org-agenda
-  (map! :map org-agenda-mode-map
-        :leader
-        "m f" #'org-agenda-filter))
-
+;; SPC
 (map! :leader
-  "'" nil
-  "~" nil
-  "*" nil
-  ";" nil
-  "a" nil
-  "X" nil)
+      "'" nil
+      "~" nil
+      "*" nil
+      ";" nil
+      "a" nil
+      "X" nil)
 
+;; Window
 (map! :leader
-  :prefix "w"
-  "C-<up>"    nil
-  "C-<down>"  nil
-  "C-<left>"  nil
-  "C-<right>" nil
-  "<up>"      nil
-  "<down>"    nil
-  "<left>"    nil
-  "<right>"   nil
-  "C-="       nil
-  "C-_"       nil
-  "d"         nil
-  "g"         nil
-  "o"         nil
-  ":"         nil)
+      :prefix "w"
+      "C-<up>"    nil
+      "C-<down>"  nil
+      "C-<left>"  nil
+      "C-<right>" nil
+      "<up>"      nil
+      "<down>"    nil
+      "<left>"    nil
+      "<right>"   nil
+      "C-="       nil
+      "C-_"       nil
+      "d"         nil
+      "g"         nil
+      "o"         nil
+      ":"         nil)
 
+;; Toggle
 (map! :leader
-  :prefix "t"
-  "d" nil)
+      :prefix "t"
+      "d" nil)
 
-(after! org
-  (map! :map org-mode-map
-        :localleader
-        "n" nil))
+;; Org-mode
+(map! :after org
+      :map org-mode-map
+      :localleader
+      "*" nil
+      "@" nil
+      "a" nil
+      "c" nil
+      "g" nil
+      "n" nil
+      "s" nil
+      "r" nil
+      "P" nil)
 
+;; Buffer
 (map! :leader
-  :prefix "b"
-  "d" nil
-  "n" nil
-  "p" nil
-  "l" nil
-  "z" nil
-  "M" nil
-  "B" nil
-  "Z" nil
-  "S" nil
-  "C" nil)
+      :prefix "b"
+      "d" nil
+      "n" nil
+      "p" nil
+      "l" nil
+      "z" nil
+      "M" nil
+      "B" nil
+      "Z" nil
+      "S" nil
+      "C" nil)
 
+;; Workspace
 (let ((chars "0123456789")
-       (special-chars "hjklrsw"))
+      (special-chars "hjklrsw"))
   (dotimes (i (length chars))
     (let ((key (format "%c" (aref chars i))))
       (map! :leader :prefix "TAB" key nil))))
 
 (map! :leader
-  :prefix "TAB"
-  "`" nil
-  "d" nil
-  "D" nil)
+      :prefix "TAB"
+      "`" nil
+      "d" nil
+      "D" nil)
+
+;; Help
+(map! :leader
+      :prefix "h"
+      "RET"    nil
+      "C-\\"   nil
+      "."      nil
+      "4"      nil
+      "<help>" nil
+      "i"      nil
+      "A"      nil
+      "C"      nil
+      "<f1>"   nil
+      "E"      nil
+      "F"      nil
+      "g"      nil
+      "K"      nil
+      "I"      nil
+      "l"      nil
+      "L"      nil
+      "M"      nil
+      "O"      nil
+      "o"      nil
+      "n"      nil
+      "p"      nil
+      "P"      nil
+      "q"      nil
+      "u"      nil
+      "W"      nil
+      "V"      nil
+      "R"      nil
+      "T"      nil
+      "s"      nil
+      "S"      nil)
 
 (map! :leader
-  :prefix "h"
-  "RET"    nil
-  "C-\\"   nil
-  "."      nil
-  "4"      nil
-  "<help>" nil
-  "i"      nil
-  "A"      nil
-  "C"      nil
-  "<f1>"   nil
-  "E"      nil
-  "F"      nil
-  "g"      nil
-  "K"      nil
-  "I"      nil
-  "l"      nil
-  "L"      nil
-  "M"      nil
-  "O"      nil
-  "o"      nil
-  "n"      nil
-  "p"      nil
-  "P"      nil
-  "q"      nil
-  "u"      nil
-  "W"      nil
-  "V"      nil
-  "R"      nil
-  "T"      nil
-  "s"      nil
-  "S"      nil)
+      :prefix ("h b" . "bindings")
+      "f" nil
+      "k" nil
+      "t" nil
+      "m" nil)
 
 (map! :leader
-  :prefix ("h b" . "bindings")
-  "f" nil
-  "k" nil
-  "t" nil
-  "m" nil)
+      :prefix ("h d" . "bindings")
+      "b" nil
+      "c" nil
+      "d" nil
+      "l" nil
+      "L" nil
+      "n" nil
+      "p" nil
+      "t" nil
+      "u" nil
+      "x" nil
+      "N" nil
+      "s" nil
+      "S" nil)
 
+;; Projectile
 (map! :leader
-  :prefix ("h d" . "bindings")
-  "b" nil
-  "c" nil
-  "d" nil
-  "l" nil
-  "L" nil
-  "n" nil
-  "p" nil
-  "t" nil
-  "u" nil
-  "x" nil
-  "N" nil
-  "s" nil
-  "S" nil)
+      :prefix "p"
+      "&" nil
+      "f" nil
+      "g" nil
+      "k" nil
+      "o" nil
+      "e" nil)
 
+;; GIT
 (map! :leader
-  :prefix "p"
-  "&" nil
-  "f" nil
-  "g" nil
-  "k" nil
-  "o" nil
-  "e" nil)
+      :prefix ("g" . "git")
+      "'" nil
+      "o" nil
+      "c" nil
+      "D" nil
+      "C" nil
+      "l" nil
+      "f" nil)
 
+;; Insert
 (map! :leader
-  (:prefix ("g" . "git")
-    "'" nil
-    "o" nil
-    "c" nil
-    "D" nil
-    "C" nil
-    "l" nil
-    "f" nil))
+      :prefix "i"
+      "p" nil
+      "y" nil)
 
-(map! :after org
-  :map org-mode-map
-  :localleader
-  "*" nil
-  "@" nil
-  "a" nil
-  "c" nil
-  "g" nil
-  "s" nil
-  "r" nil
-  "P" nil)
-
+;; File
 (map! :leader
-  :prefix "i"
-  "p" nil
-  "y" nil)
-
-(map! :leader
-  :prefix "f"
-  "c" nil
-  "d" nil
-  "e" nil
-  "l" nil
-  "p" nil
-  "E" nil)
+      :prefix "f"
+      "c" nil
+      "d" nil
+      "e" nil
+      "l" nil
+      "p" nil
+      "E" nil)
 
 (dotimes (i 10)
   (define-key evil-window-map (number-to-string i) nil))
 
-;; Remove all SPC w C-<key> bindings
+;; Remove all 'SPC w' and 'SPC h' C-<key> bindings
 (let ((chars "abcdefghijklmnopqrstuvwxyz")
-       (special-chars "hjklrsw"))
+      (special-chars "hjklrsw"))
   (dotimes (i (length chars))
     (let ((key (format "C-%c" (aref chars i))))
       (map! :leader :prefix "w" key nil)
