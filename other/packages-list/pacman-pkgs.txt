@@ -1,5 +1,7 @@
 alacritty
 arandr
+aspell
+aspell-en
 betterlockscreen
 bitwarden
 blueman
@@ -48,6 +50,7 @@ rofi
 simplescreenrecorder
 spotify
 stow
+syncthing-gtk
 telegram-desktop
 tidy
 trayer
@@ -69,5 +72,3 @@ zsh
 zsh-autosuggestions
 zsh-completions
 zsh-syntax-highlighting
-aspell
-aspell-en
