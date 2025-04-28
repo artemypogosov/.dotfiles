@@ -14,33 +14,30 @@
 ;;      Alternatively, press 'gd' (or 'C-c c d') on a module to browse its
 ;;      directory (for easy access to its source code).
 
-(doom! :input
-       ;;layout               ; using Doom with non-qwerty keyboard layouts.
-
-       :completion
+(doom! :completion
        (company +childframe)  ; the ultimate code completion backend
        (vertico +icons)       ; the search engine of the future
        ;; helm                ; the *other* search engine for love and life
        ;; ido                 ; the other *other* search engine...
 
        :ui
-       doom                ; what makes DOOM look the way it does
-       doom-dashboard      ; a nifty splash screen for Emacs
-       doom-quit           ; DOOM quit-message prompts when you quit Emacs
-       (emoji +unicode)    ; 🙂
-       hl-todo             ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
-       indent-guides       ; highlighted indent columns
-       modeline            ; snazzy, Atom-inspired modeline, plus API
-       nav-flash           ; blink cursor line after big motions
-       ophints             ; highlight the region an operation acts on
-       (popup +defaults)   ; tame sudden yet inevitable temporary windows
-       treemacs            ; a project drawer, like neotree but cooler
-       (vc-gutter +pretty) ; vcs diff in the fringe
-       window-select       ; visually switch windows
-       workspaces          ; tab emulation, persistence & separate workspaces
-       zen                 ; distraction-free coding or writing
-       ;; tabs             ; a tab bar for Emacs
-        unicode          ; extended unicode support for various languages
+       doom                   ; what makes DOOM look the way it does
+       doom-quit              ; DOOM quit-message prompts when you quit Emacs
+       doom-dashboard         ; a nifty splash screen for Emacs
+       zen                    ; distraction-free coding or writing
+       ophints                ; highlight the region an operation acts on
+       hl-todo                ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
+       unicode                ; extended unicode support for various languages
+       modeline               ; snazzy, Atom-inspired modeline, plus API
+       treemacs               ; a project drawer, like neotree but cooler
+       nav-flash              ; blink cursor line after big motions
+       workspaces             ; tab emulation, persistence & separate workspaces
+       window-select          ; visually switch windows
+       indent-guides          ; highlighted indent columns
+       (emoji +unicode)       ; 🙂
+       (popup +defaults)      ; tame sudden yet inevitable temporary windows
+       (vc-gutter +pretty)    ; vcs diff in the fringe
+       ;; tabs                ; a tab bar for Emacs
        ;; (ligatures +extra)  ; ligatures and symbols to make your code pretty again
        ;; vi-tilde-fringe     ; fringe tildes to mark beyond EOB
 
@@ -48,71 +45,50 @@
        (evil +everywhere)  ; come to the dark side, we have cookies
        file-templates      ; auto-snippets for empty files
        multiple-cursors    ; editing in many places at once
-
-       ;; TODO bind --> js2-mode-toggle-element ;;
        fold                ; (nigh) universal code folding
-
-       ;; TODO configure it. We can not only FORMAT on SAVE, but we can FORMAT using different commands
-       ;;(format +onsave)  ; automated prettiness
-
-       ;; NOTE Project is on pause. Should I try it? It can expand text objects
-       ;;objed             ; text object editing for the innocent
-
-       ;; NOTE Gives an ability to handle parentheses?
-       ;;lispy             ; vim for lisp, for people who don't like vim
-
-       ;;parinfer          ; turn lisp into python, sort of
-       ;; TODO not sure if I need it
-       rotate-text         ; cycle region at point between text candidates
+       (format +onsave)    ; automated prettiness
+       rotate-text         ; cycle region at point between text candidates (inversion: true -> false etc)
        snippets            ; my elves. They type so I don't have to
        word-wrap           ; soft wrapping with language-aware indent
+       ;;lispy             ; vim for lisp, for people who don't like vim
+       ;;parinfer          ; turn lisp into python, sort of
 
        :emacs
-       (dired +dirvish +icons)    ; making dired pretty [functional]
-       electric          ; smarter, keyword-based electric-indent
-       (ibuffer +icons)  ; interactive buffer management
-       undo              ; persistent, smarter undo for your inevitable mistakes
-       vc                ; version-control and Emacs, sitting in a tree
+       vc                       ; version-control and Emacs, sitting in a tree
+       undo                     ; persistent, smarter undo for your inevitable mistakes
+       electric                 ; smarter, keyword-based electric-indent
+       (ibuffer +icons)         ; interactive buffer management
+       (dired +dirvish +icons)  ; making dired pretty [functional]
 
        :term
-       ;; eshell            ; the elisp shell that works everywhere
-       ;; shell             ; simple shell REPL for Emacs
-       ;; term              ; basic terminal emulator for Emacs
-       vterm               ; the best terminal emulation in Emacs
+       vterm     ; the best terminal emulation in Emacs
+       ;; eshell ; the elisp shell that works everywhere
+       ;; shell  ; simple shell REPL for Emacs
+       ;; term   ; basic terminal emulator for Emacs
 
        :checkers
-       ;; TODO configure flycheck and linter for JS and other used languages
-       syntax              ; tasing you for every semicolon you forget
-       (spell +aspell +everywhere)   ; tasing you for misspelling mispelling
-       ;; grammar             ; tasing grammar mistake every you make
+       syntax                       ; tasing you for every semicolon you forget
+       (spell +aspell +everywhere)  ; tasing you for misspelling mispelling
+       ;; grammar                   ; tasing grammar mistake every you make
 
        :tools
        docker
        lookup              ; navigate your code and its documentation
        lsp                 ; M-x vscode
-       ;; TODO learn magit
        magit               ; a git porcelain for Emacs
        make                ; run make from tasks Emacs
        tree-sitter
        (eval +overlay)     ; run code, run (also, repls)
-       ;; ansible
-       ;; debugger          ; FIXME stepping through code, to help you add bugs
+       ;; debugger         ; FIXME stepping through code, to help you add bugs
        ;; direnv
-       ;; editorconfig      ; let someone else argue about tabs vs spaces
-       ;; ein               ; tame Jupyter notebooks with emacs
-       ;; gist              ; interacting with github gists
-       ;; pass              ; password manager for nerds
-       ;; pdf               ; pdf enhancements
-       ;; prodigy           ; FIXME managing external services & code builders
-       ;; rgb               ; creating color strings
-       ;; taskrunner        ; taskrunner for all your projects
-       ;; terraform         ; infrastructure as code
-       ;; tmux              ; an API for interacting with tmux
-       ;; upload            ; map local to remote projects via ssh/ftp
-
-       :os
-       (:if IS-MAC macos)  ; improve compatibility with macOS
-       ;;tty               ; improve the terminal Emacs experience
+       ;; editorconfig     ; let someone else argue about tabs vs spaces
+       ;; gist             ; interacting with github gists
+       ;; pdf              ; pdf enhancements
+       ;; prodigy          ; FIXME managing external services & code builders
+       ;; rgb              ; creating color strings
+       ;; taskrunner       ; taskrunner for all your projects
+       ;; terraform        ; infrastructure as code
+       ;; upload           ; map local to remote projects via ssh/ftp
 
        :lang
        emacs-lisp                    ; drown in parentheses
@@ -124,6 +100,7 @@
        (javascript +lsp tree-sitter) ; all(hope(abandon(ye(who(enter(here))))))
        (org +roam2 +dragndrop)       ; organize your plain life in plain text
        (web +lsp tree-sitter)        ; the tubes
+
        ;;agda              ; types of types of types of types...
        ;;beancount         ; mind the GAAP
        ;;cc                ; C > C++ == 1
@@ -176,6 +153,10 @@
        ;;terra             ; Earth and Moon in alignment for performance.
        ;;zig               ; C, but simpler
 
+       :os
+       (:if IS-MAC macos)  ; improve compatibility with macOS
+       ;;tty               ; improve the terminal Emacs experience
+       ;;
        :email
        ;;(mu4e +org +gmail)
        ;;notmuch
@@ -187,6 +168,9 @@
        ;;everywhere        ; *leave* Emacs!? You must be joking
        ;;irc               ; how neckbeards socialize
        ;;(rss +org)        ; emacs as an RSS reader
+
+       :input
+       ;;layout            ; using Doom with non-qwerty keyboard layouts.
 
        :config
        ;;literate
