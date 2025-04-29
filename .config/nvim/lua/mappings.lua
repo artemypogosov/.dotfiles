@@ -4,7 +4,6 @@ require "nvchad.mappings"
 local base46 = require("base46")
 local bm = require "bookmarks"
 local telescope = require('telescope.builtin')
-local map = vim.keymap.set
 
 local function is_git_repo()
   -- Check if the current directory contains a .git folder
@@ -132,16 +131,16 @@ wk.add({
   ---------
   ---LSP---
   ---------
-  { "<leader>lf", function() require("conform").format({ lsp_fallback = true }) end, mode = "n", desc = "Format buffer" },
-  { "<leader>lR",  require "nvchad.lsp.renamer",  desc = "Rename var", mode = "n" },
-  { "<leader>lA",  vim.lsp.buf.code_action,       desc = "LSP Action", mode = "n" },
+  { "<leader>cf", function() require("conform").format({ lsp_fallback = true }) end, mode = "n", desc = "Format buffer" },
+  { "<leader>cR",  require "nvchad.lsp.renamer",  desc = "Rename var", mode = "n" },
+  { "<leader>cA",  vim.lsp.buf.code_action,       desc = "LSP Action", mode = "n" },
 
-  { "<leader>lt", ":Telescope treesitter<CR>",            desc = "Treesitter", mode = "n" },
-  { "<leader>lD", ":Telescope diagnostics bufnr=0<CR>",   desc = "Diagnostic", mode = "n" },
-  { "<leader>ld", ":Telescope lsp_definitions<CR>",       desc = "Definitions", mode = "n" },
-  { "<leader>lr", ":Telescope lsp_references<CR>",        desc = "References", mode = "n" },
-  { "<leader>li", ":Telescope lsp_implementations<CR>",   desc = "Implementations", mode = "n" },
-  { "<leader>lt", ":Telescope lsp_type_definitions<CR>",  desc = "Type definitions", mode = "n" },
+  { "<leader>ct", ":Telescope treesitter<CR>",            desc = "Treesitter", mode = "n" },
+  { "<leader>cD", ":Telescope diagnostics bufnr=0<CR>",   desc = "Diagnostic", mode = "n" },
+  { "<leader>cd", ":Telescope lsp_definitions<CR>",       desc = "Definitions", mode = "n" },
+  { "<leader>cr", ":Telescope lsp_references<CR>",        desc = "References", mode = "n" },
+  { "<leader>ci", ":Telescope lsp_implementations<CR>",   desc = "Implementations", mode = "n" },
+  { "<leader>ct", ":Telescope lsp_type_definitions<CR>",  desc = "Type definitions", mode = "n" },
   ---------------
   ---BOOKMARKS---
   ---------------
