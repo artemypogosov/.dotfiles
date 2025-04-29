@@ -59,3 +59,24 @@ vim.api.nvim_create_autocmd("User", {
      vim.api.nvim_set_current_buf(vim.t.bufs[i])
    end)
  end
+
+-- File: ~/.config/nvim/lua/custom/plugins/lspconfig.lua
+
+return {
+  config = function()
+    local on_attach = function(client, bufnr)
+      -- delete NvChad's mapping
+      pcall(vim.keymap.del, "n", "<leader>wl", { buffer = bufnr })
+
+      -- set your override
+      vim.keymap.set("n", "<leader>wl", "<C-w>l", {
+        buffer = bufnr,
+        desc = "Switch right",
+        silent = true,
+      })
+    end
+
+    -- load NvChad default config and inject on_attach
+    require("nvchad.configs.lspconfig").defaults.on_attach = on_attach
+  end,
+}
