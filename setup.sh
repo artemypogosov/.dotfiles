@@ -27,9 +27,9 @@ case "$choice" in
     mkdir ~/.local/state/bash
 
 
-    echo "=== Installing programms... [pacman + yay] ==="
-    pacman -S - < ~/.dotfiles/other/packages-list/pacman-pkgs.txt
-    yay -S - < ~/.dotfiles/other/packages-list/yay-pkgs.txt
+    echo "=== Installing programs... [pacman + yay] ==="
+    pacman -S - < ~/.dotfiles/other/pacman-pkgs.txt
+    yay -S - < ~/.dotfiles/other/yay-pkgs.txt
 
     echo "=== GNU Stow: linking .dotfiles ==="
     stow .

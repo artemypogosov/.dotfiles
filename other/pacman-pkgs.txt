@@ -15,6 +15,7 @@ dunst
 emacs
 fd
 file-roller
+filezilla
 flameshot
 font-manager
 galculator
