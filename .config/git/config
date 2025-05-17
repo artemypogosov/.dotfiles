@@ -1,12 +1,12 @@
 [alias]
 	st   = status
-  s    = status --short
+	s    = status --short
 	go   = checkout
 	br   = branch
 	com  = commit
 	last = "log -1"
 [user]
-	name  =  Artem Pogosov
+	name  = Artem Pogosov
 	email = artemypogosov@gmail.com
 [core]
 	editor = nvim

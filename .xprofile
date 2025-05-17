@@ -26,5 +26,4 @@ nitrogen --restore &
 unclutter --timeout 10 &
 nm-applet &
 blueman-applet &
-dropbox &
-
+syncthing-gtk &

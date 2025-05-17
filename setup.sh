@@ -2,7 +2,7 @@
 
 cat other/computer.txt
 echo "The recommendation is to run setup.sh from an active XMonad instance."
-echo 
+echo
 
 read -r -p "Start setup? (y/n)? " choice
 case "$choice" in
@@ -44,7 +44,7 @@ case "$choice" in
     fi
 
     echo "=== Setup wallpapers ==="
-    systemctl enable betterlockscreen@$USER &&
+    systemctl enable "betterlockscreen@$USER" &&
 
     read -r -p "Are you running a dual-monitor setup? (y/n)? " choice
     case "$choice" in
@@ -83,7 +83,7 @@ case "$choice" in
 
     echo "1. Add '--lock dimblur' and optional '--display 2' in /usr/lib/systemd/system/betterlockscreen@.service"
     echo "2. Set 'kitty.desktop' to NoDisplay=true in .local/share/applications/"
-    echo "3. cp -a ~/config/etckeeper/lightdm/. /etc/lightdm/"
+    echo "3. cp -a ~/.config/etckeeper/lightdm/. /etc/lightdm/"
     echo "4. Open 'lightdm-gtk-greeter-settings' and set background depending on [PC or laptop]"
     echo "5. Setup powermanagement [suspend on lid close, look at tray power icon]"
     echo "6. cp ~/.dotfiles/other/.pws ~/.emacs.d/.local/etc/ispell/.pws  (.pws - dictionary file for Emacs (syntax +aspell))"
