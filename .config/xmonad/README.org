@@ -167,7 +167,7 @@ myTall = renamed [Replace "tall"]
   $ windowNavigation
  -- $ subLayout [] (smartBorders Simplest)
   $ limitWindows 5
-  $ mySpacing 25
+  $ mySpacing 18
   $ ResizableTall 1 (3/100) (1/2) []
 
 myMirror = renamed [Replace "mirror tall"]
@@ -214,7 +214,7 @@ myKeys c = mkNamedKeymap c $
 
   ^++^ -- Doom Emacs
   [ ("M-d d",                  addName "Emacsclient"         $ spawn (myEmacs))
-  , ("M-d b",                  addName "Emacsclient Ibuffer" $ spawn (myEmacs ++ ("--eval '(ibuffer)'")))
+  -- , ("M-d b",                  addName "Emacsclient Ibuffer" $ spawn (myEmacs ++ ("--eval '(ibuffer)'")))
   , ("M-d f",                  addName "Emacsclient Dired"   $ spawn (myEmacs ++ ("--eval '(dired nil)'")))
   , ("M-d s",                  addName "Emacsclient Eshell"  $ spawn (myEmacs ++ ("--eval '(eshell)'")))
   , ("M-d v",                  addName "Emacsclient Vterm"   $ spawn (myEmacs ++ ("--eval '(+vterm/here nil)'")))]

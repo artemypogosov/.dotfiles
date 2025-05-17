@@ -48,7 +48,7 @@ qutebrowser
 ranger
 ripgrep
 rofi
-simplescreenrecorder
+simplescreenrecorder-qt6-git
 spotify
 stow
 syncthing-gtk
