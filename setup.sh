@@ -87,6 +87,7 @@ case "$choice" in
     echo "4. Open 'lightdm-gtk-greeter-settings' and set background depending on [PC or laptop]"
     echo "5. Setup powermanagement [suspend on lid close, look at tray power icon]"
     echo "6. cp ~/.dotfiles/other/.pws ~/.emacs.d/.local/etc/ispell/.pws  (.pws - dictionary file for Emacs (syntax +aspell))"
+    echo "7. Setup syncthing"
     sleep 3
     echo "=== Ready! ===";;
   * )
