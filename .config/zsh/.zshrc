@@ -11,24 +11,26 @@ fi
 ###############
 ### ALIASES ###
 ###############
-
-alias rm="rm -I"
-alias cp="cp -vi"
+alias ..='cd ..'
+alias ...='cd ../..'
+alias rm='rm -I'
+alias cp='cp -vi'
 alias ls='ls -h --color=auto --hyperlink=auto "$@"'
 alias ll='ls -lah'
 alias ls.="ls -A | grep '^\.'"
-alias grep="grep --color=auto"
-alias df="df -h"
-alias free="free -th"
-alias userlist="cut -d: -f1 /etc/passwd"
-alias jctl="journalctl -p 3 -xb"
-alias psgrep="ps aux | grep -v grep | grep -i -e VSZ -e"
+alias grep='grep --color=auto'
+alias df='df -h'
+alias free='free -th'
+alias userlist='cut -d: -f1 /etc/passwd'
+alias jctl='journalctl -p 3 -xb'
+alias psgrep='ps aux | grep -v grep | grep -i -e VSZ -e'
 alias wget="wget --hsts-file='$XDG_CACHE_HOME/wget-hsts'"
 
-alias vim="nvim"
+alias vim='nvim'
+alias emacs="emacsclient -c -a 'emacs'"
 
 # Test webcam
-alias webcam="ffplay /dev/video0"
+alias webcam='ffplay /dev/video0'
 
 # Change bash default init file
 alias bash="bash --init-file ~/.local/state/bash/.bashrc"
@@ -46,6 +48,13 @@ alias update-fc='sudo fc-cache -fv'
 # Recently installed packages
 alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -25 | nl"
 alias riplong="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -100 | nl"
+
+# fzf
+alias vf='vim $(find . -type f | fzf)'
+alias fzf='find . -type f | fzf'
+
+# Rick Astley
+alias rr='curl -s -L https://raw.githubusercontent.com/keroserene/rickrollrc/master/roll.sh | bash'
 
 ###############
 ### HISTORY ###
@@ -100,6 +109,48 @@ zle -N zle-line-init
 echo -ne '\e[5 q'
 # Use beam shape cursor for each new prompt.
 preexec() { echo -ne '\e[5 q' ;}
+
+########################
+### CUSTOM FUNCTIONS ###
+########################
+function ex {
+ if [ -z "$1" ]; then
+    # display usage if no parameters given
+    echo "Usage: ex <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
+    echo "       extract <path/file_name_1.ext> [path/file_name_2.ext] [path/file_name_3.ext]"
+ else
+    for n in "$@"
+    do
+      if [ -f "$n" ] ; then
+          case "${n%,}" in
+            *.cbt|*.tar.bz2|*.tar.gz|*.tar.xz|*.tbz2|*.tgz|*.txz|*.tar)
+                         tar xvf "$n"       ;;
+            *.lzma)      unlzma ./"$n"      ;;
+            *.bz2)       bunzip2 ./"$n"     ;;
+            *.cbr|*.rar)       unrar x -ad ./"$n" ;;
+            *.gz)        gunzip ./"$n"      ;;
+            *.cbz|*.epub|*.zip)       unzip ./"$n"       ;;
+            *.z)         uncompress ./"$n"  ;;
+            *.7z|*.arj|*.cab|*.cb7|*.chm|*.deb|*.dmg|*.iso|*.lzh|*.msi|*.pkg|*.rpm|*.udf|*.wim|*.xar)
+                         7z x ./"$n"        ;;
+            *.xz)        unxz ./"$n"        ;;
+            *.exe)       cabextract ./"$n"  ;;
+            *.cpio)      cpio -id < ./"$n"  ;;
+            *.cba|*.ace)      unace x ./"$n"      ;;
+            *)
+                         echo "ex: '$n' - unknown archive method"
+                         return 1
+                         ;;
+          esac
+      else
+          echo "'$n' - file does not exist"
+          return 1
+      fi
+    done
+fi
+}
+
+
 
 ################################################################
 ### USE 'RANGER' TO SWITCH DIRECTORIES AND BIND IT TO CTRL-R ###

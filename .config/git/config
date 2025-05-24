@@ -1,6 +1,6 @@
 [alias]
 	st   = status
-	s    = status --short
+	ss   = status --short
 	go   = checkout
 	br   = branch
 	com  = commit
