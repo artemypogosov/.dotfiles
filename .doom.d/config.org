@@ -6,6 +6,7 @@
 - [[#font][FONT]]
 - [[#theme][THEME]]
 - [[#general][GENERAL]]
+- [[#reverse-im][REVERSE-IM]]
 - [[#dashboard][DASHBOARD]]
   - [[#generate][Generate]]
   - [[#menu-sections][Menu sections]]
@@ -18,10 +19,13 @@
   - [[#hooks][Hooks]]
 - [[#prettify-symbols][PRETTIFY SYMBOLS]]
 - [[#rainbow-mode][RAINBOW MODE]]
+- [[#visual-replace][VISUAL REPLACE]]
 - [[#drag-stuff][DRAG STUFF]]
 - [[#spelling][SPELLING]]
 - [[#dimming-windows][DIMMING WINDOWS]]
+- [[#indentation][INDENTATION]]
 - [[#lsp--linting][LSP & LINTING]]
+- [[#company-auto-completion][COMPANY (auto-completion)]]
 - [[#dired][DIRED]]
 - [[#custom-functions][CUSTOM FUNCTIONS]]
   - [[#mysubstitute][my/substitute]]
@@ -110,13 +114,36 @@
 ;; 'fill-column' - display vertical limit line
 (setq-default fill-column 120)
 
+(defun my-set-fill-column ()
+  (setq fill-column 120))
+
+(add-hook 'prog-mode-hook #'my-set-fill-column)
+(add-hook 'prog-mode-hook #'display-fill-column-indicator-mode)
+
+;; Automatically change opened and closed tags.
+(after! web-mode
+  (require 'sgml-mode)
+  (add-hook 'web-mode-hook #'sgml-electric-tag-pair-mode))
+
 ;; 'global-auto-revert-mode' - auto sync buffers when they are changed by another program
 ;; 'indent-bars-mode' - use tabs instead of spaces
 ;; 'rainbow-mode' - inline preview of hex code colors
+;; (indent-tabs-mode t)
 (global-auto-revert-mode t)
 (global-display-fill-column-indicator-mode 1)
 (indent-bars-mode -1)
-;; (indent-tabs-mode t)
+#+end_src
+
+#+RESULTS:
+
+* REVERSE-IM
+#+begin_src elisp
+(use-package! reverse-im
+  :custom
+  ;; Replace with your input method, for example "russian-computer"
+  (reverse-im-input-methods '("ukrainian-computer"))
+  :config
+  (reverse-im-mode t))
 #+end_src
 * DASHBOARD
 ** Generate
@@ -206,20 +233,22 @@
 ** General
 #+begin_src elisp
 ;; 'TODO'      - needs to be done
+;; 'NEXT'      - next one to be considered
 ;; 'STARTED'   - in progress
 ;; 'WAIT'      - blocked by something, have to wait
 ;; 'HOLD'      - hold (wait) on purpose
 ;; 'DONE'      - ready
 ;; 'CANCELLED' - no longer needed
 
-(defconst my/org-root-dir "~/Org"
-  "Root directory for all my Org-related files.")
+(defconst my/org-root-dir "~/Org")
+(defconst my/org-personal-dir (directory-files-recursively (concat my/org-root-dir "/agenda/personal") "\\.org$"))
+(defconst my/org-work-dir (directory-files-recursively (concat my/org-root-dir "/agenda/work") "\\.org$"))
 
 (after! org
   (setq org-directory my/org-root-dir
         ;; Location of .orgids
         org-id-locations-file (concat my/org-root-dir "/.orgids")
-        org-agenda-files '("agenda/personal" "agenda/work" "quick.org")
+        org-agenda-files  (append my/org-personal-dir my/org-work-dir (list "~/Org/inbox.org"))
         org-fancy-priorities-list '("" "" "")
         org-superstar-headline-bullets-list '( "●" "○" "⟁"  "⟐" "✿")
         org-tag-alist '(;; Affiliation
@@ -229,13 +258,14 @@
                         ("shopping" . ?S) ("gym" . ?G) ("birthday" . ?B)
                         ;; Other
                         ("wishlist" . ?L)  ("repeated" . ?R))
-        org-todo-keywords '((sequence "TODO(t)" "STARTED(s!)" "WAIT(w)" "HOLD(h)" "|" "DONE(d!)" "CANCELLED(c)"))
+        org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "STARTED(s!)" "WAIT(w)" "HOLD(h)" "|" "DONE(d!)" "CANCELLED(c)"))
         org-todo-keyword-faces '(("TODO"      :foreground "#afb224" :underline t)
-                                 ("DONE"      :foreground "#665c54" :underline t)
+                                 ("NEXT"      :foreground "#fabd2f" :underline t)
                                  ("STARTED"   :foreground "#b16286" :underline t)
-                                 ("CANCELLED" :foreground "#cc241d" :underline t)
                                  ("HOLD"      :foreground "#458588" :underline t)
-                                 ("WAIT"      :foreground "#fe8019" :underline t))
+                                 ("WAIT"      :foreground "#fe8019" :underline t)
+                                 ("DONE"      :foreground "#665c54" :underline t)
+                                 ("CANCELLED" :foreground "#cc241d" :underline t))
         org-hide-emphasis-markers t))
 #+end_src
 ** Headings style
@@ -244,28 +274,29 @@
 (custom-set-faces!
   '(org-level-1 :foreground "#83a598" :inherit outline-1 :height 1.2)
   '(org-level-2 :foreground "#e7ab36" :inherit outline-2 :height 1.1)
-  '(org-level-3 :foreground "#d3869b" :inherit outline-3 :height 1.05)
-  '(org-level-4 :foreground "#89b482" :inherit outline-4 :height 1.025)
-  '(org-level-5 :foreground "#f28534" :inherit outline-5 :height 1.0125))
+  '(org-level-3 :foreground "#9e7edf" :inherit outline-3 :height 1.05)
+  '(org-level-4 :foreground "#5e8b4d" :inherit outline-4 :height 1.025)
+  '(org-level-5 :foreground "#d44c3b" :inherit outline-5 :height 1.0125)
+  '(org-link    :foreground "#64a2f4"))
 #+end_src
 ** Agenda
 #+begin_src elisp
 ;; org-deadline-warning-days
 (setq org-agenda-custom-commands
       '(("p" "Personal"
-         ((agenda "" ((org-agenda-files '("agenda/personal"))))
+         ((agenda "" ((org-agenda-files my/org-personal-dir)))
           (tags-todo "personal" ((org-agenda-overriding-header "Personal Tasks:")))
-          (tags-todo "-{.*}" ((org-agenda-overriding-header "Untagged Tasks:")))))
-
+          (tags-todo "-{.*}" ((org-agenda-overriding-header "Untagged Tasks:")
+                              (org-agenda-files my/org-personal-dir)))))
         ("w" "Work"
-         ((agenda "" ((org-agenda-files '("agenda/work"))))
+         ((agenda "" ((org-agenda-files my/org-work-dir)))
           (tags-todo "work" ((org-agenda-overriding-header "Work tasks:")))
-          (tags-todo "-{.*}" ((org-agenda-overriding-header "Untagged Tasks:")))))
-
+          (tags-todo "-{.*}" ((org-agenda-overriding-header "Untagged Tasks:")
+                              (org-agenda-files my/org-work-dir)))))
         ("i" "Inbox"
          ((agenda "" ((org-agenda-files '("inbox.org"))))
           (todo "" ((org-agenda-files '("inbox.org"))
-                      (org-agenda-overriding-header "Inbox notes:"))))) ))
+                    (org-agenda-overriding-header "Inbox notes:"))))) ))
 #+end_src
 ** Roam
 #+begin_src elisp
@@ -332,6 +363,15 @@
   :defer t
   :hook ((css-mode scss-mode sass-mode html-mode web-mode emacs-lisp-mode org-mode) . rainbow-mode))
 #+end_src
+* VISUAL REPLACE
+#+begin_src elisp
+(visual-replace-global-mode 1)
+(setq visual-replace-keep-initial-position t
+      visual-replace-default-to-full-scope t)
+
+(after! visual-replace
+  (add-hook 'visual-replace-minibuffer-mode-hook #'visual-replace-toggle-case-fold))
+#+end_src
 * DRAG STUFF
 #+begin_src elisp
 (use-package! drag-stuff
@@ -353,7 +393,7 @@
 * SPELLING
 #+begin_src elisp
 (after! spell-fu
-  (setq spell-fu-idle-delay 1) ; default is 0.25
+  (setq spell-fu-idle-delay 0.5) ; default is 0.25
   (setq-default spell-fu-word-regexp "\\b\\([A-Za-z]+\\(['’][A-Za-z]+\\)?\\)\\b"))
 
 #+end_src
@@ -364,6 +404,13 @@
 (dimmer-configure-which-key)
 (dimmer-configure-company-box)
 (dimmer-mode t)
+#+end_src
+* INDENTATION
+#+begin_src elisp
+(after! web-mode
+  (setq web-mode-markup-indent-offset 2
+        web-mode-css-indent-offset 2
+        web-mode-code-indent-offset 2))
 #+end_src
 * TODO LSP & LINTING
 #+begin_src elisp
@@ -386,17 +433,70 @@
 #+end_src
 
 #+RESULTS:
+* COMPANY (auto-completion)
+#+begin_src elisp
+(after! company
+  (setq company-minimum-prefix-length 2
+        company-idle-delay 0.1
+        company-show-quick-access t
+        company-tooltip-limit 20
+        company-tooltip-align-annotations t)
+
+  ;; Make company-files a higher priority backend
+  (setq company-backends (cons 'company-files (delete 'company-files company-backends)))
+
+  ;; Better file path completion settings
+  (setq company-files-exclusions nil)
+  (setq company-files-chop-trailing-slash t)
+
+  ;; Enable completion at point for file paths
+  (defun my/enable-path-completion ()
+    "Enable file path completion using company."
+    (setq-local company-backends
+                (cons 'company-files company-backends)))
+
+  ;; ;; Enable for all major modes
+  (add-hook 'after-change-major-mode-hook #'my/enable-path-completion)
+
+  ;; Custom file path trigger
+  (defun my/looks-like-path-p (input)
+    "Check if INPUT looks like a file path."
+    ;;;;;; Absolute path
+    (or (string-match-p "^/" input)
+        ;; Home directory
+        (string-match-p "^~/" input)
+        ;; Relative path
+        (string-match-p "^\\.\\{1,2\\}/" input)
+        ;; dir/ or similar
+        (string-match-p "^[a-zA-Z0-9._-]+/" input)))
+
+  (defun my/company-path-trigger (command &optional arg &rest ignored)
+    "Company backend that triggers file completion for path-like input."
+    (interactive (list 'interactive))
+    (cl-case command
+      (interactive (company-begin-backend 'company-files))
+      (prefix (when (my/looks-like-path-p (or (company-grab-line "\\([^ ]*\\)" 1) ""))
+                (company-files 'prefix)))
+      (t (apply 'company-files command arg ignored))))
+
+  ;; Add the custom path trigger to backends
+  (add-to-list 'company-backends 'my/company-path-trigger))
+#+end_src
+
+#+RESULTS:
+| company-files | my/company-path-trigger | company-capf |
 
 * DIRED
 #+begin_src elisp
 ;; 'dirvish' - extends 'dired'
 (after! dirvish
   (setq dirvish-hide-details t
+        dired-mouse-drag-files t
         dirvish-mode-line-format '(:left (sort file-time symlink) :right (yank index))
         dirvish-quick-access-entries
         '(("h" "~/" "Home")
           ("t"  "~/.local/share/Trash/" "Trashes")
-          ("o" my/org-root-dir "Org")
+          ("o" "~/Org" "Org")
           ("d" "~/Downloads" "Downloads")
           ("pi" "~/Pictures" "Pictures")
           ("pr" "~/Projects" "Projects"))))
@@ -425,15 +525,26 @@
 #+begin_src elisp
 (map! :leader
       :prefix "r"
-      :desc "Replace" "r" (lambda ()
-                            (interactive)
-                            (my/substitute "global-line"))
-      :desc "Replace" "R" (lambda ()
-                            (interactive)
-                            (my/substitute "global-file"))
-      :desc "Replace" "A" (lambda ()
-                            (interactive)
-                            (my/substitute "global-file-ask")))
+      :desc "Substitute in line" "l" (lambda ()
+                                       (interactive)
+                                       (my/substitute "global-line"))
+      :desc "Substitute in file" "f" (lambda ()
+                                       (interactive)
+                                       (my/substitute "global-file"))
+      :desc "Substitute in file + confirm" "c" (lambda ()
+                                                 (interactive)
+                                                 (my/substitute "global-file-ask")))
+#+end_src
+*** visual-replace
+#+begin_src elisp
+(map! :leader
+      :prefix "r"
+      :desc "Replace" "r" #'visual-replace
+      :desc "Replace selected" "s" #'visual-replace-selected
+      :desc "Replace at point" "p" #'visual-replace-thing-at-point)
+
+(define-key visual-replace-mode-map (kbd "+")
+              visual-replace-secondary-mode-map)
 #+end_src
 *** Toggle
 #+begin_src elisp
@@ -442,11 +553,23 @@
        :desc "Toggle treemacs" "t" #'+treemacs/toggle
        :desc "Toggle imenu sidebar" "s" #'imenu-list-smart-toggle))
 #+end_src
+*** Emmet
+#+begin_src elisp
+
+#+end_src
 *** Devdocs
 #+begin_src elisp
-(map! :leader
-      :prefix "h"
-      "l" #'devdocs-lookup)
+ (map! :leader
+       :desc "Devdocs lookup" "l" #'devdocs-lookup)
+#+end_src
+*** org-clock
+#+begin_src elisp
+(after! org
+  (map! :map org-mode-map
+        :leader
+        :prefix ("n" . "notes")
+        :desc "Clock In"  "c" #'org-clock-in
+        :desc "Clock Out" "C" #'org-clock-out))
 #+end_src
 *** Other
 #+begin_src elisp
@@ -478,11 +601,15 @@
 
 (map! :leader
       :prefix ("g" . "git")
-       :desc "Open file in remote repo" "O" #'+vc/browse-at-remote)
+      :desc "Open file in remote repo" "O" #'+vc/browse-at-remote)
 
 (after! evil
-  (define-key evil-normal-state-map (kbd "C-s") #'save-buffer)
-  (define-key evil-insert-state-map (kbd "C-s") #'save-buffer))
+  (define-key evil-insert-state-map (kbd "C-s")
+              (lambda ()
+                (interactive)
+                (save-buffer)
+                (evil-normal-state)))
+  (define-key evil-normal-state-map (kbd "C-s") #'save-buffer))
 
 (defun my/comment-line-and-next ()
   "Comment the current line and move to the next."

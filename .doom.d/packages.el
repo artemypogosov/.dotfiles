@@ -25,8 +25,12 @@
 (package! windresize)
 (package! drag-stuff)
 (package! imenu-list)
-(package! devdocs)
 (package! dimmer)
+(package! reverse-im)
+(package! visual-replace)
+
+;; Programming
+(package! devdocs)
 
 ;; Org
 (package! org-superstar)
