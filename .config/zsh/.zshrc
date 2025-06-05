@@ -5,34 +5,42 @@ fi
 
 ~/.local/bin/cutefetch random
 
-
 #export LC_TIME="en_US.UTF-8"
 
 ###############
 ### ALIASES ###
 ###############
+
+# General
 alias ..='cd ..'
 alias ...='cd ../..'
+
 alias rm='rm -I'
 alias cp='cp -vi'
+
 alias ls='ls -h --color=auto --hyperlink=auto "$@"'
 alias ll='ls -lah'
-alias ls.="ls -A | grep '^\.'"
-alias grep='grep --color=auto'
+# .[^.]*' - glob pattern to list only hidden files/dirs
+alias ls.='ls -ld .[^.]*'
+
+alias cal='cal -m'
 alias df='df -h'
 alias free='free -th'
+alias grep='grep --color=auto'
+
 alias userlist='cut -d: -f1 /etc/passwd'
 alias jctl='journalctl -p 3 -xb'
 alias psgrep='ps aux | grep -v grep | grep -i -e VSZ -e'
 alias wget="wget --hsts-file='$XDG_CACHE_HOME/wget-hsts'"
 
+# Editors
 alias vim='nvim'
 alias emacs="emacsclient -c -a 'emacs'"
 
 # Test webcam
 alias webcam='ffplay /dev/video0'
 
-# Change bash default init file
+# Set bash default init file
 alias bash="bash --init-file ~/.local/state/bash/.bashrc"
 
 # Passing two --refresh or -y flags will force a refresh of all package lists
@@ -50,7 +58,7 @@ alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -25 | nl"
 alias riplong="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -100 | nl"
 
 # fzf
-alias vf='vim $(find . -type f | fzf)'
+alias vfind='vim $(find . -type f | fzf)'
 alias fzf='find . -type f | fzf'
 
 # Rick Astley
