@@ -1,6 +1,9 @@
 #!/bin/bash
 
 cat other/computer.txt
+echo
+date | awk '{ print $1; print $2; print $3; print $4 }' | xargs echo "Date:"
+echo
 echo "The recommendation is to run setup.sh from an active XMonad instance."
 echo
 

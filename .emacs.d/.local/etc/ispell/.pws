@@ -1,4 +1,4 @@
-personal_ws-1.1 en 177
+personal_ws-1.1 en 181
 agda
 alacritty
 ansible
@@ -63,6 +63,7 @@ garmin
 gdscript
 gists
 gitignore
+globbing
 gmail
 graphql
 gunzip
@@ -132,6 +133,7 @@ spotify
 stashchuk
 stderr
 stdout
+subdir
 subdirectory
 subtree
 sudo
@@ -158,6 +160,7 @@ unstage
 unstaged
 untagged
 untrack
+unvisited
 vcs
 viewport
 vimiv
@@ -165,6 +168,7 @@ vimmers
 vscode
 webpage
 whichkey
+woff
 workspaces
 xargs
 xmonad
