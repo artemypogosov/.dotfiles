@@ -18,7 +18,7 @@
   - [[#roam][Roam]]
   - [[#hooks][Hooks]]
 - [[#prettify-symbols][PRETTIFY SYMBOLS]]
-- [[#rainbow-mode][RAINBOW MODE]]
+- [[#colorful-mode][COLORFUL-MODE]]
 - [[#visual-replace][VISUAL REPLACE]]
 - [[#drag-stuff][DRAG STUFF]]
 - [[#spelling][SPELLING]]
@@ -26,6 +26,7 @@
 - [[#indentation][INDENTATION]]
 - [[#lsp--linting][LSP & LINTING]]
 - [[#company-auto-completion][COMPANY (auto-completion)]]
+- [[#emmet][EMMET]]
 - [[#dired][DIRED]]
 - [[#custom-functions][CUSTOM FUNCTIONS]]
   - [[#mysubstitute][my/substitute]]
@@ -127,7 +128,6 @@
 
 ;; 'global-auto-revert-mode' - auto sync buffers when they are changed by another program
 ;; 'indent-bars-mode' - use tabs instead of spaces
-;; 'rainbow-mode' - inline preview of hex code colors
 ;; (indent-tabs-mode t)
 (global-auto-revert-mode t)
 (global-display-fill-column-indicator-mode 1)
@@ -357,11 +357,22 @@
                                            ("#+end_quote"   . "❞")))
             (prettify-symbols-mode 1)))
 #+end_src
-* RAINBOW MODE
+* COLORFUL-MODE
 #+begin_src elisp
-(use-package! rainbow-mode
-  :defer t
-  :hook ((css-mode scss-mode sass-mode html-mode web-mode emacs-lisp-mode org-mode) . rainbow-mode))
+;; 'rainbow-mode' - default mode for highlighting colors in Doom Emacs
+(remove-hook 'prog-mode-hook #'rainbow-mode)
+(remove-hook 'css-mode-hook #'rainbow-mode)
+(remove-hook 'emacs-lisp-mode-hook #'rainbow-mode)
+
+;; 'colorful-mode' - inline preview of hex code colors
+(use-package! colorful-mode
+  :custom
+  (colorful-use-prefix t)
+  (colorful-prefix-string "•")
+  (colorful-only-strings 'only-prog)
+  (css-fontify-colors nil)
+  :config
+  (global-colorful-mode +1))
 #+end_src
 * VISUAL REPLACE
 #+begin_src elisp
@@ -412,7 +423,7 @@
         web-mode-css-indent-offset 2
         web-mode-code-indent-offset 2))
 #+end_src
-* TODO LSP & LINTING
+* LSP & LINTING
 #+begin_src elisp
 ;; (after! flycheck
 ;;   (flycheck-add-mode 'javascript-eslint 'js-mode)
@@ -430,9 +441,16 @@
 ;; '(tide-hl-identifier-face :underline t :background nil))
 
 
-#+end_src
+;; (after! lsp-mode
+;;   (setq lsp-enable-semantic-highlighting nil
+;;         lsp-enable-symbol-highlighting nil
+;;         lsp-semantic-tokens-enable nil))
 
-#+RESULTS:
+(after! lsp-mode
+  (setq lsp-enable-symbol-highlighting nil)
+  ;; Also explicitly remove the highlight hooks
+  (remove-hook 'lsp-mode-hook #'lsp-enable-symbol-highlighting))
+#+end_src
 * COMPANY (auto-completion)
 #+begin_src elisp
 (after! company
@@ -482,10 +500,27 @@
   ;; Add the custom path trigger to backends
   (add-to-list 'company-backends 'my/company-path-trigger))
 #+end_src
+* EMMET
+#+begin_src elisp
+(defun +web/indent-or-yas-or-emmet-expand ()
+  "Do-what-I-mean on TAB.
 
-#+RESULTS:
-| company-files | my/company-path-trigger | company-capf |
-
+Invokes `indent-for-tab-command' if at or before text bol, `yas-expand' if on a
+snippet, or `emmet-expand-line'."
+  (interactive)
+  (call-interactively
+   (cond ((or (<= (current-column) (current-indentation))
+              (not (eolp))
+              (not (or (memq (char-after) (list ?\n ?\s ?\t))
+                       (eobp))))
+          #'indent-for-tab-command)
+         ((and (modulep! :editor snippets)
+               (require 'yasnippet nil t)
+               (yas--templates-for-key-at-point))
+          #'yas-expand)
+         ;; Always use emmet-expand-line instead of emmet-expand-yas
+         (#'emmet-expand-line))))
+#+end_src
 * DIRED
 #+begin_src elisp
 ;; 'dirvish' - extends 'dired'
@@ -552,10 +587,6 @@
       (:prefix ("t" . "Toggle")
        :desc "Toggle treemacs" "t" #'+treemacs/toggle
        :desc "Toggle imenu sidebar" "s" #'imenu-list-smart-toggle))
-#+end_src
-*** Emmet
-#+begin_src elisp
-
 #+end_src
 *** Devdocs
 #+begin_src elisp

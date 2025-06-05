@@ -31,6 +31,7 @@
 
 ;; Programming
 (package! devdocs)
+(package! colorful-mode)
 
 ;; Org
 (package! org-superstar)

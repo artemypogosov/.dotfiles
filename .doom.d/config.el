@@ -83,7 +83,6 @@
 
 ;; 'global-auto-revert-mode' - auto sync buffers when they are changed by another program
 ;; 'indent-bars-mode' - use tabs instead of spaces
-;; 'rainbow-mode' - inline preview of hex code colors
 ;; (indent-tabs-mode t)
 (global-auto-revert-mode t)
 (global-display-fill-column-indicator-mode 1)
@@ -287,9 +286,20 @@
                                            ("#+end_quote"   . "❞")))
             (prettify-symbols-mode 1)))
 
-(use-package! rainbow-mode
-  :defer t
-  :hook ((css-mode scss-mode sass-mode html-mode web-mode emacs-lisp-mode org-mode) . rainbow-mode))
+;; 'rainbow-mode' - default mode for highlighting colors in Doom Emacs
+(remove-hook 'prog-mode-hook #'rainbow-mode)
+(remove-hook 'css-mode-hook #'rainbow-mode)
+(remove-hook 'emacs-lisp-mode-hook #'rainbow-mode)
+
+;; 'colorful-mode' - inline preview of hex code colors
+(use-package! colorful-mode
+  :custom
+  (colorful-use-prefix t)
+  (colorful-prefix-string "•")
+  (colorful-only-strings 'only-prog)
+  (css-fontify-colors nil)
+  :config
+  (global-colorful-mode +1))
 
 (visual-replace-global-mode 1)
 (setq visual-replace-keep-initial-position t
@@ -344,6 +354,17 @@
 ;; (custom-set-faces!
 ;; '(tide-hl-identifier-face :underline t :background nil))
 
+
+;; (after! lsp-mode
+;;   (setq lsp-enable-semantic-highlighting nil
+;;         lsp-enable-symbol-highlighting nil
+;;         lsp-semantic-tokens-enable nil))
+
+(after! lsp-mode
+  (setq lsp-enable-symbol-highlighting nil)
+  ;; Also explicitly remove the highlight hooks
+  (remove-hook 'lsp-mode-hook #'lsp-enable-symbol-highlighting))
+
 (after! company
   (setq company-minimum-prefix-length 2
         company-idle-delay 0.1
@@ -390,6 +411,25 @@
 
   ;; Add the custom path trigger to backends
   (add-to-list 'company-backends 'my/company-path-trigger))
+
+(defun +web/indent-or-yas-or-emmet-expand ()
+  "Do-what-I-mean on TAB.
+
+Invokes `indent-for-tab-command' if at or before text bol, `yas-expand' if on a
+snippet, or `emmet-expand-line'."
+  (interactive)
+  (call-interactively
+   (cond ((or (<= (current-column) (current-indentation))
+              (not (eolp))
+              (not (or (memq (char-after) (list ?\n ?\s ?\t))
+                       (eobp))))
+          #'indent-for-tab-command)
+         ((and (modulep! :editor snippets)
+               (require 'yasnippet nil t)
+               (yas--templates-for-key-at-point))
+          #'yas-expand)
+         ;; Always use emmet-expand-line instead of emmet-expand-yas
+         (#'emmet-expand-line))))
 
 ;; 'dirvish' - extends 'dired'
 (after! dirvish
@@ -444,8 +484,6 @@
       (:prefix ("t" . "Toggle")
        :desc "Toggle treemacs" "t" #'+treemacs/toggle
        :desc "Toggle imenu sidebar" "s" #'imenu-list-smart-toggle))
-
-
 
  (map! :leader
        :desc "Devdocs lookup" "l" #'devdocs-lookup)
