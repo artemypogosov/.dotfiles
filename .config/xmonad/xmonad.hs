@@ -136,7 +136,7 @@ myTall = renamed [Replace "tall"]
   $ windowNavigation
  -- $ subLayout [] (smartBorders Simplest)
   $ limitWindows 5
-  $ mySpacing 18
+  $ mySpacing 15
   $ ResizableTall 1 (3/100) (1/2) []
 
 myMirror = renamed [Replace "mirror tall"]
@@ -160,7 +160,7 @@ myKeys c = mkNamedKeymap c $
   , ("M-S-c",                  addName "Kill focused window"            $ kill1)
   , ("M-S-a c",                addName "Kill all windows on workspace"  $ killAll)]
 
-  ^++^ -- Layout
+  ^++^ -- Layout [M-S-<space> - reset layout size]
   [ ("M-<Tab>",                addName "Change layout"                $ sendMessage NextLayout)
   , ("M-S-m",                  addName "Swap focused W with master W" $ windows W.swapMaster)
   , ("M-m",                    addName "Toggle full screen mode"      $ sendMessage (MT.Toggle NBFULL) >> sendMessage ToggleStruts)]
@@ -182,8 +182,8 @@ myKeys c = mkNamedKeymap c $
   ^++^ -- Doom Emacs
   [ ("M-d d",                  addName "Emacsclient"         $ spawn (myEmacs))
   -- , ("M-d b",                  addName "Emacsclient Ibuffer" $ spawn (myEmacs ++ ("--eval '(ibuffer)'")))
-  , ("M-d f",                  addName "Emacsclient Dired"   $ spawn (myEmacs ++ ("--eval '(dired nil)'")))
-  , ("M-d s",                  addName "Emacsclient Eshell"  $ spawn (myEmacs ++ ("--eval '(eshell)'")))
+  , ("M-d f",                  addName "Emacsclient Dired"   $ spawn (myEmacs ++ ("--eval '(dired \"~\")'")))
+  -- , ("M-d s",                  addName "Emacsclient Eshell"  $ spawn (myEmacs ++ ("--eval '(eshell)'")))
   , ("M-d v",                  addName "Emacsclient Vterm"   $ spawn (myEmacs ++ ("--eval '(+vterm/here nil)'")))]
 
   ^++^ -- Screenshot
