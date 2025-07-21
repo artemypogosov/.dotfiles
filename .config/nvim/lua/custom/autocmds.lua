@@ -36,6 +36,13 @@ vim.api.nvim_create_autocmd("BufDelete", {
   end,
 })
 
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*",
+  callback = function(args)
+    require("conform").format({ bufnr = args.buf })
+  end,
+})
+
 vim.api.nvim_create_autocmd("User", {
   pattern = "BufDeletePost",
   group = vim.api.nvim_create_augroup("dashboard_delete_buffers", {}),

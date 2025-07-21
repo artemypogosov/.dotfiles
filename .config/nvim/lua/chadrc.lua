@@ -14,6 +14,7 @@ local git_modules = require("custom.git").modules
 
 M.base46 = {
   theme = "gruvbox",
+  -- theme = "kanagawa",
   theme_toggle = { "gruvbox", "gruvbox_light" },
 }
 
