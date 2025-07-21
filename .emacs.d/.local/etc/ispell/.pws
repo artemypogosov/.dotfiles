@@ -1,4 +1,5 @@
-personal_ws-1.1 en 181
+personal_ws-1.1 en 198
+adminer
 agda
 alacritty
 ansible
@@ -9,14 +10,17 @@ artemypogosov
 astley
 auth
 avy
+awk
 backend
 backlinks
+balancer
 beancount
 biogon
 bitwarden
 bogdan
 bootcamp
 bourne
+busybox
 cheatsheets
 chmod
 chown
@@ -28,6 +32,7 @@ csharp
 ctrl
 deamon
 decrypt
+deps
 desc
 devdocs
 dhall
@@ -36,6 +41,8 @@ direnv
 dirs
 dirvish
 distros
+dockerfile
+dockerignore
 dotfiles
 dsls
 dsp
@@ -57,6 +64,7 @@ flycheck
 for
 formatters
 frontend
+fs
 fsharp
 fstar
 garmin
@@ -68,6 +76,7 @@ gmail
 graphql
 gunzip
 gzip
+healthcheck
 hostname
 https
 hy
@@ -76,11 +85,14 @@ idris
 imenu
 init
 inode
+jpg
 js
+json
 jupyter
 komoot
 kubernetes
 leatherman
+leotax
 lifecycles
 linter
 linters
@@ -95,11 +107,14 @@ magit
 meghanada
 modeline
 monadic
+mongo
 monospace
 multiedit
 neckbeards
 neotree
 neovim
+nginx
+nicca
 nikkor
 nim
 notmuch
@@ -120,6 +135,7 @@ repo
 repos
 rgb
 ricoh
+rmdir
 roadmap
 rss
 rst
@@ -172,6 +188,7 @@ woff
 workspaces
 xargs
 xmonad
+yml
 zig
 zipcloak
 zipdetails

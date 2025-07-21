@@ -7,6 +7,7 @@ bitwarden
 blueman
 brightnessctl
 calcurse
+cronie
 darktable
 docker
 docker-compose
@@ -49,6 +50,7 @@ ranger
 ripgrep
 rofi
 simplescreenrecorder-qt6-git
+speedtest-cli
 spotify
 stow
 syncthing-gtk
@@ -63,6 +65,7 @@ unclutter
 upower
 vimiv
 vlc
+whois
 xclip
 xmobar
 xmonad
