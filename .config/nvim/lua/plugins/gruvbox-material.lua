@@ -16,6 +16,6 @@ return {
     g.gruvbox_material_diagnostic_line_highlight = 1
     g.gruvbox_material_statusline_style = "default" -- "mix" & "original"
 
-    -- vim.cmd.colorscheme("gruvbox-material")
+    vim.cmd.colorscheme("gruvbox-material")
   end,
 }
