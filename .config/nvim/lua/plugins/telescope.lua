@@ -11,9 +11,6 @@ return {
       "nvim-telescope/telescope-file-browser.nvim",
       "nvim-telescope/telescope-fzf-native.nvim",
       "nvim-tree/nvim-web-devicons",
-
-      -- "nvim-telescope/telescope-bookmarks.nvim",
-      -- "nvim-telescope/telescope-workspaces.nvim",
     },
     config = function()
       local telescope = require("telescope")
@@ -32,8 +29,8 @@ return {
               preview_width = 0.55,
               results_width = 0.8,
             },
-            width = 0.5,
-            height = 0.6,
+            width = 0.65,
+            height = 0.5,
             preview_cutoff = 120,
           },
           winblend = 0, -- Set to 10–20 for slight transparency
@@ -78,6 +75,16 @@ return {
             override_file_sorter = true,
             -- case_mode = "respect_case",
           },
+          workspaces = {
+            -- keep insert mode after selection in the picker, default is false
+            keep_insert = true,
+            -- Highlight group used for the path in the picker, default is "String"
+            path_hl = "String",
+            layout_config = {
+              width = 0.4,
+              height = 0.3,
+            },
+          },
         },
       })
 
@@ -85,8 +92,8 @@ return {
       pcall(telescope.load_extension, "file_browser")
       pcall(telescope.load_extension, "fzf")
       pcall(telescope.load_extension, "nvim-tree/nvim-web-devicons")
+      pcall(telescope.load_extension, "workspaces")
       -- pcall(telescope.load_extension, "bookmarks")
-      -- pcall(telescope.load_extension, "workspaces")
     end,
   },
   {

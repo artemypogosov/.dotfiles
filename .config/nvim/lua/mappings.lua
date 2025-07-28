@@ -1,7 +1,9 @@
 local wk = require("which-key")
 local bm = require("bookmarks")
 local telescope = require("telescope.builtin")
+local telescope_global = require("telescope")
 local confirm_quit = require("confirm-quit")
+local workspaces_extension = require("telescope._extensions.workspaces")
 
 ----------------------
 --- HELP FUNCTIONS ---
@@ -39,6 +41,23 @@ local function find_git_files()
   else
     print("Not a git repository")
   end
+end
+
+local function find_recent_files()
+  telescope.oldfiles({
+    previewer = false,
+    layout_config = { width = 0.4, height = 0.3 },
+  })
+end
+
+local function switch_project()
+  telescope_global.extensions.workspaces.workspaces({
+    layout_config = {
+      width = 0.355,
+      height = 0.27,
+      prompt_position = "top",
+    },
+  })
 end
 
 local function search_project()
@@ -91,12 +110,7 @@ wk.add({
     desc = "Find file",
     mode = "n",
   },
-  {
-    "<leader>fr",
-    execute_command("Telescope oldfiles previewer=false"),
-    desc = "Recent files",
-    mode = "n",
-  },
+  { "<leader>fr", find_recent_files, desc = "Recent files", mode = "n" },
   {
     "<leader>fd",
     execute_command("Telescope find_files previewer=false"),
@@ -111,7 +125,7 @@ wk.add({
   ---------------
   { "<leader>p", group = "project" },
 
-  { "<leader>pp", execute_command("WorkspacesOpen"), desc = "Switch project", mode = "n" },
+  { "<leader>pp", switch_project, desc = "Switch project", mode = "n" },
   { "<leader>pl", execute_command("WorkspacesList"), desc = "List workspaces", mode = "n" },
   { "<leader>pL", execute_command("WorkspacesListDirs"), desc = "List projects' dirs", mode = "n" },
 
