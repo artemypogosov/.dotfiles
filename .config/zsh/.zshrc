@@ -64,6 +64,16 @@ alias fzf='find . -type f | fzf'
 # Rick Astley
 alias rr='curl -s -L https://raw.githubusercontent.com/keroserene/rickrollrc/master/roll.sh | bash'
 
+
+#################
+### FUNCTIONS ###
+#################
+
+# Create dir and cd into it
+mkcd() {
+  mkdir -p "$1" && cd "$1"
+}
+
 ###############
 ### HISTORY ###
 ###############

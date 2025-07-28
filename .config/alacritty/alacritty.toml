@@ -24,7 +24,7 @@ foreground = "0xebdbb2"
 
 [font]
 normal = {family = "SauceCodePro Nerd Font Mono"}
-size = 11
+size = 11.5
 
 [scrolling]
 history = 5000
