@@ -58,6 +58,7 @@ telegram-desktop
 tidy
 trayer
 tree
+tree-sitter
 ttf-sourcecodepro-nerd
 ttf-ubuntu-font-family
 ueberzug
