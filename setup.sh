@@ -1,8 +1,9 @@
 #!/bin/bash
+set -euo pipefail
 
 cat other/computer.txt
 echo
-date | awk '{ print $1; print $2; print $3; print $4 }' | xargs echo "Date:"
+echo "Date: $(date +"%a %b %d %H:%M:%S")"
 echo
 echo "The recommendation is to run setup.sh from an active XMonad instance."
 echo
@@ -15,19 +16,20 @@ case "$choice" in
     echo "======================"
 
     echo "=== Creating directories ==="
-    mkdir ~/.config/simplescreenrecorder
-    mkdir ~/.config/X11
-    mkdir ~/.config/auth
-    mkdir ~/.config/wget-hsts
-    mkdir ~/.config/screen/screenrc
-    mkdir ~/.config/git
-    mkdir ~/.config/npm/config/
-    mkdir ~/.config/docker
-    mkdir ~/.local/share/lein
-    mkdir ~/.local/share/cargo
-    mkdir ~/.cache/mypy
-    mkdir ~/.local/state/npm/logs
-    mkdir ~/.local/state/bash
+    mkdir -p \
+      ~/.config/simplescreenrecorder \
+      ~/.config/X11 \
+      ~/.config/auth \
+      ~/.config/wget-hsts \
+      ~/.config/screen \
+      ~/.config/git \
+      ~/.config/npm/config \
+      ~/.config/docker \
+      ~/.local/share/lein \
+      ~/.local/share/cargo \
+      ~/.cache/mypy \
+      ~/.local/state/npm/logs \
+      ~/.local/state/bash
 
     echo "=== Installing programs... [pacman + yay] ==="
     pacman -S - < ~/.dotfiles/other/pacman-pkgs.txt
@@ -67,12 +69,12 @@ case "$choice" in
     xrdb -load ~/.config/X11/.Xresources
 
     if [ ! -d ~/.cache/zsh ]; then
-      mkdir ~/.cache/zsh
+      mkdir -p ~/.cache/zsh
       touch ~/.cache/zsh/history
     fi
 
     if [ ! -d ~/.local/share/applications ]; then
-      mkdir ~/.local/share/applications
+      mkdir -p ~/.local/share/applications
       cp /usr/share/applications/kitty.desktop ~/.local/share/applications/
     fi
 
