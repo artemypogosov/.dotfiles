@@ -39,6 +39,7 @@ maim
 neovim
 nitrogen
 nodejs
+noto-fonts-emoji
 npm
 openvpn
 p7zip

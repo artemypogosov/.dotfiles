@@ -64,16 +64,6 @@ alias fzf='find . -type f | fzf'
 # Rick Astley
 alias rr='curl -s -L https://raw.githubusercontent.com/keroserene/rickrollrc/master/roll.sh | bash'
 
-
-#################
-### FUNCTIONS ###
-#################
-
-# Create dir and cd into it
-mkcd() {
-  mkdir -p "$1" && cd "$1"
-}
-
 ###############
 ### HISTORY ###
 ###############
@@ -128,10 +118,17 @@ echo -ne '\e[5 q'
 # Use beam shape cursor for each new prompt.
 preexec() { echo -ne '\e[5 q' ;}
 
-########################
-### CUSTOM FUNCTIONS ###
-########################
-function ex {
+#################
+### FUNCTIONS ###
+#################
+
+# Create dir and cd into it
+mkcd() {
+  mkdir -p "$1" && cd "$1"
+}
+
+# Extract almost any type of archive
+ex() {
  if [ -z "$1" ]; then
     # display usage if no parameters given
     echo "Usage: ex <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
@@ -168,7 +165,18 @@ function ex {
 fi
 }
 
-
+# Load 'nvm' only after first run of 'nvm' command in terminal
+nvm() {
+  # Remove this wrapper so subsequent calls go directly to the real nvm
+  unset -f nvm
+  
+  # Source nvm scripts if they exist
+  [ -s "$HOME/.nvm/nvm.sh" ] && source "$HOME/.nvm/nvm.sh"
+  [ -s "$HOME/.nvm/bash_completion" ] && source "$HOME/.nvm/bash_completion"
+  
+  # Now call the actual nvm with all arguments
+  nvm "$@"
+}
 
 ################################################################
 ### USE 'RANGER' TO SWITCH DIRECTORIES AND BIND IT TO CTRL-R ###
@@ -213,3 +221,4 @@ bindkey '^t' autosuggest-toggle
 
 # To customize prompt, run `p10k configure` or edit ~/p10k.zsh.
 [[ ! -f ~/.config/zsh/p10k.zsh ]] || source ~/.config/zsh/p10k.zsh
+
