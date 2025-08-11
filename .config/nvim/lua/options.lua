@@ -44,9 +44,6 @@ opt.mouse = "a"
 -- Don't show the mode, since it's already in the statusline
 opt.showmode = false
 
--- Disable a command line
--- vim.opt.cmdheight = 0
-
 -- Sync clipboard between OS and Neovim.
 -- Schedule the setting after `UiEnter` because it can increase startup-time.
 -- Remove this option if you want your OS clipboard to remain independent.
@@ -58,19 +55,24 @@ end)
 -- instead raise a dialog asking if you wish to save the current file(s)
 vim.o.confirm = true
 
+-- Search case handling
 opt.ignorecase = true
 opt.smartcase = true
 
 -- Verical inform column left to the line numbers
 opt.signcolumn = "yes"
 
+-- Windows splitting stratage
 opt.splitright = true
 opt.splitbelow = true
 
+-- Special chars for spaces, tabs etc.
 o.list = true
 opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 opt.fillchars = { eob = " " }
 
+-- Command preview for 'substitute'
 opt.inccommand = "split"
 
+-- Set always visible lines at bottom while scrolling
 opt.scrolloff = 10

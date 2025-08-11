@@ -3,7 +3,6 @@ local bm = require("bookmarks")
 local telescope = require("telescope.builtin")
 local telescope_global = require("telescope")
 local confirm_quit = require("confirm-quit")
-local workspaces_extension = require("telescope._extensions.workspaces")
 
 ----------------------
 --- HELP FUNCTIONS ---
@@ -46,7 +45,7 @@ end
 local function find_recent_files()
   telescope.oldfiles({
     previewer = false,
-    layout_config = { width = 0.4, height = 0.3 },
+    layout_config = { width = 0.6, height = 0.3 },
   })
 end
 
@@ -166,6 +165,8 @@ wk.add({
   --------------
   --- TOGGLE ---
   --------------
+  { "<leader>t", group = "toggle" },
+
   { "<leader>tt", execute_command("NvimTreeToggle ."), desc = "Toggle sidebar", mode = "n" },
   { "<leader>tf", execute_command("NvimTreeFocus"), desc = "Focus  sidebar", mode = "n" },
   {
@@ -290,6 +291,8 @@ wk.add({
   ------------
   --- HELP ---
   ------------
+  { "<leader>h", group = "help" },
+
   { "<leader>hL", execute_command("Lazy"), desc = "Lazy", mode = "n" },
   { "<leader>hM", execute_command("Mason"), desc = "Mason", mode = "n" },
 
@@ -314,28 +317,9 @@ wk.add({
     desc = "Select scratch",
     mode = "n",
   },
-
-  { "<leader>w", "<C-\\><C-n><C-w>", desc = "Terminal: window command", mode = "t" },
-  {
-    "<leader>ot",
-    execute_command("ToggleTerm size=20 direction=horizontal name=Terminal"),
-    desc = "Toggle terminal",
-    mode = "n",
-  },
-  {
-    "<leader>ot",
-    execute_command("ToggleTerm"),
-    desc = "Toggle terminal",
-    mode = "t",
-  },
 })
 
 -- Map ZZ to ConfirmQuit (saves and quits with confirmation)
 vim.keymap.set("n", "ZZ", function()
   confirm_quit.confirm_quit()
 end, { desc = "Confirm before ZZ (wq)" })
-
--- Map ZQ to ConfirmQuit! (force quit with confirmation)
--- vim.keymap.set("n", "ZQ", function()
--- confirm_quit.confirm_quit()
--- end, { desc = "Confirm before ZQ (q!)" })
