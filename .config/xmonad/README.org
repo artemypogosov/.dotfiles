@@ -214,9 +214,7 @@ myKeys c = mkNamedKeymap c $
 
   ^++^ -- Doom Emacs
   [ ("M-d d",                  addName "Emacsclient"         $ spawn (myEmacs))
-  -- , ("M-d b",                  addName "Emacsclient Ibuffer" $ spawn (myEmacs ++ ("--eval '(ibuffer)'")))
   , ("M-d f",                  addName "Emacsclient Dired"   $ spawn (myEmacs ++ ("--eval '(dired \"~\")'")))
-  -- , ("M-d s",                  addName "Emacsclient Eshell"  $ spawn (myEmacs ++ ("--eval '(eshell)'")))
   , ("M-d v",                  addName "Emacsclient Vterm"   $ spawn (myEmacs ++ ("--eval '(+vterm/here nil)'")))]
 
   ^++^ -- Screenshot
