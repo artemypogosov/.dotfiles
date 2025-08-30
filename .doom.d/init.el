@@ -1,7 +1,7 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
-;; This file controls what Doom modules are enabled and what order they load
-;; in. Remember to run 'doom sync' after modifying it!
+;; This file controls what Doom modules are enabled and what order they load in.
+;; Remember to run 'doom sync' after modifying it!
 
 ;; NOTE Press 'SPC h d h' (or 'C-h d h' for non-vim users) to access Doom's
 ;;      documentation. There you'll find a "Module Index" link where you'll find
@@ -15,10 +15,10 @@
 ;;      directory (for easy access to its source code).
 
 (doom! :completion
+       ;; 'company' is marked as DEPRECATED in Doom. 'corfu' is a new replacement.
+       ;; Consider to replace it someday.
        (company +childframe)  ; the ultimate code completion backend
        (vertico +icons)       ; the search engine of the future
-       ;; helm                ; the *other* search engine for love and life
-       ;; ido                 ; the other *other* search engine...
 
        :ui
        doom                   ; what makes DOOM look the way it does
@@ -29,7 +29,7 @@
        hl-todo                ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        unicode                ; extended unicode support for various languages
        modeline               ; snazzy, Atom-inspired modeline, plus API
-       treemacs               ; a project drawer, like neotree but cooler
+       (treemacs +lsp)        ; a project drawer, like neotree but cooler
        nav-flash              ; blink cursor line after big motions
        workspaces             ; tab emulation, persistence & separate workspaces
        window-select          ; visually switch windows
@@ -67,21 +67,24 @@
        ;; term   ; basic terminal emulator for Emacs
 
        :checkers
-       syntax                       ; tasing you for every semicolon you forget
+       (syntax +icons)              ; tasing you for every semicolon you forget
        (spell +aspell +everywhere)  ; tasing you for misspelling mispelling
        ;; grammar                   ; tasing grammar mistake every you make
 
        :tools
-       docker
-       lookup              ; navigate your code and its documentation
+       (docker +lsp)
        lsp                 ; M-x vscode
+       lookup              ; navigate your code and its documentation     
        magit               ; a git porcelain for Emacs
        make                ; run make from tasks Emacs
        tree-sitter
        (eval +overlay)     ; run code, run (also, repls)
+       editorconfig        ; let someone else argue about tabs vs spaces
+
+       ;; NOTE: Try to use 'debugger'
        ;; debugger         ; FIXME stepping through code, to help you add bugs
+       ;;
        ;; direnv
-       ;; editorconfig     ; let someone else argue about tabs vs spaces
        ;; gist             ; interacting with github gists
        ;; pdf              ; pdf enhancements
        ;; prodigy          ; FIXME managing external services & code builders
@@ -91,15 +94,16 @@
        ;; upload           ; map local to remote projects via ssh/ftp
 
        :lang
-       emacs-lisp                    ; drown in parentheses
-       json                          ; At least it ain't XML
-       markdown                      ; writing docs for people to ignore
-       sh                            ; she sells {ba,z,fi}sh shells on the C xor
-       yaml                          ; JSON, but readable
-       (haskell +dante)              ; a language that's lazier than I am
-       (javascript +lsp tree-sitter) ; all(hope(abandon(ye(who(enter(here))))))
-       (org +roam2 +dragndrop)       ; organize your plain life in plain text
-       (web +lsp tree-sitter)        ; the tubes
+       emacs-lisp                     ; drown in parentheses
+       markdown                       ; writing docs for people to ignore
+       (json +lsp +tree-sitter)       ; At least it ain't XML
+       (sh +lsp +tree-sitter)         ; she sells {ba,z,fi}sh shells on the C xor
+       (yaml +lsp +tree-sitter)       ; JSON, but readable
+       (haskell +dante)               ; a language that's lazier than I am
+       (javascript +lsp +tree-sitter) ; all(hope(abandon(ye(who(enter(here))))))
+       (org +roam2 +dragndrop)        ; organize your plain life in plain text
+       (web +lsp +tree-sitter)        ; the tubes
+       (lua +lsp +tree-sitter)        ; one-based indices? one-based indices
 
        ;;agda              ; types of types of types of types...
        ;;beancount         ; mind the GAAP
@@ -130,7 +134,6 @@
        ;;latex             ; writing papers in Emacs has never been so fun
        ;;lean              ; for folks with too much to prove
        ;;ledger            ; be audit you can be
-       ;;lua               ; one-based indices? one-based indices
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
@@ -163,9 +166,9 @@
        ;;(wanderlust +gmail)
 
        :app
-       ;;calendar
+       calendar
+       ;; everywhere        ; *leave* Emacs!? You must be joking
        ;;emms
-       ;;everywhere        ; *leave* Emacs!? You must be joking
        ;;irc               ; how neckbeards socialize
        ;;(rss +org)        ; emacs as an RSS reader
 
@@ -173,5 +176,5 @@
        ;;layout            ; using Doom with non-qwerty keyboard layouts.
 
        :config
-       ;;literate
+       literate
        (default +bindings +smartparens))

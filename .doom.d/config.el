@@ -23,6 +23,10 @@
  '(font-lock-comment-face :slant italic)
  '(font-lock-keyword-face :slant italic))
 
+;; Use Noto Color Emoji for emoji characters
+;; Also used to draw icons in modeline
+(set-fontset-font t 'unicode "Noto Color Emoji" nil 'prepend)
+
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function.
@@ -52,15 +56,15 @@
  password-cache-expiry nil
  delete-by-moving-to-trash t
  trash-directory "~/.local/share/Trash/files"
- display-line-numbers-type t
  projectile-project-search-path '("~/Projects")
+ display-line-numbers-type 'relative
  evil-ex-substitute-case 'sensitive
- global-auto-revert-non-file-buffers t
  evil-snipe-scope 'buffer
- imenu-list-focus-after-activation t
- ;; indent-bars-display-on-blank-lines nil
- ;; company-idle-delay nil
- )
+ global-auto-revert-non-file-buffers t
+ auto-revert-verbose nil
+ +zen-text-scale 1
+ imenu-list-auto-resize t
+ imenu-list-focus-after-activation t)
 
 ;; 'setq' vs 'setq-default'
 ;; 'setq' - use it to set a value with a global vars
@@ -70,27 +74,30 @@
 ;; 'fill-column' - display vertical limit line
 (setq-default fill-column 120)
 
-(defun my-set-fill-column ()
-  (setq fill-column 120))
-
-(add-hook 'prog-mode-hook #'my-set-fill-column)
-(add-hook 'prog-mode-hook #'display-fill-column-indicator-mode)
-
-;; Automatically change opened and closed tags.
 (after! web-mode
   (require 'sgml-mode)
   (add-hook 'web-mode-hook #'sgml-electric-tag-pair-mode))
 
+(after! treemacs
+  (treemacs-follow-mode 1))
+
+(after! dirvish
+  (dirvish-side-follow-mode 1))
+
+;; Automatically change opened and closed tags.
+;; 'indent-bars-mode' - shows vertical bars to visually indicate indentation levels
 ;; 'global-auto-revert-mode' - auto sync buffers when they are changed by another program
-;; 'indent-bars-mode' - use tabs instead of spaces
-;; (indent-tabs-mode t)
+(add-hook 'after-change-major-mode-hook
+          (lambda ()
+            (when (derived-mode-p 'yaml-mode)
+              (indent-bars-mode t))))
 (global-auto-revert-mode t)
 (global-display-fill-column-indicator-mode 1)
-(indent-bars-mode -1)
 
+;; Allows you to use keybindings with non English layouts
 (use-package! reverse-im
   :custom
-  ;; Replace with your input method, for example "russian-computer"
+  ;; Replace with your input method, for example "ukrainian-computer"
   (reverse-im-input-methods '("ukrainian-computer"))
   :config
   (reverse-im-mode t))
@@ -146,9 +153,9 @@
 (setq +doom-dashboard-menu-sections
       '(("Recent files" :action recentf-open-files)
         ("Open project" :action projectile-switch-project)
-        ("Last session" :when (my/session-file-exists) :action doom/quickload-session)
-        ("Bookmarks" :action bookmarks-jump)
-        ("Org-agenda" :when (fboundp 'org-agenda) :action org-agenda)))
+        ("Last session" :action doom/quickload-session :when (my/session-file-exists))
+        ("Bookmarks"    :action bookmarks-jump)
+        ("Org-agenda"   :action org-agenda :when (fboundp 'org-agenda))))
 
 (remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-footer)
 
@@ -172,6 +179,26 @@
   ;; Disable size indication in all buffers
   (add-hook 'after-change-major-mode-hook (lambda () (size-indication-mode -1))))
 
+;; 'dirvish' - extends 'dired'
+(after! dirvish
+  (setq dirvish-hide-details t
+        dired-mouse-drag-files t
+        dirvish-mode-line-format '(:left (sort file-time symlink) :right (yank index))
+        ;; Use 'b' + letter
+        dirvish-quick-access-entries
+        '(("h" "~/" "Home")
+          ("t"  "~/.local/share/Trash/" "Trash")
+          ("o" "~/Org" "Org")
+          ("d" "~/Downloads" "Downloads")
+          ("pi" "~/Pictures" "Pictures")
+          ("pr" "~/Projects" "Projects"))))
+
+(use-package! calfw
+  :after org
+  :init
+  (setq cfw:render-line-breaker 'cfw:render-line-breaker-wordwrap)
+  (setq calendar-week-start-day 1))
+
 ;; 'TODO'      - needs to be done
 ;; 'NEXT'      - next one to be considered
 ;; 'STARTED'   - in progress
@@ -186,6 +213,7 @@
 
 (after! org
   (setq org-directory my/org-root-dir
+        org-startup-folded 'content
         ;; Location of .orgids
         org-id-locations-file (concat my/org-root-dir "/.orgids")
         org-agenda-files  (append my/org-personal-dir my/org-work-dir (list "~/Org/inbox.org"))
@@ -216,8 +244,8 @@
   '(org-level-5 :foreground "#d44c3b" :inherit outline-5 :height 1.0125)
   '(org-link    :foreground "#64a2f4"))
 
-;; org-deadline-warning-days
-(setq org-agenda-custom-commands
+(setq org-deadline-warning-days 7
+      org-agenda-custom-commands
       '(("p" "Personal"
          ((agenda "" ((org-agenda-files my/org-personal-dir)))
           (tags-todo "personal" ((org-agenda-overriding-header "Personal Tasks:")))
@@ -271,12 +299,58 @@
                               "#+title: ${title}\n")
            :unnarrowed t))))
 
+(use-package! websocket
+  :after org-roam)
+
+(use-package! org-roam-ui
+  :after org-roam
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
+
 (after! org
   (add-hook 'org-mode-hook (lambda ()
                              (global-display-fill-column-indicator-mode -1)
                              (org-superstar-mode)
                              (org-fancy-priorities-mode)
                              (add-hook 'after-save-hook 'org-babel-tangle nil t))))
+
+;; always open the preview window at the right
+(setq markdown-split-window-direction 'right)
+
+(visual-replace-global-mode 1)
+
+(setq visual-replace-keep-initial-position t
+      visual-replace-default-to-full-scope t)
+
+(after! visual-replace
+  (add-hook 'visual-replace-minibuffer-mode-hook #'visual-replace-toggle-case-fold))
+
+(use-package! drag-stuff
+  ;; Use :defer 't in order to lazy load the package
+  :defer t
+  :init
+  ;; enable in certain modes (optional)
+  (add-hook 'prog-mode-hook #'drag-stuff-mode)
+  (add-hook 'text-mode-hook #'drag-stuff-mode)
+  :config
+  ;; keybindings in evil-visual-state (most useful here)
+  (define-key evil-visual-state-map (kbd "M-j") #'drag-stuff-down)
+  (define-key evil-visual-state-map (kbd "M-k") #'drag-stuff-up)
+
+  ;; optional: enable for normal mode line dragging
+  (define-key evil-normal-state-map (kbd "M-j") #'drag-stuff-down)
+  (define-key evil-normal-state-map (kbd "M-k") #'drag-stuff-up))
+
+(use-package! idle-underline-mode
+  :config
+  (setq idle-underline-idle-time 0.2)
+  :hook (prog-mode . idle-underline-mode))
+
+(after! idle-underline-mode
+  (set-face-attribute 'idle-underline nil :underline t :background nil :inherit nil))
 
 (add-hook 'org-mode-hook
           (lambda ()
@@ -301,33 +375,29 @@
   :config
   (global-colorful-mode +1))
 
-(visual-replace-global-mode 1)
-(setq visual-replace-keep-initial-position t
-      visual-replace-default-to-full-scope t)
+(after! lsp-mode
+  ;; Remove symbol and all usages higlighting
+  (setq lsp-enable-symbol-highlighting nil
+        lsp-code-action-no-header t
+        lsp-code-action-show-menu t)
 
-(after! visual-replace
-  (add-hook 'visual-replace-minibuffer-mode-hook #'visual-replace-toggle-case-fold))
+  ;; Also explicitly remove the highlight hooks
+  (remove-hook 'lsp-mode-hook #'lsp-enable-symbol-highlighting))
 
-(use-package! drag-stuff
-  ;; Use :defer 't in order to lazy load the package
-  :defer t
-  :init
-  ;; enable in certain modes (optional)
-  (add-hook 'prog-mode-hook #'drag-stuff-mode)
-  (add-hook 'text-mode-hook #'drag-stuff-mode)
-  :config
-  ;; keybindings in evil-visual-state (most useful here)
-  (define-key evil-visual-state-map (kbd "M-j") #'drag-stuff-down)
-  (define-key evil-visual-state-map (kbd "M-k") #'drag-stuff-up)
-
-  ;; optional: enable for normal mode line dragging
-  (define-key evil-normal-state-map (kbd "M-j") #'drag-stuff-down)
-  (define-key evil-normal-state-map (kbd "M-k") #'drag-stuff-up))
+(setq-hook! 'python-mode-hook +format-with 'black)
 
 (after! spell-fu
   (setq spell-fu-idle-delay 0.5) ; default is 0.25
-  (setq-default spell-fu-word-regexp "\\b\\([A-Za-z]+\\(['’][A-Za-z]+\\)?\\)\\b"))
+  (setq-default spell-fu-word-regexp "\\b\\([A-Za-z]+\\(['’][A-Za-z]+\\)?\\)\\b")
 
+  (remove-hook 'prog-mode-hook #'spell-fu-mode)
+
+  ;; Enable only in text-like modes
+  (add-hook 'org-mode-hook #'spell-fu-mode)
+  (add-hook 'markdown-mode-hook #'spell-fu-mode)
+  (add-hook 'text-mode-hook #'spell-fu-mode))
+
+;; Dim inactive windows
 (dimmer-configure-org)
 (dimmer-configure-magit)
 (dimmer-configure-which-key)
@@ -335,196 +405,247 @@
 (dimmer-mode t)
 
 (after! web-mode
-  (setq web-mode-markup-indent-offset 2
-        web-mode-css-indent-offset 2
-        web-mode-code-indent-offset 2))
-
-;; (after! flycheck
-;;   (flycheck-add-mode 'javascript-eslint 'js-mode)
-;;   (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
-;;   (flycheck-add-mode 'javascript-eslint 'web-mode))
-
-;; (add-hook 'js-mode-hook #'flycheck-mode)
-;; (add-hook 'rjsx-mode-hook #'flycheck-mode)
-;; (add-hook 'web-mode-hook #'flycheck-mode)
-
-;; (add-hook 'tide-mode-hook #'tide-hl-identifier-mode)
-;; (setq tide-hl-identifier-mode t)
-
-;; (custom-set-faces!
-;; '(tide-hl-identifier-face :underline t :background nil))
-
-
-;; (after! lsp-mode
-;;   (setq lsp-enable-semantic-highlighting nil
-;;         lsp-enable-symbol-highlighting nil
-;;         lsp-semantic-tokens-enable nil))
-
-(after! lsp-mode
-  (setq lsp-enable-symbol-highlighting nil)
-  ;; Also explicitly remove the highlight hooks
-  (remove-hook 'lsp-mode-hook #'lsp-enable-symbol-highlighting))
+  (add-hook 'web-mode-hook
+            (lambda ()
+              ;; Only set defaults if no .editorconfig is active for this buffer
+              (let ((has-editorconfig (and (boundp 'editorconfig-properties-hash)
+                                           editorconfig-properties-hash)))
+                (unless has-editorconfig
+                  (setq web-mode-markup-indent-offset 2
+                        web-mode-css-indent-offset    2
+                        web-mode-code-indent-offset   2))))))
 
 (after! company
+  ;; Core behavior settings
   (setq company-minimum-prefix-length 2
         company-idle-delay 0.1
         company-show-quick-access t
         company-tooltip-limit 20
         company-tooltip-align-annotations t)
 
-  ;; Make company-files a higher priority backend
-  (setq company-backends (cons 'company-files (delete 'company-files company-backends)))
+  ;; Prioritize company-files
+  (setq company-backends (cons 'company-files (delete 'company-files company-backends))
+        company-files-exclusions nil
+        company-files-chop-trailing-slash t)
 
-  ;; Better file path completion settings
-  (setq company-files-exclusions nil)
-  (setq company-files-chop-trailing-slash t)
-
-  ;; Enable completion at point for file paths
-  (defun my/enable-path-completion ()
-    "Enable file path completion using company."
-    (setq-local company-backends
-                (cons 'company-files company-backends)))
-
-  ;; ;; Enable for all major modes
-  (add-hook 'after-change-major-mode-hook #'my/enable-path-completion)
-
-  ;; Custom file path trigger
+  ;; Helper: check if something looks like a file path
   (defun my/looks-like-path-p (input)
-    "Check if INPUT looks like a file path."
-    ;;;;;; Absolute path
-    (or (string-match-p "^/" input)
-        ;; Home directory
-        (string-match-p "^~/" input)
-        ;; Relative path
-        (string-match-p "^\\.\\{1,2\\}/" input)
-        ;; dir/ or similar
-        (string-match-p "^[a-zA-Z0-9._-]+/" input)))
+    "Return t if INPUT looks like a file path."
+    (or (string-match-p "^/" input)              ;; Absolute
+        (string-match-p "^~/" input)             ;; Home dir
+        (string-match-p "^\\.\\{1,2\\}/" input)   ;; ./ ../
+        (string-match-p "^[a-zA-Z0-9._-]+/" input))) ;; relative like foo/bar
 
+  ;; Custom backend that triggers file path completion
   (defun my/company-path-trigger (command &optional arg &rest ignored)
-    "Company backend that triggers file completion for path-like input."
+    "Company backend to trigger file path completion."
     (interactive (list 'interactive))
     (cl-case command
       (interactive (company-begin-backend 'company-files))
-      (prefix (when (my/looks-like-path-p (or (company-grab-line "\\([^ ]*\\)" 1) ""))
-                (company-files 'prefix)))
+      (prefix
+       (let ((grabbed (or (company-grab-symbol) "")))
+         (when (my/looks-like-path-p grabbed)
+           (company-files 'prefix))))
       (t (apply 'company-files command arg ignored))))
 
-  ;; Add the custom path trigger to backends
-  (add-to-list 'company-backends 'my/company-path-trigger))
+  ;; Enable for all major modes, but avoid duplicates
+  (defun my/enable-path-completion ()
+    "Add file path completion trigger if not already present."
+    (setq-local company-backends
+                (cl-remove-duplicates
+                 (cons 'my/company-path-trigger company-backends)
+                 :test #'equal)))
+
+  (add-hook 'after-change-major-mode-hook #'my/enable-path-completion))
 
 (defun +web/indent-or-yas-or-emmet-expand ()
-  "Do-what-I-mean on TAB.
-
-Invokes `indent-for-tab-command' if at or before text bol, `yas-expand' if on a
-snippet, or `emmet-expand-line'."
-  (interactive)
-  (call-interactively
-   (cond ((or (<= (current-column) (current-indentation))
-              (not (eolp))
-              (not (or (memq (char-after) (list ?\n ?\s ?\t))
-                       (eobp))))
-          #'indent-for-tab-command)
-         ((and (modulep! :editor snippets)
-               (require 'yasnippet nil t)
-               (yas--templates-for-key-at-point))
-          #'yas-expand)
-         ;; Always use emmet-expand-line instead of emmet-expand-yas
-         (#'emmet-expand-line))))
-
-;; 'dirvish' - extends 'dired'
-(after! dirvish
-  (setq dirvish-hide-details t
-        dired-mouse-drag-files t
-        dirvish-mode-line-format '(:left (sort file-time symlink) :right (yank index))
-        dirvish-quick-access-entries
-        '(("h" "~/" "Home")
-          ("t"  "~/.local/share/Trash/" "Trashes")
-          ("o" "~/Org" "Org")
-          ("d" "~/Downloads" "Downloads")
-          ("pi" "~/Pictures" "Pictures")
-          ("pr" "~/Projects" "Projects"))))
-
-(defun my/substitute (mode)
+ "Do-what-I-mean on TAB.
+Invokes `indent-for-tab-command' if at or before text bol,
+`yas-expand' if on a snippet, or `emmet-expand-line'."
  (interactive)
-  (save-excursion
-    (let ((original-pos (point))
-          (expression (cond
-                        ((string= mode "global-file-ask") "%s##gc")
-                        ((string= mode "global-file") "%s##g")
-                        ((string= mode "global-line") "s##g")
-                        (t "default"))))
-      ;; Perform the substitution
-      (minibuffer-with-setup-hook
-          (lambda () (backward-char (if (string= mode "global-file-ask") 3 2)))
-        (evil-ex expression))
-      (goto-char original-pos))))
+ (call-interactively
+  (cond
+   ((or (<= (current-column) (current-indentation))
+        (not (eolp))
+        (not (or (memq (char-after) (list ?\n ?\s ?\t))
+                 (eobp))))
+    #'indent-for-tab-command)
+   ((and (modulep! :editor snippets)
+         (require 'yasnippet nil t)
+         (yas--templates-for-key-at-point))
+    #'yas-expand)
+   (t #'emmet-expand-line))))
+
+;; (after! org
+;;   ;; Custom notification using notify-send
+;;   (defun my-appt-send-notification (min-to-app _new-time msg)
+;;     "Send a single desktop notification for Org appointments."
+;;     (call-process "notify-send" nil 0 nil
+;;                   "-u" "critical" ;; Urgency
+;;                   "-t" "600000"   ;; Duration in ms
+;;                   (format "Appointment in %s minutes" min-to-app)
+;;                   msg))
+
+;;   ;; Configure appt for a single early warning
+;;   (setq appt-disp-window-function #'my-appt-send-notification
+;;         appt-message-warning-time 15  ;; Notify 15 min before
+;;         appt-display-interval nil)    ;; No repeats
+
+;;   ;; Refresh function
+;;   (defun my-refresh-appt ()
+;;     "Refresh appointments from Org agenda."
+;;     (setq appt-time-msg-list nil)
+;;     (org-agenda-to-appt))
+
+;;   ;; Activate appt mode
+;;   (appt-activate 1)
+
+;;   ;; Refresh after startup
+;;   (add-hook! 'doom-after-init-hook #'my-refresh-appt)
+
+;;   ;; Refresh after regenerating agenda
+;;   (add-hook 'org-agenda-finalize-hook #'my-refresh-appt)
+
+;;   ;; Refresh hourly to catch new events
+;;   (run-at-time "1 min" 3600 #'my-refresh-appt))
+
+;; (defun my/save-buffer-on-focus-out ()
+;;   "Save current buffer when Emacs frame loses focus."
+;;   (when (and (buffer-file-name)   ; buffer is visiting a file
+;;              (buffer-modified-p)) ; buffer has unsaved changes
+;;     (save-buffer)
+;;     (when (bound-and-true-p evil-local-mode)
+;;       (evil-normal-state))))
+
+;; (add-hook 'focus-out-hook #'my/save-buffer-on-focus-out)
+
+(defun my/set-fill-column-if-unset ()
+  (unless (local-variable-p 'fill-column)
+    (setq fill-column 120)))
+
+(add-hook 'prog-mode-hook #'my/set-fill-column-if-unset)
+(add-hook 'prog-mode-hook #'display-fill-column-indicator-mode)
+
+(defun my/visual-replace-with-query ()
+  "Call visual-replace with query mode enabled for this invocation only."
+  (interactive)
+  (let ((hook (lambda ()
+                (visual-replace-toggle-query)
+                (remove-hook 'minibuffer-setup-hook hook))))
+    (add-hook 'minibuffer-setup-hook hook)
+    (call-interactively #'visual-replace)))
 
 (map! :leader
-      :prefix "r"
-      :desc "Substitute in line" "l" (lambda ()
-                                       (interactive)
-                                       (my/substitute "global-line"))
-      :desc "Substitute in file" "f" (lambda ()
-                                       (interactive)
-                                       (my/substitute "global-file"))
-      :desc "Substitute in file + confirm" "c" (lambda ()
-                                                 (interactive)
-                                                 (my/substitute "global-file-ask")))
+      (:prefix ("r" . "replace")
+       :desc "Replace" "r" #'visual-replace
+       :desc "Replace at point" "p" #'visual-replace-thing-at-point
+       :desc "Replace selected" "s" #'visual-replace-selected
+       :desc "Replace in line" "l" (lambda ()
+                                     (interactive)
+                                     (let ((pos (point)))  ;; save current position
+                                       (goto-char (line-beginning-position))
+                                       (push-mark (line-end-position) t t)
+                                       (call-interactively #'visual-replace)
+                                       (goto-char pos)))
+       :desc "Replace with confirm" "c" #'my/visual-replace-with-query))
+
+(define-key visual-replace-mode-map (kbd "+") visual-replace-secondary-mode-map)
+
+;; Vim text-objects alternative for the lazy
+(after! expand-region
+  (map! :nv "M-e" #'er/expand-region)
+  (map! :leader
+        (:prefix ("e" . "expand")
+         :desc "Mark JS function" "f" #'er/mark-js-function ;; vaf
+         :desc "Mark JS inner return" "r" #'er/mark-js-inner-return ;; vi(
+         :desc "Mark JS outer return" "R" #'er/mark-js-outer-return
+         :desc "Mark JS if" "i" #'er/mark-js-if ;; vaj / vij
+         :desc "Mark JS call" "c" #'er/mark-js-call ;; vaF
+         :desc "Mark JS comment" "C" #'er/mark-comment ;; vac
+         :desc "Mark inside pairs" "B" #'er/mark-inside-pairs ;; viB
+         :desc "Mark paragraph" "p" #'er/mark-paragraph ;; vip
+         :desc "Mark url" "u" #'er/mark-url ;; vau
+         :desc "Mark inside quotes" "q" #'er/mark-inside-quotes ;; vi" / viq
+         :desc "Mark outside quotes" "Q" #'er/mark-outside-quotes ;; va" / vaq
+         :desc "Mark html attribute" "a" #'er/mark-html-attribute
+         :desc "Mark JS object property" "o" #'er/mark-js-object-property ;; vaj / via / vaa / vaA
+         :desc "Mark org code block" "e" #'er/mark-org-code-block))) ;; vae / vie
+;; vaB -- mark outer content in any parentheses
+;; vab -- mark outer content of () parentheses
+;; vac -- mark comment
+;; val -- mark loop ('for' statement)
+;; vaC -- mark class
+;; vag -- whole buffer
+;; vap -- whole paragraph
+;; vaq -- mark any quote (both '' & "")
+;; vat -- mark a tag
+;; vau -- mark an url
+;; vav -- mark confitional expression (like 'if', 'swith' etc.)
+
+(after! org
+  (map! :leader
+        :prefix ("n" . "notes")
+        (:prefix ("r" . "roam")
+         :desc "Open UI graph" "o" #'org-roam-ui-open)))
 
 (map! :leader
-      :prefix "r"
-      :desc "Replace" "r" #'visual-replace
-      :desc "Replace selected" "s" #'visual-replace-selected
-      :desc "Replace at point" "p" #'visual-replace-thing-at-point)
-
-(define-key visual-replace-mode-map (kbd "+")
-              visual-replace-secondary-mode-map)
-
-(map! :leader
-      (:prefix ("t" . "Toggle")
+      (:prefix ("t" . "toggle")
        :desc "Toggle treemacs" "t" #'+treemacs/toggle
-       :desc "Toggle imenu sidebar" "s" #'imenu-list-smart-toggle))
+       :desc "Toggle imenu sidebar" "m" #'imenu-list-smart-toggle))
 
+;; Windows manipulation
+(map! :leader
+      :prefix "w"
+      "M" #'maximize-window
+      "C" #'delete-other-windows
+      "z" #'windresize)
+
+;; Calendar
+(map! :leader
+      (:prefix ("o" . "open")
+       :desc "Open calendar" "c" #'=calendar))
+
+;; Devdocs
  (map! :leader
        :desc "Devdocs lookup" "l" #'devdocs-lookup)
 
-(after! org
-  (map! :map org-mode-map
-        :leader
-        :prefix ("n" . "notes")
-        :desc "Clock In"  "c" #'org-clock-in
-        :desc "Clock Out" "C" #'org-clock-out))
+;; Markdown
+(after! markdown-mode
+  (map! :localleader
+        :mode markdown-mode
+        :desc "Markdown live preview" "l" #'markdown-live-preview-mode))
 
-(map! :leader
-      :prefix "w"
-      "M" #'maximize-window)
+;; Complete file path
+(map! :i "M-p" #'company-files)
 
-(map! :leader
-      :prefix "p"
-      "S" #'projectile-replace)
-
+;; Manage bookmarks
 (map! :leader
       :prefix "b"
       :desc "Bookmark list" "m" #'bookmark-bmenu-list)
 
+;; Manage workspaces
 (map! :leader
       :prefix "TAB"
       :desc "Delete workspace" "k" #'+workspace/kill
       :desc "Delete saved workspace" "K" #'+workspace/delete)
 
+;; Quit Emacs
 (map! :leader
       :prefix "q"
       :desc "Quit Emacs and ask to save" "Q" #'evil-quit-all)
 
+;; Help
 (map! :leader
       :prefix "h"
       :desc "Find text in documentation" "a" #'apropos-documentation
       :desc "Man page" "w" #'+default/man-or-woman)
 
+;; GIT integration
 (map! :leader
       :prefix ("g" . "git")
       :desc "Open file in remote repo" "O" #'+vc/browse-at-remote)
 
+;; Save buffer by pressing C-s
 (after! evil
   (define-key evil-insert-state-map (kbd "C-s")
               (lambda ()
@@ -533,6 +654,7 @@ snippet, or `emmet-expand-line'."
                 (evil-normal-state)))
   (define-key evil-normal-state-map (kbd "C-s") #'save-buffer))
 
+;; Comment lines
 (defun my/comment-line-and-next ()
   "Comment the current line and move to the next."
   (interactive)
@@ -723,9 +845,3 @@ snippet, or `emmet-expand-line'."
   (dotimes (i (length special-chars))
     (let ((key (format "C-S-%c" (aref special-chars i))))
       (map! :leader :prefix "w" key nil))))
-
-(fmakunbound 'woman)
-
-(mapatoms (lambda (sym)
-            (when (string-prefix-p "woman" (symbol-name sym))
-              (fmakunbound sym))))
