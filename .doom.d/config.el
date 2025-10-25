@@ -14,8 +14,8 @@
 ;; ‘font-lock-comment-face’ – for comments.
 ;; ‘font-lock-keyword-face’ – for keywords with special significance like ‘setq’ in elisp.
 
- (setq doom-font (font-spec :family "SauceCodePro Nerd Font Mono" :size 16)
-       doom-variable-pitch-font (font-spec :family "Ubuntu" :size 16)
+ (setq doom-font (font-spec :family "SauceCodePro Nerd Font Mono" :size 17)
+       doom-variable-pitch-font (font-spec :family "Ubuntu" :size 17)
        doom-big-font (font-spec :family "SauceCodePro Nerd Font Mono" :size 20))
 
 ;; Face style to use with comments and keywords
@@ -83,6 +83,11 @@
 
 (after! dirvish
   (dirvish-side-follow-mode 1))
+
+(after! yaml-mode
+  (add-hook 'yaml-mode-hook
+            (lambda ()
+              (apheleia-mode -1))))
 
 ;; Automatically change opened and closed tags.
 ;; 'indent-bars-mode' - shows vertical bars to visually indicate indentation levels
@@ -666,31 +671,14 @@ Invokes `indent-for-tab-command' if at or before text bol,
   (define-key evil-insert-state-map (kbd "C-/") #'my/comment-line-and-next))
 
 ;; SPC
-(map! :leader
-      "'" nil
-      "~" nil
-      "*" nil
-      ";" nil
-      "a" nil
-      "X" nil)
+(map! :leader "'" nil "~" nil "*" nil ";" nil "a" nil "X" nil)
 
 ;; Window
 (map! :leader
       :prefix "w"
-      "C-<up>"    nil
-      "C-<down>"  nil
-      "C-<left>"  nil
-      "C-<right>" nil
-      "<up>"      nil
-      "<down>"    nil
-      "<left>"    nil
-      "<right>"   nil
-      "C-="       nil
-      "C-_"       nil
-      "d"         nil
-      "g"         nil
-      "o"         nil
-      ":"         nil)
+      "C-<up>"    nil "C-<down>"  nil "C-<left>"  nil "C-<right>" nil "<up>"      nil
+      "<down>"    nil "<left>"    nil "<right>"   nil "C-="       nil "C-_"       nil
+      "d"         nil "g"         nil "o"         nil ":"         nil)
 
 ;; Toggle
 (map! :leader
@@ -701,29 +689,12 @@ Invokes `indent-for-tab-command' if at or before text bol,
 (map! :after org
       :map org-mode-map
       :localleader
-      "*" nil
-      "@" nil
-      "a" nil
-      "c" nil
-      "g" nil
-      "n" nil
-      "s" nil
-      "r" nil
-      "P" nil)
+      "*" nil "@" nil "a" nil "c" nil "g" nil "n" nil "s" nil "r" nil "P" nil)
 
 ;; Buffer
 (map! :leader
       :prefix "b"
-      "d" nil
-      "n" nil
-      "p" nil
-      "l" nil
-      "z" nil
-      "M" nil
-      "B" nil
-      "Z" nil
-      "S" nil
-      "C" nil)
+      "d" nil "n" nil "p" nil "l" nil "z" nil "M" nil "B" nil "Z" nil "S" nil "C" nil)
 
 ;; Workspace
 (let ((chars "0123456789")
@@ -734,43 +705,16 @@ Invokes `indent-for-tab-command' if at or before text bol,
 
 (map! :leader
       :prefix "TAB"
-      "`" nil
-      "d" nil
-      "D" nil)
+      "`" nil "d" nil "D" nil)
 
 ;; Help
 (map! :leader
       :prefix "h"
-      "RET"    nil
-      "C-\\"   nil
-      "."      nil
-      "4"      nil
-      "<help>" nil
-      "i"      nil
-      "A"      nil
-      "C"      nil
-      "<f1>"   nil
-      "E"      nil
-      "F"      nil
-      "g"      nil
-      "K"      nil
-      "I"      nil
-      "l"      nil
-      "L"      nil
-      "M"      nil
-      "O"      nil
-      "o"      nil
-      "n"      nil
-      "p"      nil
-      "P"      nil
-      "q"      nil
-      "u"      nil
-      "W"      nil
-      "V"      nil
-      "R"      nil
-      "T"      nil
-      "s"      nil
-      "S"      nil)
+      "RET"    nil "C-\\"   nil "."      nil "4"      nil "<help>" nil "i"      nil
+      "A"      nil "C"      nil "<f1>"   nil "E"      nil "F"      nil "g"      nil
+      "K"      nil "I"      nil "l"      nil "L"      nil "M"      nil "O"      nil
+      "o"      nil "n"      nil "p"      nil "P"      nil "q"      nil "u"      nil
+      "W"      nil "V"      nil "R"      nil "T"      nil "s"      nil "S"      nil)
 
 (map! :leader
       :prefix ("h b" . "bindings")
@@ -781,56 +725,28 @@ Invokes `indent-for-tab-command' if at or before text bol,
 
 (map! :leader
       :prefix ("h d" . "bindings")
-      "b" nil
-      "c" nil
-      "d" nil
-      "l" nil
-      "L" nil
-      "n" nil
-      "p" nil
-      "t" nil
-      "u" nil
-      "x" nil
-      "N" nil
-      "s" nil
-      "S" nil)
+      "b" nil "c" nil "d" nil "l" nil "L" nil "n" nil
+      "p" nil "t" nil "u" nil "x" nil "N" nil "s" nil "S" nil)
 
 ;; Projectile
 (map! :leader
       :prefix "p"
-      "&" nil
-      "f" nil
-      "g" nil
-      "k" nil
-      "o" nil
-      "e" nil)
+      "&" nil "f" nil "g" nil "k" nil "o" nil "e" nil)
 
 ;; GIT
 (map! :leader
       :prefix ("g" . "git")
-      "'" nil
-      "o" nil
-      "c" nil
-      "D" nil
-      "C" nil
-      "l" nil
-      "f" nil)
+      "'" nil "o" nil "c" nil "D" nil "C" nil "l" nil "f" nil)
 
 ;; Insert
 (map! :leader
       :prefix "i"
-      "p" nil
-      "y" nil)
+      "p" nil "y" nil)
 
 ;; File
 (map! :leader
       :prefix "f"
-      "c" nil
-      "d" nil
-      "e" nil
-      "l" nil
-      "p" nil
-      "E" nil)
+      "c" nil "d" nil "e" nil "l" nil "p" nil "E" nil)
 
 (dotimes (i 10)
   (define-key evil-window-map (number-to-string i) nil))
