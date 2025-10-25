@@ -85,5 +85,5 @@ Config {
           ],
         sepChar  = "%",
         alignSep = "}{",
-        template = "   %UnsafeStdinReader% }<action=`alacritty -e calcurse`>%date%</action>{%mpris2%   %default:Master%  B: %brightness%  |  %multicoretemp%  %cpu%  %memory%  |  U: <action=`alacritty -e sudo pacman -Syu`>%pacupdate%</action>  :  %kbd%  :  %battery%"
+        template = "   %UnsafeStdinReader% } %date% {%mpris2%   %default:Master%  B: %brightness%  |  %multicoretemp%  %cpu%  %memory%  |  U: <action=`alacritty -e sudo pacman -Syu`>%pacupdate%</action>  :  %kbd%  :  %battery%"
        }
