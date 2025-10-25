@@ -62,7 +62,7 @@ alias vfind='vim $(find . -type f | fzf)'
 alias fzf='find . -type f | fzf'
 
 # Kubernetes 'kubectl'
-alias kc='kubectl'
+alias k='kubectl'
 
 # Rick Astley
 alias rr='curl -s -L https://raw.githubusercontent.com/keroserene/rickrollrc/master/roll.sh | bash'
