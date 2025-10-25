@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# name: K8S Service
+# key: qservice
+# condition: t
+# --
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${1:my-service}
+spec:
+  selector:
+    app: ${2:my-app}
+  ports:
+    - port: ${4:80}
+      targetPort: ${5:8080}
+  type: ${6:ClusterIP}

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: log
+# key: qlog
+# condition: t
+# --
+
+console.log("$1:", $2)

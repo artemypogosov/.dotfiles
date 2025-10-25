@@ -1,0 +1,29 @@
+# -*- mode: snippet -*-
+# name: K8S Deployment Config
+# key: qdeploy
+# condition: t
+# --
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${1:my-app}
+spec:
+  replicas: ${2:1}
+  selector:
+    matchLabels:
+      app: $1
+  template:
+    metadata:
+      labels:
+        app: $1
+    spec:
+      containers:
+      - name: $1
+        image: ${3:<image-name>}
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "250m"
+        ports:
+        - containerPort: ${4:80}

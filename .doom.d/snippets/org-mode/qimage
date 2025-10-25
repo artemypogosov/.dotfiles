@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: image link
+# key: qimage
+# condition: t
+# --
+
+#+caption: $1
+#+attr_html: :width 750px
+[[$2][$3]]
