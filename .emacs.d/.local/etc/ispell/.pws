@@ -1,9 +1,12 @@
-personal_ws-1.1 en 229
+personal_ws-1.1 en 247
+absofruitly
 adminer
 agda
 alacritty
+allroad
 ansible
 apiserver
+apiversion
 archlinux
 artem
 artemy
@@ -25,11 +28,17 @@ busybox
 cheatsheets
 chmod
 chown
+clusterip
 cmd
 concat
 config
+configmaps
+configs
 containerd
+containerport
 coq
+cpus
+crypto
 csharp
 ctrl
 deamon
@@ -82,6 +91,7 @@ globbing
 gmail
 golang
 graphql
+grouche
 gunzip
 gzip
 hardcoded
@@ -110,12 +120,14 @@ kubectl
 kubelet
 kubernetes
 leatherman
+leica
 leotax
 lifecycle
 lifecycles
 linter
 linters
 lispy
+loadbalancer
 localhost
 loopback
 lowepro
@@ -123,6 +135,7 @@ lsp
 lua
 macos
 magit
+matchlabels
 meghanada
 minikube
 modeline
@@ -139,6 +152,7 @@ nginx
 nicca
 nikkor
 nim
+notcoin
 notmuch
 nvim
 objed
@@ -153,6 +167,7 @@ purescript
 raku
 rebase
 redux
+replicaset
 repls
 repo
 repos
@@ -161,12 +176,14 @@ ricoh
 rmdir
 roadmap
 rolleiflex
+rollout
 rss
 rst
 runc
 rwxrwxrwx
 saucecodepro
 scalable
+sekonic
 setq
 shimano
 sml
@@ -184,6 +201,7 @@ symlink
 symlinks
 systemctl
 systemd
+targetport
 tasing
 taskrunner
 terraform
