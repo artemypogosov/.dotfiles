@@ -5,9 +5,10 @@
 #################
 
 export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
+export LOCAL_BIN="$HOME/.local/bin"
 
 export ZDOTDIR="$HOME/.config/zsh"
 export XMONAD_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/xmonad"
@@ -24,7 +25,7 @@ export MYSQL_HISTFILE=/dev/null
 export XCURSOR_THEME="Adwaita"
 export EDITOR=nvim
 export VISUAL=nvim
-export PATH="$HOME/.emacs.d/bin:$PATH"
+export PATH="$LOCAL_BIN:$HOME/.emacs.d/bin:$PATH"
 
 # Cutefish
 export CF_TITLE=false

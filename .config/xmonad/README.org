@@ -118,7 +118,7 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 #+begin_src haskell
 myStartupHook :: X ()
 myStartupHook = do
-  spawnOnce "$XDG_CONFIG_HOME/scripts/init-us.sh"
+  spawnOnce "$LOCAL_BIN/init-us"
   spawn "$HOME/.dotfiles/other/keyboard-fix.sh"
   setWMName "LG3D"
 #+end_src
@@ -206,7 +206,7 @@ myKeys c = mkNamedKeymap c $
   , ("M-f f",                  addName "Launch myFileManager"      $ spawn (myFileManager))]
 
   ^++^ -- System
-  [ ("M-<Space>",              addName "Switch keyboard layout" $ spawn "$XDG_CONFIG_HOME/scripts/layout-switcher.sh")
+  [ ("M-<Space>",              addName "Switch keyboard layout" $ spawn "$LOCAL_BIN/layout-switcher")
   , ("M-<End>",                addName "Zzz..."                 $ spawn "systemctl suspend")
 
   , ("M-<Escape>",             addName "Lock screen"            $ spawn "betterlockscreen --lock dimblur --display 2") --display 2)
@@ -224,7 +224,7 @@ myKeys c = mkNamedKeymap c $
 
   ^++^ -- Multimedia
   [ ("<XF86AudioMute>",        addName "Mute audio"   $ spawn "amixer set Master toggle")
-  , ("<XF86AudioMicMute>",     addName "Mute mic"     $ spawn "$XDG_CONFIG_HOME/scripts/toggle-mic.sh")
+  , ("<XF86AudioMicMute>",     addName "Mute mic"     $ spawn "$LOCAL_BIN/toggle-mic")
   , ("<XF86AudioLowerVolume>", addName "Lower volume" $ spawn "amixer -q sset Master 5%-")
   , ("<XF86AudioRaiseVolume>", addName "Raise volume" $ spawn "amixer -q sset Master 5%+")
 
