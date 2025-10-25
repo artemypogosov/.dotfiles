@@ -27,7 +27,7 @@ fi
 bind "set completion-ignore-case on"
 
 # -- Aliases
-alias ls='ls --color=auto --hyperlink=auto "$@"'
+alias ls='ls --color=auto'
 alias ll='ls -la'
 alias ls.="ls -A | grep '^\.'"
 alias grep='grep --color=auto'
@@ -45,10 +45,6 @@ alias psgrep="ps aux | grep -v grep | grep -i -e VSZ -e"
 
 # Add new fonts
 alias update-fc='sudo fc-cache -fv'
-
-# Switch between bash and zsh
-alias tobash="sudo chsh $USER -s /bin/bash && echo 'Now log out.'"
-alias tozsh="sudo chsh $USER -s /bin/zsh && echo 'Now log out.'"
 
 # Hardware info --short
 alias hw="hwinfo --short"
