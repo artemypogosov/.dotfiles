@@ -6,7 +6,6 @@ betterlockscreen
 bitwarden
 blueman
 brightnessctl
-calcurse
 cronie
 darktable
 docker
