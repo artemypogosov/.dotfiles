@@ -44,6 +44,7 @@ noto-fonts-emoji
 npm
 openvpn
 p7zip
+pavucontrol
 pcmanfm
 pulseaudio-alsa
 qbittorrent

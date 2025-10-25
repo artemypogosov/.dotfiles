@@ -119,7 +119,7 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 myStartupHook :: X ()
 myStartupHook = do
   spawnOnce "$LOCAL_BIN/init-us"
-  spawn "$HOME/.dotfiles/other/keyboard-fix.sh"
+  spawn "$LOCAL_BIN/keyboard-fix"
   setWMName "LG3D"
 #+end_src
 

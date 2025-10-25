@@ -7,4 +7,3 @@ gruvbox-material-icon-theme-git
 htim
 otf-font-awesome-5
 picom-ftlabs-git
-pavucontrol-gtk2
