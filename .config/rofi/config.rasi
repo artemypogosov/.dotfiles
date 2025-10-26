@@ -9,16 +9,21 @@ configuration {
     matching: "prefix";
 }
 timeout {
-      action: "kb-cancel";
-      delay:  0;
+    action: "kb-cancel";
+    delay:  0;
  }
+
 filebrowser {
-      directories-first: true;
-      sorting-method:    "name";
+    directories-first: true;
+    sorting-method:    "name";
 }
 
 @theme "/usr/share/rofi/themes/gruvbox-dark.rasi"
 
+window {
+    width: 33%;
+}
+
 listview {
-	  lines: 5;
+    lines: 5;
 }
