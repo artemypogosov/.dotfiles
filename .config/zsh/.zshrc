@@ -5,8 +5,6 @@ fi
 
 ~/.local/bin/cutefetch random
 
-#export LC_TIME="en_US.UTF-8"
-
 ###############
 ### ALIASES ###
 ###############
