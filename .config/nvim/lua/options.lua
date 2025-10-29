@@ -11,7 +11,7 @@ g.have_nerd_font = true
 
 -- Make line numbers default
 o.number = true
-o.relativenumber = false
+o.relativenumber = true
 
 -- Do not move between lines when cursor at the start/end of the line
 opt.whichwrap = "<,>,[,],b,s"
