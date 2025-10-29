@@ -560,7 +560,7 @@ Invokes `indent-for-tab-command' if at or before text bol,
 (after! expand-region
   (map! :nv "M-e" #'er/expand-region)
   (map! :leader
-        (:prefix ("e" . "expand")
+        (:prefix ("e" . "expand-region")
          :desc "Mark JS function" "f" #'er/mark-js-function ;; vaf
          :desc "Mark JS inner return" "r" #'er/mark-js-inner-return ;; vi(
          :desc "Mark JS outer return" "R" #'er/mark-js-outer-return
