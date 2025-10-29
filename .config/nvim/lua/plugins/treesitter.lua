@@ -1,3 +1,11 @@
+---@diagnostic disable [missing-fields]
+
+-- Treesitter - parser generator.
+-- Neovim has syntax color by default using regexp.
+-- But treesitter parse file with a real syntax tree of the specific language.
+-- Thanks to this we can easily select the whole blocks like 'function' of 'class'
+-- Treesitter also can manage code-folding.
+
 return {
   "nvim-treesitter/nvim-treesitter",
   event = "VeryLazy",
@@ -50,7 +58,8 @@ return {
       incremental_selection = {
         enable = true,
         keymaps = {
-          init_selection = "<Enter>", -- set to `false` to disable one of the mappings
+          -- Set to `false` to disable one of the mappings
+          init_selection = "<Enter>",
           node_incremental = "<Enter>",
           scope_incremental = false,
           node_decremental = "<Backspace>",
@@ -59,5 +68,3 @@ return {
     })
   end,
 }
-
--- treesitter also can manage code-folding

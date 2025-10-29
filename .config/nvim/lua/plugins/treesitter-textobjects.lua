@@ -1,3 +1,5 @@
+---@diagnostic disable [missing-fields]
+
 return {
   "nvim-treesitter/nvim-treesitter-textobjects",
   dependencies = {
@@ -20,6 +22,19 @@ return {
 
             -- Comments (only if your grammar supports it)
             ["ao"] = { query = "@comment.outer", desc = "Comment (outer)" },
+            ["io"] = { query = "@comment.inner", desc = "Comment (inner)" },
+
+            -- Attribute
+            ["aa"] = { query = "@attribute.outer", desc = "Attribute (outer)" },
+            ["ia"] = { query = "@attribute.inner", desc = "Attribute (inner)" },
+
+            -- Block
+            ["ab"] = { query = "@block.outer", desc = "Block (outer)" },
+            ["ib"] = { query = "@block.inner", desc = "Block (inner)" },
+
+            -- Block
+            ["ar"] = { query = "@return.outer", desc = "Return (outer)" },
+            ["ir"] = { query = "@return.inner", desc = "Return (inner)" },
 
             -- Custom/local scopes
             ["as"] = {
@@ -39,10 +54,10 @@ return {
         swap = {
           enable = true,
           swap_next = {
-            ["<leader>n"] = { query = "@parameter.inner", desc = "Swap with next parameter" },
+            ["<A-n>"] = { query = "@parameter.inner", desc = "Swap with next parameter" },
           },
           swap_previous = {
-            ["<leader>N"] = { query = "@parameter.inner", desc = "Swap with previous parameter" },
+            ["<A-N>"] = { query = "@parameter.inner", desc = "Swap with previous parameter" },
           },
         },
       },
