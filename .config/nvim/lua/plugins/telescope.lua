@@ -81,8 +81,8 @@ return {
             -- Highlight group used for the path in the picker, default is "String"
             path_hl = "String",
             layout_config = {
-              width = 0.4,
-              height = 0.3,
+              width = 0.8,
+              height = 0.8,
             },
           },
         },

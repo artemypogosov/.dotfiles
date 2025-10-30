@@ -1,10 +1,12 @@
 ---@diagnostic disable [missing-fields]
 
+-- LSP - Language Server Protocol
+-- :LspInfo - get info about current LSP status
+
 local telescope = require("telescope.builtin")
 
 return {
   "neovim/nvim-lspconfig",
-  event = { "BufReadPre", "BufNewFile" },
   dependencies = {
     -- Automatically install LSPs and related tools to stdpath for Neovim
     -- Mason must be loaded before its dependents so we need to set it up here.
@@ -91,6 +93,8 @@ return {
           telescope.diagnostics({ bufnr = 0 })
         end, "[C]urrent buffer [D]iagnostics")
 
+        -- There is also a vim.diagnostics.open_float() function if you need it
+
         -- Show workspace diagnostics
         map("<leader>cH", telescope.diagnostics, "[S]show [W]orkspace [D]diagnostics")
 
@@ -125,14 +129,7 @@ return {
         -- code, if the language server you are using supports them
         --
         -- This may be unwanted, since they displace some of your code
-        if
-          client
-          and client_supports_method(
-            client,
-            vim.lsp.protocol.Methods.textDocument_inlayHint,
-            event.buf
-          )
-        then
+        if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
           map("<leader>th", function()
             vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
           end, "[T]oggle Inlay [H]ints")
@@ -229,25 +226,27 @@ return {
     --
     -- You can add other tools here that you want Mason to install
     -- for you, so that they are available from within Neovim.
+
     local ensure_installed = vim.tbl_keys(servers or {})
     vim.list_extend(ensure_installed, {
       "stylua", -- Used to format Lua code
       "prettierd", -- JS formatter daemon
       "prettier", -- JS formatter
+      "shfmt", -- sh, bash, zsh formatter
+      "beautysh",
     })
     require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
     require("mason-lspconfig").setup({
       ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-      automatic_installation = false,
+      automatic_installation = true,
       handlers = {
         function(server_name)
           local server = servers[server_name] or {}
           -- This handles overriding only values explicitly passed
           -- by the server configuration above. Useful when disabling
           -- certain features of an LSP (for example, turning off formatting for ts_ls)
-          server.capabilities =
-            vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+          server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
           require("lspconfig")[server_name].setup(server)
         end,
       },

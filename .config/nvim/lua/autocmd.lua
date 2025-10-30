@@ -11,10 +11,19 @@ vim.api.nvim_create_autocmd("FocusLost", {
   command = "silent! update", -- Saves only if there are changes
 })
 
--- Use Ctrl+n to switch buffers (tabs)
+-- Use Alt+n to switch buffers (tabs)
 for i = 1, 9 do
   vim.keymap.set("n", string.format("<A-%s>", i), function()
-    vim.cmd(i .. "tabnext")
+    local tab_count = vim.fn.tabpagenr("$")
+    if i <= tab_count then
+      vim.cmd(i .. "tabnext")
+    else
+      vim.notify(
+        string.format("Tab %d does not exist (only %d open)", i, tab_count),
+        vim.log.levels.WARN,
+        { title = "Tabs" }
+      )
+    end
   end, { desc = "Go to tab " .. i })
 end
 

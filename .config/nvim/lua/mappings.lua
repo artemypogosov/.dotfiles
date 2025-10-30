@@ -45,22 +45,49 @@ end
 local function find_recent_files()
   telescope.oldfiles({
     previewer = false,
-    layout_config = { width = 0.6, height = 0.3 },
+    layout_config = { width = 80, height = 15 },
   })
 end
 
 local function switch_project()
   telescope_global.extensions.workspaces.workspaces({
     layout_config = {
-      width = 0.355,
-      height = 0.27,
+      width = 80,
+      height = 15,
       prompt_position = "top",
     },
   })
 end
 
+-- Detect Git root manually
+local function find_git_root()
+  local cwd = vim.loop.cwd()
+  local ok, result = pcall(vim.fn.systemlist, "git -C " .. vim.fn.shellescape(cwd) .. " rev-parse --show-toplevel")
+  if ok and result and result[1] and result[1] ~= "" then
+    return result[1]
+  end
+end
+
+-- Detect LSP root using Neovim 0.10+ API
+local function get_lsp_root()
+  local buf = vim.api.nvim_get_current_buf()
+  local clients = vim.lsp.get_clients({ bufnr = buf })
+  for _, client in ipairs(clients) do
+    if client.config and client.config.root_dir then
+      return client.config.root_dir
+    end
+  end
+end
+
+-- Smart project root detector
+local function get_root()
+  return find_git_root() or get_lsp_root() or vim.loop.cwd()
+end
+
 local function search_project()
   telescope.live_grep({
+    cwd = get_root(),
+    prompt_title = "Live Grep (" .. get_root() .. ")",
     additional_args = function()
       return { "--hidden", "--glob", "!.git/*" }
     end,
@@ -71,6 +98,13 @@ local function delete_recent_files()
   local answer = vim.fn.input("Clear recent files? (yes/no): ")
   if answer:lower() == "yes" then
     vim.cmd("!rm ~/.local/state/nvim/shada/main.shada")
+  end
+end
+
+local function delete_scratch_files()
+  local answer = vim.fn.input("Delete all scratch files? (yes/no): ")
+  if answer:lower() == "yes" then
+    vim.cmd("!rm ~/.local/share/nvim/scratch/*")
   end
 end
 
@@ -127,7 +161,6 @@ wk.add({
   { "<leader>pp", switch_project, desc = "Switch project", mode = "n" },
   { "<leader>pl", execute_command("WorkspacesList"), desc = "List workspaces", mode = "n" },
   { "<leader>pL", execute_command("WorkspacesListDirs"), desc = "List projects' dirs", mode = "n" },
-
   { "<leader>pa", prefill_command("WorkspacesAdd"), desc = "Add project", mode = "n" },
   { "<leader>pA", prefill_command("WorkspacesAddDir"), desc = "Add project dir", mode = "n" },
   { "<leader>pr", prefill_command("WorkspacesRename"), desc = "Rename project", mode = "n" },
@@ -157,9 +190,9 @@ wk.add({
   { "<leader>wc", "<C-w>c", desc = "Close", mode = "n" },
   { "<leader>wC", "<C-w>o", desc = "Close other windows", mode = "n" },
 
-  { "<leader>wm", execute_command("MaximizerToggle"), desc = "Maximize window", mode = "n" },
-  { "<leader>wih", execute_command("resize 40"), desc = "Increase height", mode = "n" },
-  { "<leader>wiw", execute_command("vertical resize 150"), desc = "Increase width", mode = "n" },
+  { "<leader>wM", execute_command("MaximizerToggle"), desc = "Maximize window", mode = "n" },
+  { "<leader>wmh", execute_command("resize 40"), desc = "Increase height", mode = "n" },
+  { "<leader>wmw", execute_command("vertical resize 150"), desc = "Increase width", mode = "n" },
   { "<leader>w=", "<C-w>=", desc = "=", mode = "n" },
 
   --------------
@@ -175,6 +208,7 @@ wk.add({
     desc = "Point file in structure",
     mode = "n",
   },
+  { "<leader>tT", ToggleBackground, desc = "Toggle dark/light theme", mode = "n" },
   { "<leader>tz", execute_command("ZenMode"), desc = "Zen mode", mode = "n" },
 
   ------------------
@@ -188,9 +222,9 @@ wk.add({
   { "<leader><Tab>[", execute_command("tabNext"), desc = "Prev workspace", mode = "n" },
   { "<leader><Tab>r", prefill_command("LualineRenameTab"), desc = "Rename workspace", mode = "n" },
 
-  --------------
-  --- BUFFER ---
-  --------------
+  ---------------
+  --- BUFFERS ---
+  ---------------
   { "<leader>b", group = "buffer" },
 
   {
@@ -213,8 +247,17 @@ wk.add({
   { "<leader>b[", execute_command("bprev"), desc = "Prev buffer", mode = "n" }, -- shift + tab,
   { "<leader>bk", execute_command("bd"), desc = "Kill buffer", mode = "n" },
 
-  { "<leader>bD", execute_command("%bd|e#"), desc = "Kill all buffers except current", mode = "n" },
+  { "<leader>bO", execute_command("%bd|e#"), desc = "Kill all buffers except current", mode = "n" },
   { "<leader>bK", kill_all_buffers, desc = "Kill all buffers", mode = "n" },
+
+  { "<leader>bx", execute_command("lua Snacks.scratch()"), desc = "New scratch", mode = "n" },
+  { "<leader>bZ", delete_scratch_files, desc = "Delete all scratch files", mode = "n" },
+  {
+    "<leader>bX",
+    execute_command("lua Snacks.scratch.select()"),
+    desc = "Select scratch",
+    mode = "n",
+  },
 
   --------------
   --- SEARCH ---
@@ -233,6 +276,13 @@ wk.add({
     desc = "Search in buffer",
     mode = "n",
   },
+
+  {
+    "<leader>sB",
+    execute_command("Telescope live_grep grep_open_files=true"),
+    desc = "Seach all open buffers",
+    mode = "n",
+  },
   { "<leader>sp", search_project, desc = "Search in project", mode = "n" },
 
   -----------
@@ -247,7 +297,6 @@ wk.add({
     desc = "File log",
     mode = "n",
   },
-
   { "<leader>gg", execute_command("Neogit kind=replace"), desc = "Git status", mode = "n" },
   { "<leader>gL", execute_command("Neogit log"), desc = "Neogit: log", mode = "n" },
   { "<leader>gB", execute_command("Neogit branch"), desc = "Neogit: switch branch", mode = "n" },
@@ -304,19 +353,10 @@ wk.add({
   -------------
   --- OTHER ---
   -------------
-  { "<leader>tT", ToggleBackground, desc = "Toggle dark/light theme", mode = "n" },
   { "<C-s>", "<cmd>w<CR>", desc = "Save current buffer [n]", mode = "n" },
   { "<C-s>", "<Esc><cmd>w<CR>", desc = "Save current buffer [i]", mode = "i" },
   { "<C-c>", "<cmd>%y+<CR>", desc = "Copy entire buffer", mode = "n" },
   { "<Esc>", "<cmd>noh<CR>", desc = "Clean seach highlights", mode = "n" },
-
-  { "<leader>bx", execute_command("lua Snacks.scratch()"), desc = "New scratch", mode = "n" },
-  {
-    "<leader>bX",
-    execute_command("lua Snacks.scratch.select()"),
-    desc = "Select scratch",
-    mode = "n",
-  },
 })
 
 -- Map ZZ to ConfirmQuit (saves and quits with confirmation)
