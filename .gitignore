@@ -4,3 +4,4 @@ build-x86_64-linux
 xmonad-x86_64-linux
 xmonad.errors
 .config/ranger/colorschemes/__pycache__/
+.config/ranger/plugins/__pycache__/
