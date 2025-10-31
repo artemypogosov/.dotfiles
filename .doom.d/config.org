@@ -715,6 +715,34 @@ Invokes `indent-for-tab-command' if at or before text bol,
         (:prefix ("r" . "roam")
          :desc "Open UI graph" "o" #'org-roam-ui-open)))
 #+end_src
+*** magit
+#+begin_src elisp
+(map! :leader
+      (:prefix ("g" . "git")
+       :desc "Git log (current branch)" "z" #'magit-log-current))
+#+end_src
+*** bookmarks
+#+begin_src elisp
+(map! :leader
+      (:prefix ("o" . "open")
+       :desc "Bookmark manager" "m" #'list-bookmarks))
+#+end_src
+*** devdocs
+#+begin_src elisp
+ (map! :leader
+      (:prefix ("d" . "devdocs")
+       :desc "Devdocs: install" "+" #'devdocs-install
+       :desc "Devdocs: delete" "-" #'devdocs-delete
+       :desc "Devdocs: lookup" "l" #'devdocs-lookup
+       :desc "Devdocs: read main page" "p" #'devdocs-peruse
+       :desc "Devdocs: search on the site" "s" #'devdocs-search
+       :desc "Devdocs: update all docs" "u" #'devdocs-update-all))
+#+end_src
+*** TODO TODO/FIXME etc. keywords management
+#+begin_src elisp
+;; TODO: Map hl-todo-grep  / hl-todo-occur
+
+#+end_src
 *** Toggle
 #+begin_src elisp
 (map! :leader
@@ -736,9 +764,6 @@ Invokes `indent-for-tab-command' if at or before text bol,
       (:prefix ("o" . "open")
        :desc "Open calendar" "c" #'=calendar))
 
-;; Devdocs
- (map! :leader
-       :desc "Devdocs lookup" "l" #'devdocs-lookup)
 
 ;; Markdown
 (after! markdown-mode
@@ -748,11 +773,6 @@ Invokes `indent-for-tab-command' if at or before text bol,
 
 ;; Complete file path
 (map! :i "M-p" #'company-files)
-
-;; Manage bookmarks
-(map! :leader
-      :prefix "b"
-      :desc "Bookmark list" "m" #'bookmark-bmenu-list)
 
 ;; Manage workspaces
 (map! :leader
@@ -800,7 +820,7 @@ Invokes `indent-for-tab-command' if at or before text bol,
 ** Removed
 #+begin_src elisp
 ;; SPC
-(map! :leader "'" nil "~" nil "*" nil ";" nil "a" nil "X" nil)
+(map! :leader "'" nil "~" nil "*" nil ";" nil "a" nil "X" nil ":" nil "x" nil "u" nil)
 
 ;; Window
 (map! :leader
@@ -823,7 +843,7 @@ Invokes `indent-for-tab-command' if at or before text bol,
 ;; Buffer
 (map! :leader
       :prefix "b"
-      "d" nil "n" nil "p" nil "l" nil "z" nil "M" nil "B" nil "Z" nil "S" nil "C" nil)
+      "d" nil "n" nil "p" nil "l" nil "z" nil "m" nil "M" nil "B" nil "Z" nil "S" nil "C" nil)
 
 ;; Workspace
 (let ((chars "0123456789")

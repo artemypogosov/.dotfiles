@@ -594,6 +594,25 @@ Invokes `indent-for-tab-command' if at or before text bol,
          :desc "Open UI graph" "o" #'org-roam-ui-open)))
 
 (map! :leader
+      (:prefix ("g" . "git")
+       :desc "Git log (current branch)" "z" #'magit-log-current))
+
+(map! :leader
+      (:prefix ("o" . "open")
+       :desc "Bookmark manager" "m" #'list-bookmarks))
+
+(map! :leader
+     (:prefix ("d" . "devdocs")
+      :desc "Devdocs: install" "+" #'devdocs-install
+      :desc "Devdocs: delete" "-" #'devdocs-delete
+      :desc "Devdocs: lookup" "l" #'devdocs-lookup
+      :desc "Devdocs: read main page" "p" #'devdocs-peruse
+      :desc "Devdocs: search on the site" "s" #'devdocs-search
+      :desc "Devdocs: update all docs" "u" #'devdocs-update-all))
+
+;; TODO: Map hl-todo-grep  / hl-todo-occur
+
+(map! :leader
       (:prefix ("t" . "toggle")
        :desc "Toggle treemacs" "t" #'+treemacs/toggle
        :desc "Toggle imenu sidebar" "m" #'imenu-list-smart-toggle))
@@ -610,9 +629,6 @@ Invokes `indent-for-tab-command' if at or before text bol,
       (:prefix ("o" . "open")
        :desc "Open calendar" "c" #'=calendar))
 
-;; Devdocs
- (map! :leader
-       :desc "Devdocs lookup" "l" #'devdocs-lookup)
 
 ;; Markdown
 (after! markdown-mode
@@ -622,11 +638,6 @@ Invokes `indent-for-tab-command' if at or before text bol,
 
 ;; Complete file path
 (map! :i "M-p" #'company-files)
-
-;; Manage bookmarks
-(map! :leader
-      :prefix "b"
-      :desc "Bookmark list" "m" #'bookmark-bmenu-list)
 
 ;; Manage workspaces
 (map! :leader
@@ -671,7 +682,7 @@ Invokes `indent-for-tab-command' if at or before text bol,
   (define-key evil-insert-state-map (kbd "C-/") #'my/comment-line-and-next))
 
 ;; SPC
-(map! :leader "'" nil "~" nil "*" nil ";" nil "a" nil "X" nil)
+(map! :leader "'" nil "~" nil "*" nil ";" nil "a" nil "X" nil ":" nil "x" nil "u" nil)
 
 ;; Window
 (map! :leader
@@ -694,7 +705,7 @@ Invokes `indent-for-tab-command' if at or before text bol,
 ;; Buffer
 (map! :leader
       :prefix "b"
-      "d" nil "n" nil "p" nil "l" nil "z" nil "M" nil "B" nil "Z" nil "S" nil "C" nil)
+      "d" nil "n" nil "p" nil "l" nil "z" nil "m" nil "M" nil "B" nil "Z" nil "S" nil "C" nil)
 
 ;; Workspace
 (let ((chars "0123456789")
