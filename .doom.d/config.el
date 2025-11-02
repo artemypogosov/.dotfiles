@@ -610,7 +610,10 @@ Invokes `indent-for-tab-command' if at or before text bol,
       :desc "Devdocs: search on the site" "s" #'devdocs-search
       :desc "Devdocs: update all docs" "u" #'devdocs-update-all))
 
-;; TODO: Map hl-todo-grep  / hl-todo-occur
+(map! :leader
+      (:prefix ("s" . "search")
+       :desc "Search TODO" "." #'hl-todo-occur
+       :desc "Search TODO from dir" "," #'hl-todo-rgrep))
 
 (map! :leader
       (:prefix ("t" . "toggle")
