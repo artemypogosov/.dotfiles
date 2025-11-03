@@ -353,6 +353,12 @@ wk.add({
   -------------
   --- OTHER ---
   -------------
+
+  { "<M-j>", "<cmd>m .+1<CR>==", desc = "Move line down [n]", mode = "n" },
+  { "<M-k>", "<cmd>m .-2<CR>==", desc = "Move line up [n]", mode = "n" },
+  { "<M-j>", ":m '>+1<CR>gv=gv", desc = "Move selection down [v]", mode = "v" },
+  { "<M-k>", ":m '<-2<CR>gv=gv", desc = "Move selection up [v]", mode = "v" },
+
   { "<C-s>", "<cmd>w<CR>", desc = "Save current buffer [n]", mode = "n" },
   { "<C-s>", "<Esc><cmd>w<CR>", desc = "Save current buffer [i]", mode = "i" },
   { "<C-c>", "<cmd>%y+<CR>", desc = "Copy entire buffer", mode = "n" },
