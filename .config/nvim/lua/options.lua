@@ -62,7 +62,7 @@ opt.smartcase = true
 -- Verical inform column left to the line numbers
 opt.signcolumn = "yes"
 
--- Windows splitting stratage
+-- Windows splitting strategy
 opt.splitright = true
 opt.splitbelow = true
 

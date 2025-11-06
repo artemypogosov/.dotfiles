@@ -15,6 +15,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- Neovim options [options.lua]
 require("options")
 
 -- Setup lazy.nvim
@@ -30,5 +31,8 @@ require("lazy").setup({
   checker = { enabled = true, notify = false },
 })
 
+-- Neovim mappings [mappings.lua]
 require("mappings")
+
+-- Neovim autocmd [autocmd.lua]
 require("autocmd")
