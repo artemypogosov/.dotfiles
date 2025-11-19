@@ -1,9 +1,9 @@
 # Xsession start script
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 export USERXSESSION="$XDG_CACHE_HOME/X11/xsession"
 export USERXSESSIONRC="$XDG_CACHE_HOME/X11/xsessionrc"
 export ALTUSERXSESSION="$XDG_CACHE_HOME/X11/Xsession"
 export ERRFILE="$XDG_CACHE_HOME/X11/xsession-errors"
-
 
 # Cursor active at boot
 xsetroot -cursor_name left_ptr &
@@ -13,6 +13,9 @@ setxkbmap -option caps:escape &
 
 # Increase typing rate
 xset r rate 400 50 &
+
+# Enable 'Touch to click' on laptop [Thinkpad T470p]
+xinput set-prop "SynPS/2 Synaptics TouchPad" "libinput Tapping Enabled" 1 &
 
 # Starting applications at boot time
 killall trayer &
