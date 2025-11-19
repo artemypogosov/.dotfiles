@@ -68,7 +68,7 @@ ueberzug
 unclutter
 unzip
 upower
-vimiv
+vimiv-qt
 virtualbox
 vlc
 whois

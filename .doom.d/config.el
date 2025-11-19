@@ -33,7 +33,8 @@
 (setq doom-theme 'doom-gruvbox)
 
 (after! doom-themes
-  (setq doom-themes-enable-bold t
+  ;; Disable bold font in every mode (in ORG->'Headings style' section bold is added)
+  (setq doom-themes-enable-bold nil
         doom-themes-enable-italic t))
 
 ;; 'undo-limit' 80000000 - raise undo-limit to 80Mb
@@ -74,20 +75,34 @@
 ;; 'fill-column' - display vertical limit line
 (setq-default fill-column 120)
 
+;; Enable auto-closing tags in web-mode (like html files)
 (after! web-mode
   (require 'sgml-mode)
   (add-hook 'web-mode-hook #'sgml-electric-tag-pair-mode))
 
+;; Enable file's follow mode in dirvish and treemacs side bars
 (after! treemacs
   (treemacs-follow-mode 1))
 
 (after! dirvish
   (dirvish-side-follow-mode 1))
 
+;; Update dired buffer after some changes
+(add-hook 'dired-mode-hook #'auto-revert-mode)
+
+;; Disable code formatter in yaml
 (after! yaml-mode
   (add-hook 'yaml-mode-hook
             (lambda ()
               (apheleia-mode -1))))
+
+;; Highlight treiling spaces
+;; (after! prog-mode
+;;   (setq show-trailing-whitespace t)
+;;   (set-face-attribute 'trailing-whitespace nil
+;;                       :background "#3c3836"
+;;                       :foreground "#fb4934"
+;;                       :weight 'normal))
 
 ;; Automatically change opened and closed tags.
 ;; 'indent-bars-mode' - shows vertical bars to visually indicate indentation levels
@@ -103,7 +118,7 @@
 (use-package! reverse-im
   :custom
   ;; Replace with your input method, for example "ukrainian-computer"
-  (reverse-im-input-methods '("ukrainian-computer"))
+  (reverse-im-input-methods '("ukrainian-computer" "russian-computer"))
   :config
   (reverse-im-mode t))
 
@@ -242,11 +257,11 @@
         org-hide-emphasis-markers t))
 
 (custom-set-faces!
-  '(org-level-1 :foreground "#83a598" :inherit outline-1 :height 1.2)
-  '(org-level-2 :foreground "#e7ab36" :inherit outline-2 :height 1.1)
-  '(org-level-3 :foreground "#9e7edf" :inherit outline-3 :height 1.05)
-  '(org-level-4 :foreground "#5e8b4d" :inherit outline-4 :height 1.025)
-  '(org-level-5 :foreground "#d44c3b" :inherit outline-5 :height 1.0125)
+  '(org-level-1 :foreground "#83a598" :inherit outline-1 :height 1.2    :weight bold)
+  '(org-level-2 :foreground "#e7ab36" :inherit outline-2 :height 1.1    :weight bold)
+  '(org-level-3 :foreground "#9e7edf" :inherit outline-3 :height 1.05   :weight bold)
+  '(org-level-4 :foreground "#5e8b4d" :inherit outline-4 :height 1.025  :weight bold)
+  '(org-level-5 :foreground "#d44c3b" :inherit outline-5 :height 1.0125 :weight bold)
   '(org-link    :foreground "#64a2f4"))
 
 (setq org-deadline-warning-days 7
@@ -532,11 +547,12 @@ Invokes `indent-for-tab-command' if at or before text bol,
 (add-hook 'prog-mode-hook #'display-fill-column-indicator-mode)
 
 (defun my/visual-replace-with-query ()
-  "Call visual-replace with query mode enabled for this invocation only."
+  "Call visual-replace with query mode for this invocation only."
   (interactive)
-  (let ((hook (lambda ()
-                (visual-replace-toggle-query)
-                (remove-hook 'minibuffer-setup-hook hook))))
+  (let (hook) ;; declare hook first
+    (setq hook (lambda ()
+                 (visual-replace-toggle-query)
+                 (remove-hook 'minibuffer-setup-hook hook)))
     (add-hook 'minibuffer-setup-hook hook)
     (call-interactively #'visual-replace)))
 
