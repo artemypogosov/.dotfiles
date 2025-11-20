@@ -117,16 +117,16 @@ myManageHook = composeAll . concat $
     , [className =? c --> doCenterFloat | c <- myCFloats]
     , [title     =? t --> doFloat       | t <- myTFloats]
     , [resource  =? i --> doIgnore      | i <- myIgnores]
---  , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo "web"   | x <- my1Shifts]
+    , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo "web"   | x <- my1Shifts]
     , [namedScratchpadManageHook myScratchPads]]
   where
---    doShiftAndGo = doF . liftM2 (.) W.greedyView W.shift
+    doShiftAndGo = doF . liftM2 (.) W.greedyView W.shift
     myCFloats = ["confirm", "file_progress", "download", "error", "notification"
                , "toolbar", "Oracle VM VirtualBox Manager", "jetbrains-idea"
                , "Arandr", "Galculator"]
     myTFloats = ["Downloads", "Save As..."]
     myIgnores = ["desktop_window"]
- -- my1Shifts = ["Google-chrome", "qutebrowser"]
+    my1Shifts = ["Google-chrome", "qutebrowser"]
 
 -- If fewer than two windows. So a single window has no gaps.
 mySpacing :: Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
@@ -181,7 +181,7 @@ myKeys c = mkNamedKeymap c $
 
   ^++^ -- Doom Emacs
   [ ("M-d d",                  addName "Emacsclient"         $ spawn (myEmacs))
-  , ("M-d f",                  addName "Emacsclient Dired"   $ spawn (myEmacs ++ ("--eval '(dired \"~\")'")))
+  , ("M-d f",                  addName "Emacsclient Dired"   $ spawn (myEmacs ++ ("-n -c -e '(my/open-home-dired)'")))
   , ("M-d v",                  addName "Emacsclient Vterm"   $ spawn (myEmacs ++ ("--eval '(+vterm/here nil)'")))]
 
   ^++^ -- Screenshot

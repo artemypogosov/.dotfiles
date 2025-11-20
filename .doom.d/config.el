@@ -199,6 +199,28 @@
   ;; Disable size indication in all buffers
   (add-hook 'after-change-major-mode-hook (lambda () (size-indication-mode -1))))
 
+(defun my/open-home-dired ()
+  (interactive)
+  (dired "~"))
+
+(after! dired
+  (require 'dired-x)
+
+  ;; Hide dotfiles by default
+  (add-hook 'dired-mode-hook #'dired-omit-mode)
+
+  ;; Hide dotfiles when omit mode is ON
+  (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
+
+  ;; Override Evil so Backspace toggles omit mode
+  (map! :map dired-mode-map
+        :n "DEL" #'dired-omit-mode
+        :n "<backspace>" #'dired-omit-mode)
+
+  (map! :map dirvish-mode-map
+        :n "DEL" #'dired-omit-mode
+        :n "<backspace>" #'dired-omit-mode))
+
 ;; 'dirvish' - extends 'dired'
 (after! dirvish
   (setq dirvish-hide-details t
