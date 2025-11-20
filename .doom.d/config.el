@@ -48,7 +48,6 @@
 ;; 'global-auto-revert-non-file-buffers' - enables Auto Reverting for all types of buffers
 ;; 'evil-snipe-scope' - scope of evil-snipe search
 ;; 'imenu-list-focus-after-activation' - focus imenu-list side window after it was toggled
-;; 'company-idle-delay' - code completion delay; nil - off code completion; use C-SPC for manual completion
 (setq
  undo-limit 80000000
  evil-want-fine-undo t
@@ -68,49 +67,16 @@
  imenu-list-focus-after-activation t)
 
 ;; 'setq' vs 'setq-default'
-;; 'setq' - use it to set a value with a global vars
-;; 'setq-default' - use it to set a 'buffer-local' vars
-;; To check if the var is buffer-local: S-K --> 'fill-column' is a buffer-local variable.
+;; Use 'setq' for non-buffer-local variables
+;; (variables that are truly global)
+;; Use 'setq-default' for buffer-local variables
+;; Buffer local variables have a default value.
+;; So all buffers inherit the default value.
 
 ;; 'fill-column' - display vertical limit line
 (setq-default fill-column 120)
 
-;; Enable auto-closing tags in web-mode (like html files)
-(after! web-mode
-  (require 'sgml-mode)
-  (add-hook 'web-mode-hook #'sgml-electric-tag-pair-mode))
-
-;; Enable file's follow mode in dirvish and treemacs side bars
-(after! treemacs
-  (treemacs-follow-mode 1))
-
-(after! dirvish
-  (dirvish-side-follow-mode 1))
-
-;; Update dired buffer after some changes
-(add-hook 'dired-mode-hook #'auto-revert-mode)
-
-;; Disable code formatter in yaml
-(after! yaml-mode
-  (add-hook 'yaml-mode-hook
-            (lambda ()
-              (apheleia-mode -1))))
-
-;; Highlight treiling spaces
-;; (after! prog-mode
-;;   (setq show-trailing-whitespace t)
-;;   (set-face-attribute 'trailing-whitespace nil
-;;                       :background "#3c3836"
-;;                       :foreground "#fb4934"
-;;                       :weight 'normal))
-
-;; Automatically change opened and closed tags.
-;; 'indent-bars-mode' - shows vertical bars to visually indicate indentation levels
-;; 'global-auto-revert-mode' - auto sync buffers when they are changed by another program
-(add-hook 'after-change-major-mode-hook
-          (lambda ()
-            (when (derived-mode-p 'yaml-mode)
-              (indent-bars-mode t))))
+;; 'global-auto-revert-mode' - auto sync buffers when they are changed by other process
 (global-auto-revert-mode t)
 (global-display-fill-column-indicator-mode 1)
 
@@ -199,9 +165,16 @@
   ;; Disable size indication in all buffers
   (add-hook 'after-change-major-mode-hook (lambda () (size-indication-mode -1))))
 
+;; Enable file's follow mode in dirvish and treemacs side bars
+(after! treemacs
+  (treemacs-follow-mode 1))
+
 (defun my/open-home-dired ()
   (interactive)
   (dired "~"))
+
+;; Update dired buffer after some changes
+(add-hook 'dired-mode-hook #'auto-revert-mode)
 
 (after! dired
   (require 'dired-x)
@@ -223,6 +196,7 @@
 
 ;; 'dirvish' - extends 'dired'
 (after! dirvish
+  (dirvish-side-follow-mode 1)
   (setq dirvish-hide-details t
         dired-mouse-drag-files t
         dirvish-mode-line-format '(:left (sort file-time symlink) :right (yank index))
@@ -235,11 +209,17 @@
           ("pi" "~/Pictures" "Pictures")
           ("pr" "~/Projects" "Projects"))))
 
-(use-package! calfw
-  :after org
-  :init
-  (setq cfw:render-line-breaker 'cfw:render-line-breaker-wordwrap)
-  (setq calendar-week-start-day 1))
+;; Enable auto-closing tags in web-mode (like html files)
+(after! web-mode
+  (require 'sgml-mode)
+  (add-hook 'web-mode-hook #'sgml-electric-tag-pair-mode))
+
+(after! org
+  (use-package! calfw
+    :init
+    (setq cfw:render-line-breaker #'cfw:render-line-breaker-wordwrap
+          cfw:display-calendar-holidays nil
+          calendar-week-start-day 1)))
 
 ;; 'TODO'      - needs to be done
 ;; 'NEXT'      - next one to be considered
@@ -428,6 +408,12 @@
 
 (setq-hook! 'python-mode-hook +format-with 'black)
 
+;; Disable code formatter in yaml
+(after! yaml-mode
+  (add-hook 'yaml-mode-hook
+            (lambda ()
+              (apheleia-mode -1))))
+
 (after! spell-fu
   (setq spell-fu-idle-delay 0.5) ; default is 0.25
   (setq-default spell-fu-word-regexp "\\b\\([A-Za-z]+\\(['’][A-Za-z]+\\)?\\)\\b")
@@ -456,6 +442,12 @@
                   (setq web-mode-markup-indent-offset 2
                         web-mode-css-indent-offset    2
                         web-mode-code-indent-offset   2))))))
+
+;; 'indent-bars-mode' - shows vertical bars to visually indicate indentation levels
+(add-hook 'after-change-major-mode-hook
+          (lambda ()
+            (when (derived-mode-p 'yaml-mode)
+              (indent-bars-mode t))))
 
 (after! company
   ;; Core behavior settings
