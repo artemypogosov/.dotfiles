@@ -181,8 +181,7 @@ myKeys c = mkNamedKeymap c $
 
   ^++^ -- Doom Emacs
   [ ("M-d d",                  addName "Emacsclient"         $ spawn (myEmacs))
-  , ("M-d f",                  addName "Emacsclient Dired"   $ spawn (myEmacs ++ ("-n -c -e '(my/open-home-dired)'")))
-  , ("M-d v",                  addName "Emacsclient Vterm"   $ spawn (myEmacs ++ ("--eval '(+vterm/here nil)'")))]
+  , ("M-d f",                  addName "Emacsclient Dired"   $ spawn (myEmacs ++ ("-n -c -e '(my/open-home-dired)'")))]
 
   ^++^ -- Screenshot
   [ ("<Print>",                addName "Flameshot GUI"                  $ spawn "flameshot gui")
