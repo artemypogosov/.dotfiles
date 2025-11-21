@@ -145,7 +145,7 @@ myMirror = renamed [Replace "mirror tall"]
   $ Mirror myTall
 
 myGrid = renamed [Replace "grid"]
-  $ mySpacing 5
+  $ mySpacing 15
   $ limitWindows 4
   $ Grid
 
