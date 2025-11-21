@@ -98,6 +98,7 @@ myStartupHook :: X ()
 myStartupHook = do
   spawnOnce "$LOCAL_BIN/init-us"
   spawn "$LOCAL_BIN/keyboard-fix"
+  spawn "$LOCAL_BIN/touchpad-fix"
   setWMName "LG3D"
 
 myScratchPads :: [NamedScratchpad]
