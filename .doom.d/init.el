@@ -49,7 +49,7 @@
        (format +onsave)    ; automated prettiness
        rotate-text         ; cycle region at point between text candidates (inversion: true -> false etc)
        snippets            ; my elves. They type so I don't have to
-       word-wrap           ; soft wrapping with language-aware indent
+       ;; word-wrap        ; soft wrapping with language-aware indent
        ;;lispy             ; vim for lisp, for people who don't like vim
        ;;parinfer          ; turn lisp into python, sort of
 

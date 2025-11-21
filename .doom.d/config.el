@@ -76,17 +76,17 @@
 ;; 'fill-column' - display vertical limit line
 (setq-default fill-column 120)
 
+(defun my/set-fill-column-if-unset ()
+  (unless (local-variable-p 'fill-column)
+    (setq-default fill-column 120)))
+
+(add-hook! prog-mode
+  (my/set-fill-column-if-unset)
+  (display-fill-column-indicator-mode))
+
 ;; 'global-auto-revert-mode' - auto sync buffers when they are changed by other process
 (global-auto-revert-mode t)
 (global-display-fill-column-indicator-mode 1)
-
-;; Allows you to use keybindings with non English layouts
-(use-package! reverse-im
-  :custom
-  ;; Replace with your input method, for example "ukrainian-computer"
-  (reverse-im-input-methods '("ukrainian-computer" "russian-computer"))
-  :config
-  (reverse-im-mode t))
 
 (defun my/generate-dashboard ()
   (let* ((art '(" ⠀⠀⠀⠀⠀⠀⠀⢠⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡄⠀⠀⠀⠀⠀⠀⠀ "
@@ -163,7 +163,7 @@
   (column-number-mode -1)
   (line-number-mode -1)
   ;; Disable size indication in all buffers
-  (add-hook 'after-change-major-mode-hook (lambda () (size-indication-mode -1))))
+  (add-hook! after-change-major-mode (size-indication-mode -1)))
 
 ;; Enable file's follow mode in dirvish and treemacs side bars
 (after! treemacs
@@ -173,14 +173,11 @@
   (interactive)
   (dired "~"))
 
-;; Update dired buffer after some changes
-(add-hook 'dired-mode-hook #'auto-revert-mode)
-
 (after! dired
   (require 'dired-x)
 
-  ;; Hide dotfiles by default
-  (add-hook 'dired-mode-hook #'dired-omit-mode)
+  ;; Hide dotfiles by default & update dired buffer after some changes
+  (add-hook! dired-mode (dired-omit-mode) (auto-revert-mode))
 
   ;; Hide dotfiles when omit mode is ON
   (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
@@ -208,18 +205,6 @@
           ("d" "~/Downloads" "Downloads")
           ("pi" "~/Pictures" "Pictures")
           ("pr" "~/Projects" "Projects"))))
-
-;; Enable auto-closing tags in web-mode (like html files)
-(after! web-mode
-  (require 'sgml-mode)
-  (add-hook 'web-mode-hook #'sgml-electric-tag-pair-mode))
-
-(after! org
-  (use-package! calfw
-    :init
-    (setq cfw:render-line-breaker #'cfw:render-line-breaker-wordwrap
-          cfw:display-calendar-holidays nil
-          calendar-week-start-day 1)))
 
 ;; 'TODO'      - needs to be done
 ;; 'NEXT'      - next one to be considered
@@ -333,54 +318,85 @@
         org-roam-ui-open-on-start t))
 
 (after! org
-  (add-hook 'org-mode-hook (lambda ()
-                             (global-display-fill-column-indicator-mode -1)
-                             (org-superstar-mode)
-                             (org-fancy-priorities-mode)
-                             (add-hook 'after-save-hook 'org-babel-tangle nil t))))
+  (add-hook! org-mode
+    (global-display-fill-column-indicator-mode -1)
+    (org-superstar-mode)
+    (org-fancy-priorities-mode)
+    (add-hook! after-save :local (org-babel-tangle))))
+
+(after! org
+  (use-package! calfw
+    :init
+    (setq cfw:render-line-breaker #'cfw:render-line-breaker-wordwrap
+          cfw:display-calendar-holidays nil
+          calendar-week-start-day 1)))
 
 ;; always open the preview window at the right
 (setq markdown-split-window-direction 'right)
 
-(visual-replace-global-mode 1)
+(after! web-mode
+  ;; Enable auto-closing tags in web-mode (like html files)
+  (require 'sgml-mode)
+  ;; Identation
+  (add-hook! web-mode
+    (sgml-electric-tag-pair-mode)
+    ;; Only set defaults if no .editorconfig is active for this buffer
+    (let ((has-editorconfig (and (boundp 'editorconfig-properties-hash)
+                                 editorconfig-properties-hash)))
+      (unless has-editorconfig
+        (setq-local web-mode-markup-indent-offset 2
+                    web-mode-css-indent-offset    2
+                    web-mode-code-indent-offset   2)))))
 
-(setq visual-replace-keep-initial-position t
-      visual-replace-default-to-full-scope t)
+;; EMMET (html, css)
+(defun +web/indent-or-yas-or-emmet-expand ()
+  "Do-what-I-mean on TAB.
+   Invokes `indent-for-tab-command' if at or before text bol,
+  `yas-expand' if on a snippet, or `emmet-expand-line'."
+  (interactive)
+  (call-interactively
+   (cond
+    ((or (<= (current-column) (current-indentation))
+         (not (eolp))
+         (not (or (memq (char-after) (list ?\n ?\s ?\t))
+                  (eobp))))
+     #'indent-for-tab-command)
+    ((and (modulep! :editor snippets)
+          (require 'yasnippet nil t)
+          (yas--templates-for-key-at-point))
+     #'yas-expand)
+    (t #'emmet-expand-line))))
 
-(after! visual-replace
-  (add-hook 'visual-replace-minibuffer-mode-hook #'visual-replace-toggle-case-fold))
+;; 'indent-bars-mode' - shows vertical bars to visually indicate indentation levels
+(add-hook! after-change-major-mode
+  (when (derived-mode-p 'yaml-mode)
+    (indent-bars-mode t)))
 
-(use-package! drag-stuff
-  ;; Use :defer 't in order to lazy load the package
-  :defer t
-  :init
-  ;; enable in certain modes (optional)
-  (add-hook 'prog-mode-hook #'drag-stuff-mode)
-  (add-hook 'text-mode-hook #'drag-stuff-mode)
-  :config
-  ;; keybindings in evil-visual-state (most useful here)
-  (define-key evil-visual-state-map (kbd "M-j") #'drag-stuff-down)
-  (define-key evil-visual-state-map (kbd "M-k") #'drag-stuff-up)
+(after! lsp-mode
+  ;; Remove symbol and all usages higlighting
+  (setq lsp-enable-symbol-highlighting nil
+        lsp-code-action-no-header t
+        lsp-code-action-show-menu t)
 
-  ;; optional: enable for normal mode line dragging
-  (define-key evil-normal-state-map (kbd "M-j") #'drag-stuff-down)
-  (define-key evil-normal-state-map (kbd "M-k") #'drag-stuff-up))
+  ;; Also explicitly remove the highlight hooks
+  (remove-hook 'lsp-mode-hook #'lsp-enable-symbol-highlighting))
 
-(use-package! idle-underline-mode
-  :config
-  (setq idle-underline-idle-time 0.2)
-  :hook (prog-mode . idle-underline-mode))
+(setq-hook! 'python-mode-hook +format-with 'black)
 
-(after! idle-underline-mode
-  (set-face-attribute 'idle-underline nil :underline t :background nil :inherit nil))
+;; Disable code formatter in yaml
+(after! yaml-mode
+  (add-hook! yaml-mode (apheleia-mode -1)))
 
-(add-hook 'org-mode-hook
-          (lambda ()
-            (setq prettify-symbols-alist '(("#+begin_src"   . "»")
-                                           ("#+end_src"     . "«")
-                                           ("#+begin_quote" . "❝")
-                                           ("#+end_quote"   . "❞")))
-            (prettify-symbols-mode 1)))
+(after! spell-fu
+  (setq spell-fu-idle-delay 0.5) ; default is 0.25
+  (setq-default spell-fu-word-regexp "\\b\\([A-Za-z]+\\(['’][A-Za-z]+\\)?\\)\\b")
+
+  (remove-hook 'prog-mode-hook #'spell-fu-mode)
+
+  ;; Enable only in text-like modes
+  (add-hook! org-mode (spell-fu-mode))
+  (add-hook! markdown-mode (spell-fu-mode))
+  (add-hook! text-mode (spell-fu-mode)))
 
 ;; 'rainbow-mode' - default mode for highlighting colors in Doom Emacs
 (remove-hook 'prog-mode-hook #'rainbow-mode)
@@ -397,33 +413,46 @@
   :config
   (global-colorful-mode +1))
 
-(after! lsp-mode
-  ;; Remove symbol and all usages higlighting
-  (setq lsp-enable-symbol-highlighting nil
-        lsp-code-action-no-header t
-        lsp-code-action-show-menu t)
+(add-hook! org-mode
+  (setq prettify-symbols-alist '(("#+begin_src"   . "»")
+                                 ("#+end_src"     . "«")
+                                 ("#+begin_quote" . "❝")
+                                 ("#+end_quote"   . "❞")))
+  (prettify-symbols-mode 1))
 
-  ;; Also explicitly remove the highlight hooks
-  (remove-hook 'lsp-mode-hook #'lsp-enable-symbol-highlighting))
+(use-package! idle-underline-mode
+  :hook (prog-mode . idle-underline-mode)
+  :init
+  (setq idle-underline-idle-time 0.2))
 
-(setq-hook! 'python-mode-hook +format-with 'black)
+(after! idle-underline-mode
+  (set-face-attribute 'idle-underline nil
+                      :underline t
+                      :background 'unspecified
+                      :inherit nil))
 
-;; Disable code formatter in yaml
-(after! yaml-mode
-  (add-hook 'yaml-mode-hook
-            (lambda ()
-              (apheleia-mode -1))))
+(visual-replace-global-mode 1)
 
-(after! spell-fu
-  (setq spell-fu-idle-delay 0.5) ; default is 0.25
-  (setq-default spell-fu-word-regexp "\\b\\([A-Za-z]+\\(['’][A-Za-z]+\\)?\\)\\b")
+(setq visual-replace-keep-initial-position t
+      visual-replace-default-to-full-scope t)
 
-  (remove-hook 'prog-mode-hook #'spell-fu-mode)
+(after! visual-replace
+  (add-hook! visual-replace-minibuffer-mode (visual-replace-toggle-case-fold)))
 
-  ;; Enable only in text-like modes
-  (add-hook 'org-mode-hook #'spell-fu-mode)
-  (add-hook 'markdown-mode-hook #'spell-fu-mode)
-  (add-hook 'text-mode-hook #'spell-fu-mode))
+(use-package! drag-stuff
+  ;; Use :defer 't in order to lazy load the package
+  :defer t
+  :init
+  ;; Enable in certain modes (optional)
+  (add-hook! (prog-mode text-mode) (drag-stuff-mode))
+  :config
+  ;; Keybindings in evil-visual-state (most useful here)
+  (define-key evil-visual-state-map (kbd "M-j") #'drag-stuff-down)
+  (define-key evil-visual-state-map (kbd "M-k") #'drag-stuff-up)
+
+  ;; Optional: enable for normal mode line dragging
+  (define-key evil-normal-state-map (kbd "M-j") #'drag-stuff-down)
+  (define-key evil-normal-state-map (kbd "M-k") #'drag-stuff-up))
 
 ;; Dim inactive windows
 (dimmer-configure-org)
@@ -432,27 +461,18 @@
 (dimmer-configure-company-box)
 (dimmer-mode t)
 
-(after! web-mode
-  (add-hook 'web-mode-hook
-            (lambda ()
-              ;; Only set defaults if no .editorconfig is active for this buffer
-              (let ((has-editorconfig (and (boundp 'editorconfig-properties-hash)
-                                           editorconfig-properties-hash)))
-                (unless has-editorconfig
-                  (setq web-mode-markup-indent-offset 2
-                        web-mode-css-indent-offset    2
-                        web-mode-code-indent-offset   2))))))
-
-;; 'indent-bars-mode' - shows vertical bars to visually indicate indentation levels
-(add-hook 'after-change-major-mode-hook
-          (lambda ()
-            (when (derived-mode-p 'yaml-mode)
-              (indent-bars-mode t))))
+;; Allows you to use keybindings with non English layouts
+(use-package! reverse-im
+  :custom
+  ;; Replace with your input method, for example "ukrainian-computer"
+  (reverse-im-input-methods '("ukrainian-computer" "russian-computer"))
+  :config
+  (reverse-im-mode t))
 
 (after! company
   ;; Core behavior settings
   (setq company-minimum-prefix-length 2
-        company-idle-delay 0.1
+        company-idle-delay 0.2
         company-show-quick-access t
         company-tooltip-limit 20
         company-tooltip-align-annotations t)
@@ -490,84 +510,36 @@
                  (cons 'my/company-path-trigger company-backends)
                  :test #'equal)))
 
-  (add-hook 'after-change-major-mode-hook #'my/enable-path-completion))
+  (add-hook! after-change-major-mode (my/enable-path-completion)))
 
-(defun +web/indent-or-yas-or-emmet-expand ()
- "Do-what-I-mean on TAB.
-Invokes `indent-for-tab-command' if at or before text bol,
-`yas-expand' if on a snippet, or `emmet-expand-line'."
- (interactive)
- (call-interactively
-  (cond
-   ((or (<= (current-column) (current-indentation))
-        (not (eolp))
-        (not (or (memq (char-after) (list ?\n ?\s ?\t))
-                 (eobp))))
-    #'indent-for-tab-command)
-   ((and (modulep! :editor snippets)
-         (require 'yasnippet nil t)
-         (yas--templates-for-key-at-point))
-    #'yas-expand)
-   (t #'emmet-expand-line))))
+;; "ID of the last appt notification so it can be updated instead of duplicated."
+(defvar my/appt-notification-id nil)
 
-;; (after! org
-;;   ;; Custom notification using notify-send
-;;   (defun my-appt-send-notification (min-to-app _new-time msg)
-;;     "Send a single desktop notification for Org appointments."
-;;     (call-process "notify-send" nil 0 nil
-;;                   "-u" "critical" ;; Urgency
-;;                   "-t" "600000"   ;; Duration in ms
-;;                   (format "Appointment in %s minutes" min-to-app)
-;;                   msg))
+(after! appt
+  (setq appt-message-warning-time 10
+        appt-display-interval 1)
 
-;;   ;; Configure appt for a single early warning
-;;   (setq appt-disp-window-function #'my-appt-send-notification
-;;         appt-message-warning-time 15  ;; Notify 15 min before
-;;         appt-display-interval nil)    ;; No repeats
+  (require 'notifications)
 
-;;   ;; Refresh function
-;;   (defun my-refresh-appt ()
-;;     "Refresh appointments from Org agenda."
-;;     (setq appt-time-msg-list nil)
-;;     (org-agenda-to-appt))
+  (setq appt-disp-window-function
+        (lambda (remaining _new-time msg)
+          (setq my/appt-notification-id
+                (notifications-notify
+                 :title (format "In %s minutes" remaining)
+                 :body msg
+                 :urgency 'normal
+                 :replaces-id my/appt-notification-id))))
 
-;;   ;; Activate appt mode
-;;   (appt-activate 1)
-
-;;   ;; Refresh after startup
-;;   (add-hook! 'doom-after-init-hook #'my-refresh-appt)
-
-;;   ;; Refresh after regenerating agenda
-;;   (add-hook 'org-agenda-finalize-hook #'my-refresh-appt)
-
-;;   ;; Refresh hourly to catch new events
-;;   (run-at-time "1 min" 3600 #'my-refresh-appt))
-
-;; (defun my/save-buffer-on-focus-out ()
-;;   "Save current buffer when Emacs frame loses focus."
-;;   (when (and (buffer-file-name)   ; buffer is visiting a file
-;;              (buffer-modified-p)) ; buffer has unsaved changes
-;;     (save-buffer)
-;;     (when (bound-and-true-p evil-local-mode)
-;;       (evil-normal-state))))
-
-;; (add-hook 'focus-out-hook #'my/save-buffer-on-focus-out)
-
-(defun my/set-fill-column-if-unset ()
-  (unless (local-variable-p 'fill-column)
-    (setq fill-column 120)))
-
-(add-hook 'prog-mode-hook #'my/set-fill-column-if-unset)
-(add-hook 'prog-mode-hook #'display-fill-column-indicator-mode)
+  (advice-add 'appt-check :before #'org-agenda-to-appt)
+  (appt-activate t))
 
 (defun my/visual-replace-with-query ()
   "Call visual-replace with query mode for this invocation only."
   (interactive)
   (let (hook) ;; declare hook first
-    (setq hook (lambda ()
-                 (visual-replace-toggle-query)
-                 (remove-hook 'minibuffer-setup-hook hook)))
-    (add-hook 'minibuffer-setup-hook hook)
+    (add-hook! minibuffer-setup
+      (visual-replace-toggle-query)
+      (remove-hook 'minibuffer-setup-hook hook))
     (call-interactively #'visual-replace)))
 
 (map! :leader
@@ -605,17 +577,6 @@ Invokes `indent-for-tab-command' if at or before text bol,
          :desc "Mark html attribute" "a" #'er/mark-html-attribute
          :desc "Mark JS object property" "o" #'er/mark-js-object-property ;; vaj / via / vaa / vaA
          :desc "Mark org code block" "e" #'er/mark-org-code-block))) ;; vae / vie
-;; vaB -- mark outer content in any parentheses
-;; vab -- mark outer content of () parentheses
-;; vac -- mark comment
-;; val -- mark loop ('for' statement)
-;; vaC -- mark class
-;; vag -- whole buffer
-;; vap -- whole paragraph
-;; vaq -- mark any quote (both '' & "")
-;; vat -- mark a tag
-;; vau -- mark an url
-;; vav -- mark confitional expression (like 'if', 'swith' etc.)
 
 (after! org
   (map! :leader
@@ -624,8 +585,13 @@ Invokes `indent-for-tab-command' if at or before text bol,
          :desc "Open UI graph" "o" #'org-roam-ui-open)))
 
 (map! :leader
-      (:prefix ("g" . "git")
-       :desc "Git log (current branch)" "z" #'magit-log-current))
+      :prefix ("g" . "git")
+      :desc "Open file in remote repo" "O" #'+vc/browse-at-remote)
+
+(map! :leader
+      (:prefix ("s" . "search")
+       :desc "Search TODO" "." #'hl-todo-occur
+       :desc "Search TODO from dir" "," #'hl-todo-rgrep))
 
 (map! :leader
       (:prefix ("o" . "open")
@@ -633,17 +599,12 @@ Invokes `indent-for-tab-command' if at or before text bol,
 
 (map! :leader
      (:prefix ("d" . "devdocs")
-      :desc "Devdocs: install" "+" #'devdocs-install
-      :desc "Devdocs: delete" "-" #'devdocs-delete
-      :desc "Devdocs: lookup" "l" #'devdocs-lookup
-      :desc "Devdocs: read main page" "p" #'devdocs-peruse
-      :desc "Devdocs: search on the site" "s" #'devdocs-search
-      :desc "Devdocs: update all docs" "u" #'devdocs-update-all))
-
-(map! :leader
-      (:prefix ("s" . "search")
-       :desc "Search TODO" "." #'hl-todo-occur
-       :desc "Search TODO from dir" "," #'hl-todo-rgrep))
+      :desc "Install" "+" #'devdocs-install
+      :desc "Delete" "-" #'devdocs-delete
+      :desc "Lookup" "l" #'devdocs-lookup
+      :desc "Select docs" "L" #'devdocs-peruse
+      :desc "Search on the site" "s" #'devdocs-search
+      :desc "Update all docs" "u" #'devdocs-update-all))
 
 (map! :leader
       (:prefix ("t" . "toggle")
@@ -661,7 +622,6 @@ Invokes `indent-for-tab-command' if at or before text bol,
 (map! :leader
       (:prefix ("o" . "open")
        :desc "Open calendar" "c" #'=calendar))
-
 
 ;; Markdown
 (after! markdown-mode
@@ -689,11 +649,6 @@ Invokes `indent-for-tab-command' if at or before text bol,
       :desc "Find text in documentation" "a" #'apropos-documentation
       :desc "Man page" "w" #'+default/man-or-woman)
 
-;; GIT integration
-(map! :leader
-      :prefix ("g" . "git")
-      :desc "Open file in remote repo" "O" #'+vc/browse-at-remote)
-
 ;; Save buffer by pressing C-s
 (after! evil
   (define-key evil-insert-state-map (kbd "C-s")
@@ -718,27 +673,19 @@ Invokes `indent-for-tab-command' if at or before text bol,
 (map! :leader "'" nil "~" nil "*" nil ";" nil "a" nil "X" nil ":" nil "x" nil "u" nil)
 
 ;; Window
-(map! :leader
-      :prefix "w"
-      "C-<up>"    nil "C-<down>"  nil "C-<left>"  nil "C-<right>" nil "<up>"      nil
-      "<down>"    nil "<left>"    nil "<right>"   nil "C-="       nil "C-_"       nil
-      "d"         nil "g"         nil "o"         nil ":"         nil)
+(map! :leader :prefix "w"
+      "C-<up>"  nil "C-<down>"  nil "C-<left>"  nil "C-<right>" nil "<up>"  nil
+      "<down>"  nil "<left>"    nil "<right>"   nil "C-="       nil "C-_"   nil
+      "d"       nil "g"         nil "o"         nil ":"         nil)
 
 ;; Toggle
-(map! :leader
-      :prefix "t"
-      "d" nil)
+(map! :leader :prefix "t" "d" nil)
 
 ;; Org-mode
-(map! :after org
-      :map org-mode-map
-      :localleader
-      "*" nil "@" nil "a" nil "c" nil "g" nil "n" nil "s" nil "r" nil "P" nil)
+(map! :after org :map org-mode-map :localleader "*" nil "@" nil "a" nil "c" nil "g" nil "n" nil "s" nil "r" nil "P" nil)
 
 ;; Buffer
-(map! :leader
-      :prefix "b"
-      "d" nil "n" nil "p" nil "l" nil "z" nil "m" nil "M" nil "B" nil "Z" nil "S" nil "C" nil)
+(map! :leader :prefix "b" "d" nil "n" nil "p" nil "l" nil "z" nil "m" nil "M" nil "B" nil "Z" nil "S" nil "C" nil)
 
 ;; Workspace
 (let ((chars "0123456789")
@@ -747,53 +694,35 @@ Invokes `indent-for-tab-command' if at or before text bol,
     (let ((key (format "%c" (aref chars i))))
       (map! :leader :prefix "TAB" key nil))))
 
-(map! :leader
-      :prefix "TAB"
-      "`" nil "d" nil "D" nil)
+(map! :leader :prefix "TAB" "`" nil "d" nil "D" nil)
 
 ;; Help
-(map! :leader
-      :prefix "h"
+(map! :leader :prefix "h"
       "RET"    nil "C-\\"   nil "."      nil "4"      nil "<help>" nil "i"      nil
       "A"      nil "C"      nil "<f1>"   nil "E"      nil "F"      nil "g"      nil
       "K"      nil "I"      nil "l"      nil "L"      nil "M"      nil "O"      nil
       "o"      nil "n"      nil "p"      nil "P"      nil "q"      nil "u"      nil
       "W"      nil "V"      nil "R"      nil "T"      nil "s"      nil "S"      nil)
 
-(map! :leader
-      :prefix ("h b" . "bindings")
-      "f" nil
-      "k" nil
-      "t" nil
-      "m" nil)
+(map! :leader :prefix ("h b" . "bindings") "f" nil "k" nil "t" nil "m" nil)
 
-(map! :leader
-      :prefix ("h d" . "bindings")
+(map! :leader :prefix ("h d" . "bindings")
       "b" nil "c" nil "d" nil "l" nil "L" nil "n" nil
       "p" nil "t" nil "u" nil "x" nil "N" nil "s" nil "S" nil)
 
 ;; Projectile
-(map! :leader
-      :prefix "p"
-      "&" nil "f" nil "g" nil "k" nil "o" nil "e" nil)
+(map! :leader :prefix "p" "&" nil "f" nil "g" nil "k" nil "o" nil "e" nil)
 
 ;; GIT
-(map! :leader
-      :prefix ("g" . "git")
-      "'" nil "o" nil "c" nil "D" nil "C" nil "l" nil "f" nil)
+(map! :leader :prefix ("g" . "git") "'" nil "o" nil "c" nil "D" nil "C" nil "l" nil "f" nil)
 
 ;; Insert
-(map! :leader
-      :prefix "i"
-      "p" nil "y" nil)
+(map! :leader :prefix "i" "p" nil "y" nil)
 
 ;; File
-(map! :leader
-      :prefix "f"
-      "c" nil "d" nil "e" nil "l" nil "p" nil "E" nil)
+(map! :leader :prefix "f" "c" nil "d" nil "e" nil "l" nil "p" nil "E" nil)
 
-(dotimes (i 10)
-  (define-key evil-window-map (number-to-string i) nil))
+(dotimes (i 10) (define-key evil-window-map (number-to-string i) nil))
 
 ;; Remove all 'SPC w' and 'SPC h' C-<key> bindings
 (let ((chars "abcdefghijklmnopqrstuvwxyz")
