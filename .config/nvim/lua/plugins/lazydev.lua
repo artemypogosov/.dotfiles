@@ -1,5 +1,6 @@
 return {
   {
+    -- Properly configures LuaLS for editing your Neovim config by lazily updating your workspace libraries.
     "folke/lazydev.nvim",
     ft = "lua", -- Load only for Lua files
     opts = {

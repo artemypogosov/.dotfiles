@@ -1,4 +1,5 @@
 return {
+  -- A Bookmarks Plugin With Global File Store For Neovim Written In Lua
   "tomasky/bookmarks.nvim",
   lazy = true,
   event = "BufRead",

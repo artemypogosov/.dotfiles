@@ -1,6 +1,7 @@
 local g = vim.g
 
 return {
+  -- Gruvbox with Material Palette
   "sainnhe/gruvbox-material",
   lazy = false,
   priority = 1000,

@@ -2,6 +2,7 @@ local g = vim.g
 local o = vim.o
 
 return {
+  -- Retro groove color scheme for Vim
   "morhetz/gruvbox",
   lazy = false,
   priority = 1000,

@@ -1,5 +1,6 @@
 return {
   {
+    -- Compatibility layer for using nvim-cmp sources on blink.cmp
     "saghen/blink.compat",
     -- use the latest release, via version = '*', if you also use the latest release for blink.cmp
     version = "*",
@@ -9,6 +10,7 @@ return {
     opts = {},
   },
   {
+    -- Performant, batteries-included completion plugin for Neovim
     "saghen/blink.cmp",
     event = "InsertEnter",
     -- optional: provides snippets for the snippet source
