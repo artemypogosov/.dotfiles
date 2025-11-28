@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-cat other/computer.txt
+cat computer.txt
 echo
 echo "Date: $(date +"%a %b %d %H:%M:%S")"
 echo
@@ -33,6 +33,7 @@ y | Y)
 
   echo "=== Installing programs... [pacman + yay] ==="
   pacman -S - <~/.dotfiles/other/pacman-pkgs.txt
+  pacman -S - <~/.dotfiles/other/formatters-pkgs.txt
   yay -S - <~/.dotfiles/other/yay-pkgs.txt
 
   echo "=== GNU Stow: linking .dotfiles ==="
