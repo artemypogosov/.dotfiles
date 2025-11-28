@@ -21,8 +21,6 @@
 ;; with the `:disable' property: (package! builtin-package :disable t)
 
 ;;; General
-;; 'vimtutor' for Evil users
-(package! evil-tutor)
 ;; Resize windows
 (package! windresize)
 ;; Drag lines
