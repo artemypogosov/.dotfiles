@@ -20,35 +20,53 @@
 ;; If you'd like to disable a package included with Doom, you can do so here
 ;; with the `:disable' property: (package! builtin-package :disable t)
 
-;;; General
+;;;;;;;;;;;;;;;
+;;; General ;;;
+;;;;;;;;;;;;;;;
+
 ;; Resize windows
 (package! windresize)
-;; Drag lines
-(package! drag-stuff)
-;; Context menu
-(package! imenu-list)
+
 ;; Dim unfocused windows
 (package! dimmer)
+
+;; Drag lines
+(package! drag-stuff)
+
 ;; Enables other keyboard layouts for keybindings
 (package! reverse-im)
 
-;; Programming
+;;;;;;;;;;;;;;;;;;;
+;;; DEVELOPMENT ;;;
+;;;;;;;;;;;;;;;;;;;
+
 ;; Development docs
 (package! devdocs)
+
 ;; Preview any color in a buffer
 (package! colorful-mode)
+
 ;; Replace words with visual representation in real time
 (package! visual-replace)
+
 ;; Underline uses of symbol under the cursor
-(package! underline-symbol
+(package! idle-underline-mode
   :recipe (:host github :repo "artemypogosov/idle-underline-mode"))
 
-;; Org
+;;;;;;;;;;;
+;;; Org ;;;
+;;;;;;;;;;;
+
 ;; Personal knowledge management system
+;; Always use the newest version, not Doom’s pinned version.
+;; This is important for 'org-roam-ui'
 (unpin! org-roam)
+
 ;; Visual representation of org-roam graph
 (package! org-roam-ui)
-;; Change heading symbols
-(package! org-superstar)
+
 ;; Change priority symbols
 (package! org-fancy-priorities)
+
+;; Change heading symbols
+;; (package! org-superstar)

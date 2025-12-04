@@ -8,7 +8,7 @@ font = Monospace 11
 line_height = 3
 
 # fixed width
-width = 300
+width = 400
 
 # The maximum height of a single notification, excluding the frame.
 height = 300
@@ -74,7 +74,7 @@ timeout = 10
 [urgency_normal]
 background = "#282828"
 foreground = "#ebdbb2"
-timeout = 10
+timeout = 60
 
 [urgency_critical]
 background = "#fb4934"

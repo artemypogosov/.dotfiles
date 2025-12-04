@@ -47,8 +47,8 @@
        multiple-cursors    ; editing in many places at once
        fold                ; (nigh) universal code folding
        (format +onsave)    ; automated prettiness
-       rotate-text         ; cycle region at point between text candidates (inversion: true -> false etc)
        snippets            ; my elves. They type so I don't have to
+       ;; rotate-text      ; cycle region at point between text candidates (inversion: true -> false etc)
        ;; word-wrap        ; soft wrapping with language-aware indent
        ;;lispy             ; vim for lisp, for people who don't like vim
        ;;parinfer          ; turn lisp into python, sort of
@@ -61,7 +61,7 @@
        (dired +dirvish +icons)  ; making dired pretty [functional]
 
        :term
-       vterm     ; the best terminal emulation in Emacs
+       ;; vterm  ; the best terminal emulation in Emacs
        ;; eshell ; the elisp shell that works everywhere
        ;; shell  ; simple shell REPL for Emacs
        ;; term   ; basic terminal emulator for Emacs
@@ -94,16 +94,16 @@
        ;; upload           ; map local to remote projects via ssh/ftp
 
        :lang
+       (web +lsp +tree-sitter)        ; the tubes
+       (javascript +lsp +tree-sitter) ; all(hope(abandon(ye(who(enter(here))))))
+       (json +lsp +tree-sitter)       ; At least it ain't XML
+       (org +roam +dragndrop)         ; organize your plain life in plain text
+       (yaml +lsp)                    ; JSON, but readable
+       (sh +lsp)                      ; she sells {ba,z,fi}sh shells on the C xor
+       haskell                        ; a language that's lazier than I am
+       (lua +lsp +tree-sitter)        ; one-based indices? one-based indices
        emacs-lisp                     ; drown in parentheses
        markdown                       ; writing docs for people to ignore
-       (json +lsp +tree-sitter)       ; At least it ain't XML
-       (sh +lsp +tree-sitter)         ; she sells {ba,z,fi}sh shells on the C xor
-       (yaml +lsp +tree-sitter)       ; JSON, but readable
-       (haskell +dante)               ; a language that's lazier than I am
-       (javascript +lsp +tree-sitter) ; all(hope(abandon(ye(who(enter(here))))))
-       (org +roam2 +dragndrop)        ; organize your plain life in plain text
-       (web +lsp +tree-sitter)        ; the tubes
-       (lua +lsp +tree-sitter)        ; one-based indices? one-based indices
 
        ;;agda              ; types of types of types of types...
        ;;beancount         ; mind the GAAP
