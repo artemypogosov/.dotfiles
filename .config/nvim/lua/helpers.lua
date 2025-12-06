@@ -46,6 +46,15 @@ function M.find_git_files()
   end
 end
 
+function M.project_session_name()
+  if is_git_repo() then
+    local root = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
+    return vim.fn.fnamemodify(root, ":t")
+  else
+    return vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+  end
+end
+
 local blame_win = nil
 local blame_buf = nil
 

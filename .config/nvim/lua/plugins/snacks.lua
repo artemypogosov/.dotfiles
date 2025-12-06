@@ -1,3 +1,5 @@
+local session = require("mini.sessions")
+
 return {
   -- snacks.nvim --> A collection of QoL (Quality of Life) plugins for Neovim
   -- Beautiful declarative dashboards
@@ -15,13 +17,18 @@ return {
       -- pane_gap = 2
       preset = {
         keys = {
-          { key = "r", desc = "Recent Files", action = ":Telescope oldfiles previewer=false" },
-          { key = "p", desc = "Open Project", action = ":WorkspacesOpen" },
-          { key = "l", desc = "Lazy", action = ":Lazy" },
           {
-            key = "c",
-            desc = "Config",
-            action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})",
+            key = "l",
+            desc = "Load session",
+            action = function()
+              session.select("read")
+            end,
+          },
+          { key = "r", desc = "Recent files", action = ":Telescope oldfiles previewer=false" },
+          {
+            key = "p",
+            desc = "Open project",
+            action = ":lua require('telescope').extensions.workspaces.workspaces({ layout_config = { width = 80, height = 15, prompt_position = 'top' } })",
           },
         },
         header = [[

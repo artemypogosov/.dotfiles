@@ -2,6 +2,7 @@ local wk = require("which-key")
 local bm = require("bookmarks")
 local confirm_quit = require("confirm-quit")
 local Snacks = require("snacks")
+local session = require("mini.sessions")
 local helpers = require("helpers")
 
 wk.add({
@@ -23,6 +24,14 @@ wk.add({
     mode = "n",
   },
   { "<leader>fr", helpers.find_recent_files, desc = "Recent files", mode = "n" },
+  {
+    "<leader>fp",
+    function()
+      Snacks.dashboard.pick("files", { cwd = vim.fn.stdpath("config") })
+    end,
+    desc = "Recent files",
+    mode = "n",
+  },
   {
     "<leader>fd",
     helpers.execute_command("Telescope find_files previewer=false"),
@@ -197,6 +206,17 @@ wk.add({
   -----------
   { "<leader>g", group = "git" },
 
+  { "<leader>gs", helpers.execute_command("Gitsigns stage_hunk"), desc = "Stage hunk", mode = "n" },
+  { "<leader>gr", helpers.execute_command("Gitsigns reset_hunk"), desc = "Reset hunk", mode = "n" },
+  { "<leader>gv", helpers.execute_command("Gitsigns select_hunk"), desc = "Select hunk", mode = "n" },
+
+  { "<leader>g[", helpers.execute_command("Gitsigns nav_hunk prev"), desc = "Prev hunk", mode = "n" },
+  { "<leader>g]", helpers.execute_command("Gitsigns nav_hunk next"), desc = "Next hunk", mode = "n" },
+
+  { "<leader>gp", helpers.execute_command("Gitsigns preview_hunk_inline"), desc = "Preview hunk [inline]", mode = "n" },
+  { "<leader>gP", helpers.execute_command("Gitsigns preview_hunk"), desc = "Previw hunk [popup]", mode = "n" },
+
+  { "<leader>gd", helpers.prefill_command("Gitsigns diffthis"), desc = "Diff with revision", mode = "n" },
   { "<leader>gl", helpers.execute_command("Telescope git_commits"), desc = "Branch log", mode = "n" },
   {
     "<leader>g.",
@@ -204,6 +224,7 @@ wk.add({
     desc = "File log",
     mode = "n",
   },
+
   { "<leader>gg", helpers.execute_command("Neogit kind=replace"), desc = "Git status", mode = "n" },
   { "<leader>gL", helpers.execute_command("Neogit log"), desc = "Neogit: log", mode = "n" },
   { "<leader>gB", helpers.execute_command("Neogit branch"), desc = "Neogit: switch branch", mode = "n" },
@@ -216,7 +237,8 @@ wk.add({
     desc = "Git Browse",
   },
 
-  { "<M-a>", helpers.execute_command("GitsignsBlameToggle"), desc = "Git annotations", mode = "n" },
+  { "<M-a>", helpers.execute_command("GitsignsBlameToggle"), desc = "Git side annotations", mode = "n" },
+  { "<M-A>", helpers.execute_command("Gitsigns blame_line"), desc = "Git popup annotations", mode = "n" },
 
   -----------
   --- LSP ---
@@ -257,7 +279,31 @@ wk.add({
   ---------------
   { "<leader>q", group = "session" },
 
-  { "<leader>qq", "<CMD>q<CR>", desc = "Quit", mode = "n" },
+  { "<leader>qq", "<CMD>qa<CR>", desc = "Quit", mode = "n" },
+  {
+    "<leader>qs",
+    function()
+      session.write(helpers.project_session_name())
+    end,
+    desc = "Save session",
+    mode = "n",
+  },
+  {
+    "<leader>ql",
+    function()
+      session.select("read")
+    end,
+    desc = "Load session",
+    mode = "n",
+  },
+  {
+    "<leader>qD",
+    function()
+      session.select("delete")
+    end,
+    desc = "Select session",
+    mode = "n",
+  },
   { "<leader>qQ", confirm_quit.confirm_quit, desc = "Quit + confirm", mode = "n" },
 
   ------------
