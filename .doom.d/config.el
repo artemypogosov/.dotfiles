@@ -538,113 +538,6 @@
    ;; Refresh agenda → appt in 30sec and then every 10 minutes
    (run-at-time "30 sec" 600 #'org-agenda-to-appt)))
 
-(map! :leader
-      (:prefix ("d" . "devdocs")
-       :desc "Install" "+" #'devdocs-install
-       :desc "Delete" "-" #'devdocs-delete
-       :desc "Lookup" "l" #'devdocs-lookup
-       :desc "Select docs" "L" #'devdocs-peruse
-       :desc "Search on the site" "s" #'devdocs-search
-       :desc "Update all docs" "u" #'devdocs-update-all))
-
-(map! :leader
-      :prefix ("g" . "git")
-      :desc "List submodules" "l" #'magit-list-submodules
-      ;; :desc "Git time machine HELP" "h" #'git-timemachine-help
-      :desc "Rebase autosquash" "ca" #'magit-rebase-autosquash
-      :desc "Open file in remote repo" "o" #'+vc/browse-at-remote)
-
-(after! git-timemachine
-  (evil-define-key 'normal git-timemachine-mode-map
-    (kbd "?") #'git-timemachine-help)
-
-  (evil-define-key 'motion git-timemachine-mode-map
-    (kbd "?") #'git-timemachine-help))
-
-;; Tangle org-file
-(after! evil-org
-  (map! :localleader
-        :map org-mode-map
-        :desc "Tangle buffer"
-        "s" #'org-babel-tangle))
-
-;; Calendar
-(map! :leader
-      (:prefix ("o" . "open")
-       :desc "Open calendar" "c" #'=calendar))
-
-;; Windows manipulation
-(map! :leader
-      :prefix "w"
-      "M" #'maximize-window
-      "C" #'delete-other-windows
-      "z" #'windresize)
-
-;; Bookmarks
-(map! :leader
-      (:prefix ("o" . "open")
-       :desc "Bookmark manager" "b" #'list-bookmarks))
-
-;; Markdown
-(after! markdown-mode
-  (map! :localleader
-        :map markdown-mode-map
-        :desc "Live preview" "l" #'markdown-live-preview-mode))
-
-;; Search TODO keywords
-(after! hl-todo
-  (map! :leader
-        (:prefix ("s" . "search")
-         :desc "Search TODO" "." #'hl-todo-occur
-         :desc "Search TODO from dir" "," #'hl-todo-rgrep)))
-
-;; Toggle 
-(map! :leader
-      (:prefix ("t" . "toggle")
-       :desc "Toggle treemacs" "t" #'+treemacs/toggle))
-
-;; Open
-(map! :leader :prefix "o" "a" #'org-agenda)
-
-;; Manage workspaces
-(map! :leader
-      :prefix "TAB"
-      :desc "Delete workspace" "k" #'+workspace/kill
-      :desc "Delete saved workspace" "K" #'+workspace/delete)
-
-;; Help
-(map! :leader
-      :prefix "h"
-      :desc "Find text in documentation" "a" #'apropos-documentation
-      :desc "Man page" "w" #'+default/man-or-woman)
-
-;; Quit Emacs
-(map! :leader
-      :prefix "q"
-      :desc "Quit Emacs and ask to save" "Q" #'evil-quit-all)
-
-;; Complete file path
-(map! :i "M-p" #'company-files)
-
-;; Save buffer with C-s
-(after! evil
-  (map! :i "C-s"
-        (lambda ()
-          (interactive)
-          (save-buffer)
-          (evil-normal-state)))
-  (map! :n "C-s" #'save-buffer))
-
-;; Comment line and move down
-(defun my/comment-line-and-next ()
-  "Comment the current line."
-  (interactive)
-  (evilnc-comment-or-uncomment-lines 1))
-
-(after! evil
-  (map! :n "C-/" #'my/comment-line-and-next
-        :i "C-/" #'my/comment-line-and-next))
-
 (defun my/unbind-leader-prefixes (&rest prefix+keys)
   "Unbind KEYS from each PREFIX using Doom's `map!` syntax.
 Usage:
@@ -694,3 +587,111 @@ Usage:
   (dotimes (i (length special-chars))
     (let ((key (format "C-S-%c" (aref special-chars i))))
       (map! :leader :prefix "w" key nil))))
+
+;; (map! :leader
+;;       (:prefix ("d" . "devdocs")
+;;        :desc "Install" "+" #'devdocs-install
+;;        :desc "Delete" "-" #'devdocs-delete
+;;        :desc "Lookup" "l" #'devdocs-lookup
+;;        :desc "Select docs" "L" #'devdocs-peruse
+;;        :desc "Search on the site" "s" #'devdocs-search
+;;        :desc "Update all docs" "u" #'devdocs-update-all))
+
+;; (map! :leader
+;;       :prefix ("g" . "git")
+;;       :desc "List submodules" "l" #'magit-list-submodules
+;;       ;; :desc "Git time machine HELP" "h" #'git-timemachine-help
+;;       :desc "Rebase autosquash" "ca" #'magit-rebase-autosquash
+;;       :desc "Open file in remote repo" "o" #'+vc/browse-at-remote
+;;       )
+
+(after! git-timemachine
+  (evil-define-key 'normal git-timemachine-mode-map
+    (kbd "?") #'git-timemachine-help)
+
+  (evil-define-key 'motion git-timemachine-mode-map
+    (kbd "?") #'git-timemachine-help))
+
+;; ;; Tangle org-file
+;; (after! evil-org
+;;   (map! :localleader
+;;         :map org-mode-map
+;;         :desc "Tangle buffer"
+;;         "s" #'org-babel-tangle))
+
+;; ;; Calendar
+;; (map! :leader
+;;       (:prefix ("o" . "open")
+;;        :desc "Open calendar" "c" #'=calendar))
+
+;; ;; Windows manipulation
+;; (map! :leader
+;;       :prefix "w"
+;;       "M" #'maximize-window
+;;       "C" #'delete-other-windows
+;;       "z" #'windresize)
+
+;; ;; Bookmarks
+;; (map! :leader
+;;       (:prefix ("o" . "open")
+;;        :desc "Bookmark manager" "b" #'list-bookmarks))
+
+;; ;; Markdown
+;; (after! markdown-mode
+;;   (map! :localleader
+;;         :map markdown-mode-map
+;;         :desc "Live preview" "l" #'markdown-live-preview-mode))
+
+;; ;; Search TODO keywords
+;; (after! hl-todo
+;;   (map! :leader
+;;         (:prefix ("s" . "search")
+;;          :desc "Search TODO" "." #'hl-todo-occur
+;;          :desc "Search TODO from dir" "," #'hl-todo-rgrep)))
+
+;; ;; Toggle 
+;; (map! :leader
+;;       (:prefix ("t" . "toggle")
+;;        :desc "Toggle treemacs" "t" #'+treemacs/toggle))
+
+;; ;; Open
+;; (map! :leader :prefix "o" "a" #'org-agenda)
+
+;; ;; Manage workspaces
+;; (map! :leader
+;;       :prefix "TAB"
+;;       :desc "Delete workspace" "k" #'+workspace/kill
+;;       :desc "Delete saved workspace" "K" #'+workspace/delete)
+
+;; ;; Help
+;; (map! :leader
+;;       :prefix "h"
+;;       :desc "Find text in documentation" "a" #'apropos-documentation
+;;       :desc "Man page" "w" #'+default/man-or-woman)
+
+;; ;; Quit Emacs
+;; (map! :leader
+;;       :prefix "q"
+;;       :desc "Quit Emacs and ask to save" "Q" #'evil-quit-all)
+
+;; ;; Complete file path
+;; (map! :i "M-p" #'company-files)
+
+;; ;; Save buffer with C-s
+;; (after! evil
+;;   (map! :i "C-s"
+;;         (lambda ()
+;;           (interactive)
+;;           (save-buffer)
+;;           (evil-normal-state)))
+;;   (map! :n "C-s" #'save-buffer))
+
+;; ;; Comment line and move down
+;; (defun my/comment-line-and-next ()
+;;   "Comment the current line."
+;;   (interactive)
+;;   (evilnc-comment-or-uncomment-lines 1))
+
+;; (after! evil
+;;   (map! :n "C-/" #'my/comment-line-and-next
+;;         :i "C-/" #'my/comment-line-and-next))
