@@ -39,11 +39,15 @@
 - [[#reverse-layout][REVERSE LAYOUT]]
 - [[#notifications][NOTIFICATIONS]]
 - [[#keybindings][KEYBINDINGS]]
-  - [[#unbind][UNBIND]]
   - [[#devdocs][DEVDOCS]]
   - [[#git][GIT]]
   - [[#org-1][ORG]]
   - [[#other][OTHER]]
+  - [[#unbind][UNBIND]]
+  - [[#devdocs-1][DEVDOCS]]
+  - [[#git-1][GIT]]
+  - [[#org-2][ORG]]
+  - [[#other-1][OTHER]]
 
 * USER
 #+begin_src elisp
@@ -124,7 +128,6 @@
 (add-hook! 'prog-mode #'display-fill-column-indicator-mode)
 
 (global-auto-revert-mode t) ;; auto sync buffers when they are changed by other process
-(general-auto-unbind-keys) ;; prevents "Key sequnce starts with non-prefix key" error
 #+end_src
 * DASHBOARD
 ** Generate art
@@ -412,6 +415,101 @@
 (setq lsp-enable-symbol-highlighting nil)
 #+end_src
 ** TODO FORMATTERS
+#+begin_src elisp
+(after! format
+  ;; Lua
+  (set-formatter! 'lua
+    (lambda ()
+      `("stylua"
+        "--stdin-filepath" ,(buffer-file-name)
+        "-"))
+    :modes '(lua-mode lua-ts-mode))
+
+  ;; ;; ------------------------------
+  ;; ;; Web (JS / TS / JSX / TSX / HTML / Vue / Svelte / Astro)
+  ;; ;; biome → prettierd → prettier
+  ;; ;; ------------------------------
+  ;; (set-formatter! 'web
+  ;;   '(("biome" "format" "--stdin-file-path" filepath)
+  ;;     ("prettierd" filepath)
+  ;;     ("prettier" "--stdin-filepath" filepath))
+  ;;   :modes '(js-mode
+  ;;            typescript-mode
+  ;;            tsx-ts-mode
+  ;;            jsx-ts-mode
+  ;;            html-mode
+  ;;            vue-mode
+  ;;            svelte-mode
+  ;;            astro-mode))
+
+
+  ;; ------------------------------
+  ;; CSS / SCSS / LESS / PostCSS
+  ;; biome → prettierd → prettier
+  ;; ------------------------------
+  ;; (set-formatter! 'css
+  ;;   '(("biome" "format" "--stdin-file-path" filepath)
+  ;;     ("prettierd" filepath)
+  ;;     ("prettier" "--stdin-filepath" filepath))
+  ;;   :modes '(css-mode
+  ;;            scss-mode
+  ;;            less-css-mode
+  ;;            postcss-mode))
+
+  ;; ------------------------------
+  ;; JSON / JSONC
+  ;; biome → prettierd → prettier
+  ;; ------------------------------
+  ;; (set-formatter! 'json
+  ;;   '(("biome" "format" "--stdin-file-path" filepath)
+  ;;     ("prettierd" filepath)
+  ;;     ("prettier" "--stdin-filepath" filepath))
+  ;;   :modes '(json-mode jsonc-mode))
+
+  ;; ------------------------------
+  ;; YAML
+  ;; prettierd → prettier
+  ;; ------------------------------
+  ;; (set-formatter! 'yaml
+  ;;   '(("prettierd" filepath)
+  ;;     ("prettier" "--stdin-filepath" filepath))
+  ;;   :modes '(yaml-mode))
+
+  ;; ------------------------------
+  ;; GraphQL
+  ;; prettierd → prettier
+  ;; ------------------------------
+  ;; (set-formatter! 'gql
+  ;;   '(("prettierd" filepath)
+  ;;     ("prettier" "--stdin-filepath" filepath))
+  ;;   :modes '(graphql-mode))
+
+  ;; ------------------------------
+  ;; Prisma schema
+  ;; prettierd → prettier
+  ;; ------------------------------
+  ;; (set-formatter! 'prisma
+  ;;   '(("prettierd" filepath)
+  ;;     ("prettier" "--stdin-filepath" filepath))
+  ;;   :modes '(prisma-mode))
+
+  ;; ------------------------------
+  ;; Shell scripts
+  ;; shfmt → beautysh
+  ;; ------------------------------
+  ;; (set-formatter! 'sh
+  ;;   '(("shfmt" "-")
+  ;;     ("beautysh" "-"))
+  ;;   :modes '(sh-mode bash-ts-mode zsh-mode))
+  )
+
+;; Optional: manual formatter keybinding
+(map! :leader "=" :desc "Format region/buffer" #'+format/region-or-buffer)
+#+end_src
+
+#+RESULTS:
+: +format/region-or-buffer
+
 ** COMPANY
 #+begin_src elisp
 (after! company
@@ -651,57 +749,172 @@
    (run-at-time "30 sec" 600 #'org-agenda-to-appt)))
 #+end_src
 * KEYBINDINGS
+** DEVDOCS
+#+begin_src elisp
+;; (map! :leader
+;;       (:prefix ("d" . "devdocs")
+;;        :desc "Install" "+" #'devdocs-install
+;;        :desc "Delete" "-" #'devdocs-delete
+;;        :desc "Lookup" "l" #'devdocs-lookup
+;;        :desc "Select docs" "L" #'devdocs-peruse
+;;        :desc "Search on the site" "s" #'devdocs-search
+;;        :desc "Update all docs" "u" #'devdocs-update-all))
+#+end_src
+** GIT
+#+begin_src elisp
+;; (map! :leader
+;;       :prefix ("g" . "git")
+;;       :desc "List submodules" "l" #'magit-list-submodules
+;;       ;; :desc "Git time machine HELP" "h" #'git-timemachine-help
+;;       :desc "Rebase autosquash" "ca" #'magit-rebase-autosquash
+;;       :desc "Open file in remote repo" "o" #'+vc/browse-at-remote)
+
+(after! git-timemachine
+  (evil-define-key 'normal git-timemachine-mode-map
+    (kbd "?") #'git-timemachine-help)
+
+  (evil-define-key 'motion git-timemachine-mode-map
+    (kbd "?") #'git-timemachine-help))
+#+end_src
+** ORG
+#+begin_src elisp
+;; Tangle org-file
+;; (after! evil-org
+;;   (map! :localleader
+;;         :map org-mode-map
+;;         :desc "Tangle buffer"
+;;         "s" #'org-babel-tangle))
+
+;; ;; Calendar
+;; (map! :leader
+;;       (:prefix ("o" . "open")
+;;        :desc "Open calendar" "c" #'=calendar))
+#+end_src
+** OTHER
+#+begin_src elisp
+;; ;; Windows manipulation
+;; (map! :leader
+;;       :prefix "w"
+;;       "M" #'maximize-window
+;;       "C" #'delete-other-windows
+;;       "z" #'windresize)
+
+;; ;; Bookmarks
+;; (map! :leader
+;;       (:prefix ("o" . "open")
+;;        :desc "Bookmark manager" "b" #'list-bookmarks))
+
+;; ;; Markdown
+;; (after! markdown-mode
+;;   (map! :localleader
+;;         :map markdown-mode-map
+;;         :desc "Live preview" "l" #'markdown-live-preview-mode))
+
+;; ;; Search TODO keywords
+;; (after! hl-todo
+;;   (map! :leader
+;;         (:prefix ("s" . "search")
+;;          :desc "Search TODO" "." #'hl-todo-occur
+;;          :desc "Search TODO from dir" "," #'hl-todo-rgrep)))
+
+;; ;; Toggle 
+;; (map! :leader
+;;       (:prefix ("t" . "toggle")
+;;        :desc "Toggle treemacs" "t" #'+treemacs/toggle))
+
+;; ;; Open
+;; (map! :leader :prefix "o" "a" #'org-agenda)
+
+;; ;; Manage workspaces
+;; (map! :leader
+;;       :prefix "TAB"
+;;       :desc "Delete workspace" "k" #'+workspace/kill
+;;       :desc "Delete saved workspace" "K" #'+workspace/delete)
+
+;; ;; Help
+;; (map! :leader
+;;       :prefix "h"
+;;       :desc "Find text in documentation" "a" #'apropos-documentation
+;;       :desc "Man page" "w" #'+default/man-or-woman)
+
+;; ;; Quit Emacs
+;; (map! :leader
+;;       :prefix "q"
+;;       :desc "Quit Emacs and ask to save" "Q" #'evil-quit-all)
+
+;; ;; Complete file path
+;; (map! :i "M-p" #'company-files)
+
+;; ;; Save buffer with C-s
+;; (after! evil
+;;   (map! :i "C-s"
+;;         (lambda ()
+;;           (interactive)
+;;           (save-buffer)
+;;           (evil-normal-state)))
+;;   (map! :n "C-s" #'save-buffer))
+
+;; ;; Comment line and move down
+;; (defun my/comment-line-and-next ()
+;;   "Comment the current line."
+;;   (interactive)
+;;   (evilnc-comment-or-uncomment-lines 1))
+
+;; (after! evil
+;;   (map! :n "C-/" #'my/comment-line-and-next
+;;         :i "C-/" #'my/comment-line-and-next))
+#+end_src
 ** UNBIND
 #+begin_src elisp
-(defun my/unbind-leader-prefixes (&rest prefix+keys)
-  "Unbind KEYS from each PREFIX using Doom's `map!` syntax.
-Usage:
-  (my/unbind-leader-prefixes
-    \"w\" '(\"d\" \"g\")
-    \"b\" '(\"l\" \"p\"))"
-  (cl-loop
-   for (prefix keys) on prefix+keys by #'cddr
-   do (let (spec)
-        ;; Build key nil key nil form
-        (dolist (k keys)
-          (push nil spec)
-          (push k spec))
-        (setq spec (nreverse spec))
-        ;; evaluate map! block for that prefix
-        (eval `(map! :leader :prefix ,prefix ,@spec)))))
+;; (defun my/unbind-leader-prefixes (&rest prefix+keys)
+;;   "Unbind KEYS from each PREFIX using Doom's `map!` syntax.
+;; Usage:
+;;   (my/unbind-leader-prefixes
+;;     \"w\" '(\"d\" \"g\")
+;;     \"b\" '(\"l\" \"p\"))"
+;;   (cl-loop
+;;    for (prefix keys) on prefix+keys by #'cddr
+;;    do (let (spec)
+;;         ;; Build key nil key nil form
+;;         (dolist (k keys)
+;;           (push nil spec)
+;;           (push k spec))
+;;         (setq spec (nreverse spec))
+;;         ;; evaluate map! block for that prefix
+;;         (eval `(map! :leader :prefix ,prefix ,@spec)))))
 
-(my/unbind-leader-prefixes
- "w" '("C-<up>" "C-<down>" "C-<left>" "C-<right>" "<up>" "<down>"
-       "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "<left>" "<right>"
-       "C-=" "C-_" "d" "g" "o" ":" "+" "-" "<" ">" "_" "|" "m" "q")
- "TAB" '("0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "d" "D" "`" "R")
- "b" '("d" "n" "p" "l" "z" "m" "M" "B" "Z" "s" "C")
- "c" '("E")
- "f" '("e" "s")
- "g" '("'" "ci" "cp" "cR" "ff" "fi" "fp")
- "h" '("RET" "." "4" "?" "A" "b" "C" "e" "E" "F"
-       "g" "I" "K" "l" "L" "M" "n" "o" "O" "p" "P" "V"
-       "q" "i" "R" "s" "S" "u" "W" "x" "<help>" "<f1>" "C-\\")
- "i" '("e" "p" "r" "u")
- "n" '("a" "l" "n" "N" "*" "y" "Y")
- "o" '("-" "A" "P")
- "p" '(">" "f" "F" "o")
- "s" '("e" "I" "j" "k" "K" "L" "m" "o" "O" "r" "t" "T")
- "t" '("g" "c" "I" "v"))
+;; (my/unbind-leader-prefixes
+;;  "w" '("C-<up>" "C-<down>" "C-<left>" "C-<right>" "<up>" "<down>"
+;;        "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "<left>" "<right>"
+;;        "C-=" "C-_" "d" "g" "o" ":" "+" "-" "<" ">" "_" "|" "m" "q")
+;;  "TAB" '("0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "d" "D" "`" "R")
+;;  "b" '("d" "n" "p" "l" "z" "m" "M" "B" "Z" "s" "C")
+;;  "c" '("E")
+;;  "f" '("e" "s")
+;;  "g" '("'" "ci" "cp" "cR" "ff" "fi" "fp")
+;;  "h" '("RET" "." "4" "?" "A" "b" "C" "e" "E" "F"
+;;        "g" "I" "K" "l" "L" "M" "n" "o" "O" "p" "P" "V"
+;;        "q" "i" "R" "s" "S" "u" "W" "x" "<help>" "<f1>" "C-\\")
+;;  "i" '("e" "p" "r" "u")
+;;  "n" '("a" "l" "n" "N" "*" "y" "Y")
+;;  "o" '("-" "A" "P")
+;;  "p" '(">" "f" "F" "o")
+;;  "s" '("e" "I" "j" "k" "K" "L" "m" "o" "O" "r" "t" "T")
+;;  "t" '("g" "c" "I" "v"))
 
-(map! :leader 
-      :desc "Find usages"  "*" #'+default/search-project-for-symbol-at-point
-      ":" nil ";" nil "a" nil "u" nil "x" nil "X" nil "~" nil)
+;; (map! :leader 
+;;       :desc "Find usages"  "*" #'+default/search-project-for-symbol-at-point
+;;       ":" nil ";" nil "a" nil "u" nil "x" nil "X" nil "~" nil)
 
-(let ((chars "abcdefghijklmnopqrstuvwxyz")
-      (special-chars "hjklrsw"))
-  (dotimes (i (length chars))
-    (let ((key (format "C-%c" (aref chars i))))
-      (map! :leader :prefix "w" key nil)
-      (map! :leader :prefix "h" key nil)))
-  (dotimes (i (length special-chars))
-    (let ((key (format "C-S-%c" (aref special-chars i))))
-      (map! :leader :prefix "w" key nil))))
+;; (let ((chars "abcdefghijklmnopqrstuvwxyz")
+;;       (special-chars "hjklrsw"))
+;;   (dotimes (i (length chars))
+;;     (let ((key (format "C-%c" (aref chars i))))
+;;       (map! :leader :prefix "w" key nil)
+;;       (map! :leader :prefix "h" key nil)))
+;;   (dotimes (i (length special-chars))
+;;     (let ((key (format "C-S-%c" (aref special-chars i))))
+;;       (map! :leader :prefix "w" key nil))))
 #+end_src
 ** DEVDOCS
 #+begin_src elisp
