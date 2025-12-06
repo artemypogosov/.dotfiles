@@ -137,7 +137,7 @@ myTall = renamed [Replace "tall"]
   $ windowNavigation
  -- $ subLayout [] (smartBorders Simplest)
   $ limitWindows 5
-  $ mySpacing 15
+  $ mySpacing 10
   $ ResizableTall 1 (3/100) (1/2) []
 
 myMirror = renamed [Replace "mirror tall"]
@@ -145,7 +145,7 @@ myMirror = renamed [Replace "mirror tall"]
   $ Mirror myTall
 
 myGrid = renamed [Replace "grid"]
-  $ mySpacing 15
+  $ mySpacing 10
   $ limitWindows 4
   $ Grid
 
