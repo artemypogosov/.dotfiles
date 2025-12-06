@@ -8,13 +8,9 @@ return {
     gitbrowse = { enabled = true },
     indent = { enabled = true },
     terminal = { enabled = true },
-    -- statuscolumn = { enabled = true },
     dashboard = {
       -- your dashboard configuration comes here
-      -- or leave it empty to use the default settings
-      -- refer to the configuration section below
       width = 40,
-      -- pane_gap = 2
       preset = {
         keys = {
           {

@@ -315,6 +315,8 @@ wk.add({
   { "<leader>hM", helpers.execute_command("Mason"), desc = "Mason", mode = "n" },
 
   { "<leader>hm", helpers.execute_command("Telescope man_pages"), desc = "Man pages", mode = "n" },
+  -- Handy for checking 'filetype' which is needed for plugins/formatter.lua
+  { "<leader>hf", ":lua print('Filetype:', vim.bo.filetype)<CR>", desc = "Print filetype", mode = "n" },
   { "<leader>hs", ":set spell<CR>", desc = "Enable spellcheck", mode = "n" },
   { "<leader>hS", ":set nospell<CR>", desc = "Disable spellcheck", mode = "n" },
   { "<leader>hr", ":Telescope spell_suggest<CR>", desc = "Spelling suggestions", mode = "n" },
