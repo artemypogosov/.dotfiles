@@ -20,6 +20,7 @@
      "014cb63097fc7dbda3edf53eb09802237961cbb4c9e9abd705f23b86511b0a69"
      "0325a6b5eea7e5febae709dab35ec8648908af12cf2d2b569bedc8da0a3a81c1"
      "48042425e84cd92184837e01d0b4fe9f912d875c43021c3bcb7eeb51f1be5710" default))
+ '(ignored-local-variable-values '((checkdoc-allow-quoting-nil-and-t . t)))
  '(org-agenda-files
    '("/home/artemy/Org/basic.org" "/home/artemy/Org/Code.org" "/home/artemy/Org/English.org"
      "/home/artemy/Org/Notebook.org" "/home/artemy/Org/To-Do.org"))

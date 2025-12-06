@@ -37,37 +37,25 @@
   (setq doom-themes-enable-bold nil
         doom-themes-enable-italic t))
 
-;; 'undo-limit' 80000000 - raise undo-limit to 80Mb
-;; 'evil-want-fine-undo' - by default while in insert all changes are one big blob. Be more granular
-;; 'auto-save-default'   - nobody likes to loose work, I certainly don't
-;; 'truncate-string-ellipsis'  - unicode ellipsis are nicer than "...", and also save space
-;; 'password-cache-expiry'     - I can trust my computers... can't I?
-;; 'delete-by-moving-to-trash' - remove files to trash
-;; 'display-line-numbers-type' - style of line numbers. For relative line numbers, set this to `relative'.
-;; 'evil-ex-substitute-case'   - case sensitive match in evil-ex-substitute command
-;; 'global-auto-revert-non-file-buffers' - enables Auto Reverting for all types of buffers
-;; 'evil-snipe-scope' - scope of evil-snipe search
-;; 'imenu-list-focus-after-activation' - focus imenu-list side window after it was toggled
-
 (setq
- undo-limit 80000000
- auto-save-default t
- truncate-string-ellipsis "…"
- password-cache-expiry nil
- delete-by-moving-to-trash t
- trash-directory "~/.local/share/Trash/files"
- projectile-project-search-path '("~/Projects")
- display-line-numbers-type 'relative
- global-auto-revert-non-file-buffers t
+ undo-limit 80000000 ;; raise undo-limit to 80Mb
+ auto-save-default t ;; nobody likes to loose work, I certainly don't
+ truncate-string-ellipsis "…" ;; unicode ellipsis are nicer than "...", and also save space
+ password-cache-expiry nil ;; I can trust my computers... can't I?
+ delete-by-moving-to-trash t ;; remove files to trash
+ trash-directory "~/.local/share/Trash/files" ;; place for trash
+ projectile-project-search-path '("~/Projects") ;; path for projectile to find projects
+ display-line-numbers-type 'relative ;; style of line numbers
+ global-auto-revert-non-file-buffers t ;; enables Auto Reverting for all types of buffers
 
  ;; Third party variables
- evil-ex-substitute-case 'sensitive
- evil-want-fine-undo t
- evil-snipe-scope 'buffer
- auto-revert-verbose nil
- +zen-text-scale 1
- imenu-list-auto-resize t
- imenu-list-focus-after-activation t)
+ evil-ex-substitute-case 'sensitive ;; case sensitive match in evil-ex-substitute command
+ evil-want-fine-undo t ;; more granular undo
+ evil-snipe-scope 'buffer ;; scope of evil-snipe search
+ auto-revert-verbose nil ;; disable auto-revert messages
+ +zen-text-scale 1 ;; scale text in zen mode
+ imenu-list-focus-after-activation t ;; focus imenu-list side window after it was toggled
+ imenu-list-auto-resize t)
 
 ;; 'setq' vs 'setq-default'
 ;; Use 'setq' for non-buffer-local variables
@@ -76,15 +64,12 @@
 ;; Buffer local variables have a default value.
 ;; So all buffers inherit the default value.
 
-;; 'fill-column' - display vertical limit line
-(setq-default fill-column 120)
+(setq-default fill-column 120) ;; display limit line
 
 (add-hook! 'prog-mode #'display-fill-column-indicator-mode)
 
-;; 'global-auto-revert-mode' - auto sync buffers when they are changed by other process
-(global-auto-revert-mode t)
-;; Prevents "Key sequnce starts with non-prefix key" error
-(general-auto-unbind-keys)
+(global-auto-revert-mode t) ;; auto sync buffers when they are changed by other process
+(general-auto-unbind-keys) ;; prevents "Key sequnce starts with non-prefix key" error
 
 (defvar my/dashboard-cache nil
   "Cached ASCII banner for Doom dashboard to avoid recomputation.")
@@ -166,9 +151,7 @@
   ;; Disable size indication
   (remove-hook 'doom-modeline-mode-hook #'size-indication-mode))
 
-;; M-m --> select multiple files
-
-;; Enable file's follow mode in treemacs
+;; Enable file's follow mode in treemacs [M-m --> select multiple files]
 (after! treemacs
   (treemacs-follow-mode 1)
   (treemacs-indent-guide-mode 1)
@@ -384,12 +367,11 @@
     ;; Pure Emmet expansion (added by me instead of 'emmet-expand-yas')
     (t #'emmet-expand-line))))
 
-;; 'indent-bars-mode' - shows vertical bars to visually indicate indentation levels
-(add-hook! yaml-mode #'indent-bars-mode)
+(add-hook! yaml-mode #'indent-bars-mode) ;; shows vertical bars to visually indicate indentation levels
 
 (after! spell-fu
-  (setq spell-fu-idle-delay 1
-        spell-fu-word-regexp "\\b\\([A-Za-z]+\\(['’][A-Za-z]+\\)?\\)\\b")
+  (setq-default spell-fu-idle-delay 1
+                spell-fu-word-regexp "\\b\\([A-Za-z]+\\(['’][A-Za-z]+\\)?\\)\\b")
 
   ;; Disable spell-fu in programming buffers
   (remove-hook 'prog-mode-hook #'spell-fu-mode)
@@ -557,10 +539,6 @@
    (run-at-time "30 sec" 600 #'org-agenda-to-appt)))
 
 (map! :leader
-      (:prefix ("t" . "toggle")
-       :desc "Toggle treemacs" "t" #'+treemacs/toggle))
-
-(map! :leader
       (:prefix ("d" . "devdocs")
        :desc "Install" "+" #'devdocs-install
        :desc "Delete" "-" #'devdocs-delete
@@ -570,13 +548,18 @@
        :desc "Update all docs" "u" #'devdocs-update-all))
 
 (map! :leader
-      (:prefix ("o" . "open")
-       :desc "Bookmark manager" "b" #'list-bookmarks))
-
-(map! :leader
       :prefix ("g" . "git")
-      :desc "Fixup autosquash" "a" #'magit-rebase-autosquash
+      :desc "List submodules" "l" #'magit-list-submodules
+      ;; :desc "Git time machine HELP" "h" #'git-timemachine-help
+      :desc "Rebase autosquash" "ca" #'magit-rebase-autosquash
       :desc "Open file in remote repo" "o" #'+vc/browse-at-remote)
+
+(after! git-timemachine
+  (evil-define-key 'normal git-timemachine-mode-map
+    (kbd "?") #'git-timemachine-help)
+
+  (evil-define-key 'motion git-timemachine-mode-map
+    (kbd "?") #'git-timemachine-help))
 
 ;; Tangle org-file
 (after! evil-org
@@ -590,12 +573,6 @@
       (:prefix ("o" . "open")
        :desc "Open calendar" "c" #'=calendar))
 
-(after! hl-todo
-  (map! :leader
-        (:prefix ("s" . "search")
-         :desc "Search TODO" "." #'hl-todo-occur
-         :desc "Search TODO from dir" "," #'hl-todo-rgrep)))
-
 ;; Windows manipulation
 (map! :leader
       :prefix "w"
@@ -603,11 +580,31 @@
       "C" #'delete-other-windows
       "z" #'windresize)
 
+;; Bookmarks
+(map! :leader
+      (:prefix ("o" . "open")
+       :desc "Bookmark manager" "b" #'list-bookmarks))
+
 ;; Markdown
 (after! markdown-mode
   (map! :localleader
         :map markdown-mode-map
         :desc "Live preview" "l" #'markdown-live-preview-mode))
+
+;; Search TODO keywords
+(after! hl-todo
+  (map! :leader
+        (:prefix ("s" . "search")
+         :desc "Search TODO" "." #'hl-todo-occur
+         :desc "Search TODO from dir" "," #'hl-todo-rgrep)))
+
+;; Toggle 
+(map! :leader
+      (:prefix ("t" . "toggle")
+       :desc "Toggle treemacs" "t" #'+treemacs/toggle))
+
+;; Open
+(map! :leader :prefix "o" "a" #'org-agenda)
 
 ;; Manage workspaces
 (map! :leader
@@ -615,19 +612,19 @@
       :desc "Delete workspace" "k" #'+workspace/kill
       :desc "Delete saved workspace" "K" #'+workspace/delete)
 
-;; Complete file path
-(map! :i "M-p" #'company-files)
+;; Help
+(map! :leader
+      :prefix "h"
+      :desc "Find text in documentation" "a" #'apropos-documentation
+      :desc "Man page" "w" #'+default/man-or-woman)
 
 ;; Quit Emacs
 (map! :leader
       :prefix "q"
       :desc "Quit Emacs and ask to save" "Q" #'evil-quit-all)
 
-;; Help
-(map! :leader
-      :prefix "h"
-      :desc "Find text in documentation" "a" #'apropos-documentation
-      :desc "Man page" "w" #'+default/man-or-woman)
+;; Complete file path
+(map! :i "M-p" #'company-files)
 
 ;; Save buffer with C-s
 (after! evil
@@ -673,8 +670,16 @@ Usage:
  "b" '("d" "n" "p" "l" "z" "m" "M" "B" "Z" "s" "C")
  "c" '("E")
  "f" '("e" "s")
- "g" '("'")
- )
+ "g" '("'" "ci" "cp" "cR" "ff" "fi" "fp")
+ "h" '("RET" "." "4" "?" "A" "b" "C" "e" "E" "F"
+       "g" "I" "K" "l" "L" "M" "n" "o" "O" "p" "P" "V"
+       "q" "i" "R" "s" "S" "u" "W" "x" "<help>" "<f1>" "C-\\")
+ "i" '("e" "p" "r" "u")
+ "n" '("a" "l" "n" "N" "*" "y" "Y")
+ "o" '("-" "A" "P")
+ "p" '(">" "f" "F" "o")
+ "s" '("e" "I" "j" "k" "K" "L" "m" "o" "O" "r" "t" "T")
+ "t" '("g" "c" "I" "v"))
 
 (map! :leader 
       :desc "Find usages"  "*" #'+default/search-project-for-symbol-at-point
@@ -685,8 +690,7 @@ Usage:
   (dotimes (i (length chars))
     (let ((key (format "C-%c" (aref chars i))))
       (map! :leader :prefix "w" key nil)
-      ;; (map! :leader :prefix "h" key nil)
-      ))
+      (map! :leader :prefix "h" key nil)))
   (dotimes (i (length special-chars))
     (let ((key (format "C-S-%c" (aref special-chars i))))
       (map! :leader :prefix "w" key nil))))
