@@ -39,15 +39,11 @@
 - [[#reverse-layout][REVERSE LAYOUT]]
 - [[#notifications][NOTIFICATIONS]]
 - [[#keybindings][KEYBINDINGS]]
+  - [[#unbind][UNBIND]]
   - [[#devdocs][DEVDOCS]]
   - [[#git][GIT]]
   - [[#org-1][ORG]]
   - [[#other][OTHER]]
-  - [[#unbind][UNBIND]]
-  - [[#devdocs-1][DEVDOCS]]
-  - [[#git-1][GIT]]
-  - [[#org-2][ORG]]
-  - [[#other-1][OTHER]]
 
 * USER
 #+begin_src elisp
@@ -97,24 +93,25 @@
 * GENERAL
 #+begin_src elisp
 (setq
- undo-limit 80000000 ;; raise undo-limit to 80Mb
- auto-save-default t ;; nobody likes to loose work, I certainly don't
- truncate-string-ellipsis "…" ;; unicode ellipsis are nicer than "...", and also save space
- password-cache-expiry nil ;; I can trust my computers... can't I?
- delete-by-moving-to-trash t ;; remove files to trash
- trash-directory "~/.local/share/Trash/files" ;; place for trash
- projectile-project-search-path '("~/Projects") ;; path for projectile to find projects
- display-line-numbers-type 'relative ;; style of line numbers
- global-auto-revert-non-file-buffers t ;; enables Auto Reverting for all types of buffers
+  undo-limit 80000000 ;; raise undo-limit to 80Mb
+  auto-save-default t ;; nobody likes to loose work, I certainly don't
+  truncate-string-ellipsis "…" ;; unicode ellipsis are nicer than "...", and also save space
+  password-cache-expiry nil ;; I can trust my computers... can't I?
+  delete-by-moving-to-trash t ;; remove files to trash
+  trash-directory "~/.local/share/Trash/files" ;; place for trash
+  global-auto-revert-non-file-buffers t ;; enables Auto Reverting for all types of buffers
+  lisp-indent-offset 2 ;; indentation for lisp
 
- ;; Third party variables
- evil-ex-substitute-case 'sensitive ;; case sensitive match in evil-ex-substitute command
- evil-want-fine-undo t ;; more granular undo
- evil-snipe-scope 'buffer ;; scope of evil-snipe search
- auto-revert-verbose nil ;; disable auto-revert messages
- +zen-text-scale 1 ;; scale text in zen mode
- imenu-list-focus-after-activation t ;; focus imenu-list side window after it was toggled
- imenu-list-auto-resize t)
+  ;; Third party variables
+  projectile-project-search-path '("~/Projects") ;; path for projectile to find projects
+  display-line-numbers-type 'relative ;; style of line numbers
+  evil-ex-substitute-case 'sensitive ;; case sensitive match in evil-ex-substitute command
+  evil-want-fine-undo t ;; more granular undo
+  evil-snipe-scope 'buffer ;; scope of evil-snipe search
+  auto-revert-verbose nil ;; disable auto-revert messages
+  +zen-text-scale 1 ;; scale text in zen mode
+  imenu-list-focus-after-activation t ;; focus imenu-list side window after it was toggled
+  imenu-list-auto-resize t)
 
 ;; 'setq' vs 'setq-default'
 ;; Use 'setq' for non-buffer-local variables
@@ -418,12 +415,12 @@
 #+begin_src elisp
 (after! format
   ;; Lua
-  (set-formatter! 'lua
-    (lambda ()
-      `("stylua"
-        "--stdin-filepath" ,(buffer-file-name)
-        "-"))
-    :modes '(lua-mode lua-ts-mode))
+  ;; (set-formatter! 'lua
+  ;;   (lambda ()
+  ;;     `("stylua"
+  ;;       "--stdin-filepath" ,(buffer-file-name)
+  ;;       "-"))
+  ;;   :modes '(lua-mode lua-ts-mode))
 
   ;; ;; ------------------------------
   ;; ;; Web (JS / TS / JSX / TSX / HTML / Vue / Svelte / Astro)
@@ -749,193 +746,76 @@
    (run-at-time "30 sec" 600 #'org-agenda-to-appt)))
 #+end_src
 * KEYBINDINGS
-** DEVDOCS
-#+begin_src elisp
-;; (map! :leader
-;;       (:prefix ("d" . "devdocs")
-;;        :desc "Install" "+" #'devdocs-install
-;;        :desc "Delete" "-" #'devdocs-delete
-;;        :desc "Lookup" "l" #'devdocs-lookup
-;;        :desc "Select docs" "L" #'devdocs-peruse
-;;        :desc "Search on the site" "s" #'devdocs-search
-;;        :desc "Update all docs" "u" #'devdocs-update-all))
-#+end_src
-** GIT
-#+begin_src elisp
-;; (map! :leader
-;;       :prefix ("g" . "git")
-;;       :desc "List submodules" "l" #'magit-list-submodules
-;;       ;; :desc "Git time machine HELP" "h" #'git-timemachine-help
-;;       :desc "Rebase autosquash" "ca" #'magit-rebase-autosquash
-;;       :desc "Open file in remote repo" "o" #'+vc/browse-at-remote)
-
-(after! git-timemachine
-  (evil-define-key 'normal git-timemachine-mode-map
-    (kbd "?") #'git-timemachine-help)
-
-  (evil-define-key 'motion git-timemachine-mode-map
-    (kbd "?") #'git-timemachine-help))
-#+end_src
-** ORG
-#+begin_src elisp
-;; Tangle org-file
-;; (after! evil-org
-;;   (map! :localleader
-;;         :map org-mode-map
-;;         :desc "Tangle buffer"
-;;         "s" #'org-babel-tangle))
-
-;; ;; Calendar
-;; (map! :leader
-;;       (:prefix ("o" . "open")
-;;        :desc "Open calendar" "c" #'=calendar))
-#+end_src
-** OTHER
-#+begin_src elisp
-;; ;; Windows manipulation
-;; (map! :leader
-;;       :prefix "w"
-;;       "M" #'maximize-window
-;;       "C" #'delete-other-windows
-;;       "z" #'windresize)
-
-;; ;; Bookmarks
-;; (map! :leader
-;;       (:prefix ("o" . "open")
-;;        :desc "Bookmark manager" "b" #'list-bookmarks))
-
-;; ;; Markdown
-;; (after! markdown-mode
-;;   (map! :localleader
-;;         :map markdown-mode-map
-;;         :desc "Live preview" "l" #'markdown-live-preview-mode))
-
-;; ;; Search TODO keywords
-;; (after! hl-todo
-;;   (map! :leader
-;;         (:prefix ("s" . "search")
-;;          :desc "Search TODO" "." #'hl-todo-occur
-;;          :desc "Search TODO from dir" "," #'hl-todo-rgrep)))
-
-;; ;; Toggle 
-;; (map! :leader
-;;       (:prefix ("t" . "toggle")
-;;        :desc "Toggle treemacs" "t" #'+treemacs/toggle))
-
-;; ;; Open
-;; (map! :leader :prefix "o" "a" #'org-agenda)
-
-;; ;; Manage workspaces
-;; (map! :leader
-;;       :prefix "TAB"
-;;       :desc "Delete workspace" "k" #'+workspace/kill
-;;       :desc "Delete saved workspace" "K" #'+workspace/delete)
-
-;; ;; Help
-;; (map! :leader
-;;       :prefix "h"
-;;       :desc "Find text in documentation" "a" #'apropos-documentation
-;;       :desc "Man page" "w" #'+default/man-or-woman)
-
-;; ;; Quit Emacs
-;; (map! :leader
-;;       :prefix "q"
-;;       :desc "Quit Emacs and ask to save" "Q" #'evil-quit-all)
-
-;; ;; Complete file path
-;; (map! :i "M-p" #'company-files)
-
-;; ;; Save buffer with C-s
-;; (after! evil
-;;   (map! :i "C-s"
-;;         (lambda ()
-;;           (interactive)
-;;           (save-buffer)
-;;           (evil-normal-state)))
-;;   (map! :n "C-s" #'save-buffer))
-
-;; ;; Comment line and move down
-;; (defun my/comment-line-and-next ()
-;;   "Comment the current line."
-;;   (interactive)
-;;   (evilnc-comment-or-uncomment-lines 1))
-
-;; (after! evil
-;;   (map! :n "C-/" #'my/comment-line-and-next
-;;         :i "C-/" #'my/comment-line-and-next))
-#+end_src
 ** UNBIND
 #+begin_src elisp
-;; (defun my/unbind-leader-prefixes (&rest prefix+keys)
-;;   "Unbind KEYS from each PREFIX using Doom's `map!` syntax.
-;; Usage:
-;;   (my/unbind-leader-prefixes
-;;     \"w\" '(\"d\" \"g\")
-;;     \"b\" '(\"l\" \"p\"))"
-;;   (cl-loop
-;;    for (prefix keys) on prefix+keys by #'cddr
-;;    do (let (spec)
-;;         ;; Build key nil key nil form
-;;         (dolist (k keys)
-;;           (push nil spec)
-;;           (push k spec))
-;;         (setq spec (nreverse spec))
-;;         ;; evaluate map! block for that prefix
-;;         (eval `(map! :leader :prefix ,prefix ,@spec)))))
+(defmacro my/unbind (&rest forms)
+  "Bulk-unbind Doom leader keys.
+Each FORM must be: (:prefix PREFIX KEY1 KEY2 ...)."
+  `(progn
+     ,@(cl-loop
+        for form in forms
+        append
+        (progn
+          ;; Validate structure
+          (unless (and (listp form)
+                       (>= (length form) 3)
+                       (eq (car form) :prefix))
+            (error "my/unbind: invalid form: %S" form))
 
-;; (my/unbind-leader-prefixes
-;;  "w" '("C-<up>" "C-<down>" "C-<left>" "C-<right>" "<up>" "<down>"
-;;        "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "<left>" "<right>"
-;;        "C-=" "C-_" "d" "g" "o" ":" "+" "-" "<" ">" "_" "|" "m" "q")
-;;  "TAB" '("0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "d" "D" "`" "R")
-;;  "b" '("d" "n" "p" "l" "z" "m" "M" "B" "Z" "s" "C")
-;;  "c" '("E")
-;;  "f" '("e" "s")
-;;  "g" '("'" "ci" "cp" "cR" "ff" "fi" "fp")
-;;  "h" '("RET" "." "4" "?" "A" "b" "C" "e" "E" "F"
-;;        "g" "I" "K" "l" "L" "M" "n" "o" "O" "p" "P" "V"
-;;        "q" "i" "R" "s" "S" "u" "W" "x" "<help>" "<f1>" "C-\\")
-;;  "i" '("e" "p" "r" "u")
-;;  "n" '("a" "l" "n" "N" "*" "y" "Y")
-;;  "o" '("-" "A" "P")
-;;  "p" '(">" "f" "F" "o")
-;;  "s" '("e" "I" "j" "k" "K" "L" "m" "o" "O" "r" "t" "T")
-;;  "t" '("g" "c" "I" "v"))
+          (let* ((prefix (cadr form))
+                 (keys   (cddr form)))
+            (unless (stringp prefix)
+              (error "my/unbind: prefix must be a string: %S" prefix))
+            (dolist (k keys)
+              (unless (stringp k)
+                (error "my/unbind: key must be string: %S" k)))
 
-;; (map! :leader 
-;;       :desc "Find usages"  "*" #'+default/search-project-for-symbol-at-point
-;;       ":" nil ";" nil "a" nil "u" nil "x" nil "X" nil "~" nil)
+            ;; Build "k1 nil k2 nil k3 nil"
+            (let (spec)
+              (dolist (k keys)
+                (setq spec (append spec (list k nil))))
+              (list `(map! :leader :prefix ,prefix ,@spec))))))))
 
-;; (let ((chars "abcdefghijklmnopqrstuvwxyz")
-;;       (special-chars "hjklrsw"))
-;;   (dotimes (i (length chars))
-;;     (let ((key (format "C-%c" (aref chars i))))
-;;       (map! :leader :prefix "w" key nil)
-;;       (map! :leader :prefix "h" key nil)))
-;;   (dotimes (i (length special-chars))
-;;     (let ((key (format "C-S-%c" (aref special-chars i))))
-;;       (map! :leader :prefix "w" key nil))))
+(my/unbind
+  (:prefix "w"
+    "C-<up>" "C-<down>" "C-<left>" "C-<right>" "<up>" "<down>"
+    "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "<left>" "<right>"
+    "C-=" "C-_" "d" "g" "o" ":" "+" "-" "<" ">" "_" "|" "m" "q"
+    "C-b" "C-c" "C-f" "C-h" "C-j" "C-k" "C-l" "C-n" "C-o" "C-p"
+    "C-q" "C-r" "C-s" "C-t" "C-u" "C-v" "C-w" "C-x" 
+    "C-S-h" "C-S-j" "C-S-k" "C-S-l" "C-S-r" "C-S-S" "C-S-w")
+  (:prefix "TAB" "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "d" "D" "`" "R")
+  (:prefix "b"
+    "d" "n" "p" "l" "z" "m" "M" "B" "Z" "s" "C")
+  (:prefix "c" "E")
+  (:prefix "f" "e" "s")
+  (:prefix "h"
+    "RET" "." "4" "?" "A" "b" "C" "e" "E" "F"
+    "g" "I" "K" "l" "L" "M" "n" "o" "O" "p" "P" "V"
+    "q" "i" "R" "s" "S" "u" "W" "x" "<help>" "<f1>" "C-\\")
+  (:prefix "i" "e" "p" "r" "u")
+  (:prefix "n" "a" "l" "n" "N" "*" "y" "Y")
+  (:prefix "o" "-" "A" "P")
+  (:prefix "p" ">" "f" "F" "o")
+  (:prefix "s" "e" "I" "j" "k" "K" "L" "m" "o" "O" "r" "t" "T")
+  (:prefix "t" "g" "c" "I" "v"))
 #+end_src
 ** DEVDOCS
 #+begin_src elisp
-;; (map! :leader
-;;       (:prefix ("d" . "devdocs")
-;;        :desc "Install" "+" #'devdocs-install
-;;        :desc "Delete" "-" #'devdocs-delete
-;;        :desc "Lookup" "l" #'devdocs-lookup
-;;        :desc "Select docs" "L" #'devdocs-peruse
-;;        :desc "Search on the site" "s" #'devdocs-search
-;;        :desc "Update all docs" "u" #'devdocs-update-all))
+(map! :leader
+      (:prefix ("d" . "devdocs")
+       :desc "Install" "+" #'devdocs-install
+       :desc "Delete" "-" #'devdocs-delete
+       :desc "Lookup" "l" #'devdocs-lookup
+       :desc "Select docs" "L" #'devdocs-peruse
+       :desc "Search on the site" "s" #'devdocs-search
+       :desc "Update all docs" "u" #'devdocs-update-all))
 #+end_src
 ** GIT
 #+begin_src elisp
-;; (map! :leader
-;;       :prefix ("g" . "git")
-;;       :desc "List submodules" "l" #'magit-list-submodules
-;;       ;; :desc "Git time machine HELP" "h" #'git-timemachine-help
-;;       :desc "Rebase autosquash" "ca" #'magit-rebase-autosquash
-;;       :desc "Open file in remote repo" "o" #'+vc/browse-at-remote
-;;       )
+(map! :leader
+      :prefix ("g" . "git")
+      :desc "Rebase autosquash" "ca" #'magit-rebase-autosquash)
 
 (after! git-timemachine
   (evil-define-key 'normal git-timemachine-mode-map
@@ -947,88 +827,85 @@
 ** ORG
 #+begin_src elisp
 ;; ;; Tangle org-file
-;; (after! evil-org
-;;   (map! :localleader
-;;         :map org-mode-map
-;;         :desc "Tangle buffer"
-;;         "s" #'org-babel-tangle))
+(after! evil-org
+  (map! :localleader
+        :map org-mode-map
+        :desc "Tangle buffer"
+        "s" #'org-babel-tangle))
 
 ;; ;; Calendar
-;; (map! :leader
-;;       (:prefix ("o" . "open")
-;;        :desc "Open calendar" "c" #'=calendar))
+(map! :leader
+      (:prefix ("o" . "open")
+       :desc "Open calendar" "c" #'=calendar))
 #+end_src
 ** OTHER
 #+begin_src elisp
-;; ;; Windows manipulation
-;; (map! :leader
-;;       :prefix "w"
-;;       "M" #'maximize-window
-;;       "C" #'delete-other-windows
-;;       "z" #'windresize)
+;; Windows manipulation
+(map! :leader
+      :prefix "w"
+      "M" #'maximize-window
+      "C" #'delete-other-windows
+      "z" #'windresize)
 
-;; ;; Bookmarks
-;; (map! :leader
-;;       (:prefix ("o" . "open")
-;;        :desc "Bookmark manager" "b" #'list-bookmarks))
+;; Bookmarks
+(map! :leader
+      (:prefix ("o" . "open")
+       :desc "Bookmark manager" "b" #'list-bookmarks))
 
-;; ;; Markdown
-;; (after! markdown-mode
-;;   (map! :localleader
-;;         :map markdown-mode-map
-;;         :desc "Live preview" "l" #'markdown-live-preview-mode))
+;; Markdown
+(after! markdown-mode
+  (map! :localleader
+        :map markdown-mode-map
+        :desc "Live preview" "l" #'markdown-live-preview-mode))
 
-;; ;; Search TODO keywords
-;; (after! hl-todo
-;;   (map! :leader
-;;         (:prefix ("s" . "search")
-;;          :desc "Search TODO" "." #'hl-todo-occur
-;;          :desc "Search TODO from dir" "," #'hl-todo-rgrep)))
+;; Search TODO keywords
+(after! hl-todo
+  (map! :leader
+        (:prefix ("s" . "search")
+         :desc "Search TODO" "." #'hl-todo-occur
+         :desc "Search TODO from dir" "," #'hl-todo-rgrep)))
 
-;; ;; Toggle 
-;; (map! :leader
-;;       (:prefix ("t" . "toggle")
-;;        :desc "Toggle treemacs" "t" #'+treemacs/toggle))
+;; Toggle 
+(map! :leader
+      (:prefix ("t" . "toggle")
+       :desc "Toggle treemacs" "t" #'+treemacs/toggle))
 
-;; ;; Open
-;; (map! :leader :prefix "o" "a" #'org-agenda)
+;; Manage workspaces
+(map! :leader
+      :prefix "TAB"
+      :desc "Delete workspace" "k" #'+workspace/kill
+      :desc "Delete saved workspace" "K" #'+workspace/delete)
 
-;; ;; Manage workspaces
-;; (map! :leader
-;;       :prefix "TAB"
-;;       :desc "Delete workspace" "k" #'+workspace/kill
-;;       :desc "Delete saved workspace" "K" #'+workspace/delete)
+;; Help
+(map! :leader
+      :prefix "h"
+      :desc "Find text in documentation" "a" #'apropos-documentation
+      :desc "Man page" "w" #'+default/man-or-woman)
 
-;; ;; Help
-;; (map! :leader
-;;       :prefix "h"
-;;       :desc "Find text in documentation" "a" #'apropos-documentation
-;;       :desc "Man page" "w" #'+default/man-or-woman)
+;; Quit Emacs
+(map! :leader
+      :prefix "q"
+      :desc "Quit Emacs and ask to save" "Q" #'evil-quit-all)
 
-;; ;; Quit Emacs
-;; (map! :leader
-;;       :prefix "q"
-;;       :desc "Quit Emacs and ask to save" "Q" #'evil-quit-all)
+;; Complete file path
+(map! :i "M-p" #'company-files)
 
-;; ;; Complete file path
-;; (map! :i "M-p" #'company-files)
+;; Save buffer with C-s
+(after! evil
+  (map! :i "C-s"
+        (lambda ()
+          (interactive)
+          (save-buffer)
+          (evil-normal-state)))
+  (map! :n "C-s" #'save-buffer))
 
-;; ;; Save buffer with C-s
-;; (after! evil
-;;   (map! :i "C-s"
-;;         (lambda ()
-;;           (interactive)
-;;           (save-buffer)
-;;           (evil-normal-state)))
-;;   (map! :n "C-s" #'save-buffer))
+;; Comment line and move down
+(defun my/comment-line-and-next ()
+  "Comment the current line."
+  (interactive)
+  (evilnc-comment-or-uncomment-lines 1))
 
-;; ;; Comment line and move down
-;; (defun my/comment-line-and-next ()
-;;   "Comment the current line."
-;;   (interactive)
-;;   (evilnc-comment-or-uncomment-lines 1))
-
-;; (after! evil
-;;   (map! :n "C-/" #'my/comment-line-and-next
-;;         :i "C-/" #'my/comment-line-and-next))
+(after! evil
+  (map! :n "C-/" #'my/comment-line-and-next
+        :i "C-/" #'my/comment-line-and-next))
 #+end_src
