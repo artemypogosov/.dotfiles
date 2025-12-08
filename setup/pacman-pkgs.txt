@@ -6,6 +6,7 @@ betterlockscreen
 bitwarden
 blueman
 brightnessctl
+cabal
 cronie
 darktable
 docker
@@ -22,9 +23,11 @@ galculator
 gimp
 git
 gnome-multi-writer
+go
 google-chrome
 gpick
 graphviz
+hoogle
 inetutils
 kitty
 kubectl
@@ -33,17 +36,16 @@ lightdm-gtk-greeter
 lightdm-gtk-greeter-settings
 lsof
 lxappearance
-lxpolkit
 lxqt-powermanagement
 maim
 minikube
 neovim
-nitrogen
 nodejs
 noto-fonts-emoji
 npm
 openvpn
 p7zip
+pandoc
 pavucontrol
 pcmanfm
 pulseaudio-alsa
@@ -59,7 +61,6 @@ stow
 syncthing-gtk
 telegram-desktop
 tidy
-trayer
 tree
 tree-sitter
 ttf-sourcecodepro-nerd
