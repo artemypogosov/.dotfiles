@@ -25,7 +25,7 @@ export MYSQL_HISTFILE=/dev/null
 export XCURSOR_THEME="Adwaita"
 export EDITOR=nvim
 export VISUAL=nvim
-export PATH="$LOCAL_BIN:$HOME/.emacs.d/bin:$PATH"
+export PATH="$LOCAL_BIN:$HOME/.emacs.d/bin:$HOME/go/bin:$PATH"
 
 # Cutefish
 export CF_TITLE=false

@@ -9,61 +9,61 @@ fi
 ### ALIASES ###
 ###############
 
-# General
-alias ..='cd ..'
-alias ...='cd ../..'
-
-alias rm='rm -I'
-alias cp='cp -vi'
-
-alias ls='ls -h --color=auto --hyperlink=auto "$@"'
-alias ll='ls -lah'
-# .[^.]*' - glob pattern to list only hidden files/dirs
-alias ls.='ls -ld .[^.]*'
-
-alias cal='cal -m'
-alias df='df -h'
-alias free='free -th'
-alias grep='grep --color=auto'
-
-alias userlist='cut -d: -f1 /etc/passwd'
-alias jctl='journalctl -p 3 -xb'
-alias psgrep='ps aux | grep -v grep | grep -i -e VSZ -e'
-alias wget="wget --hsts-file='$XDG_CACHE_HOME/wget-hsts'"
-
-# Editors
+## EDITORS
 alias vim='nvim'
 alias emacs="emacsclient -c -a 'emacs'"
 
-# Test webcam
-alias webcam='ffplay /dev/video0'
+## DEVELOPMENT
+alias k='kubectl'
 
-# Set bash default init file
-alias bash="bash --init-file ~/.local/state/bash/.bashrc"
+## NETWORK
+alias ipv4='curl -s ifconfig.me; echo'
 
-# Passing two --refresh or -y flags will force a refresh of all package lists
-# even if they appear to be up to date.
+## PACKAGE MANAGEMENT
+# -Syyu force a refresh of all package lists
 alias update='sudo pacman -Syyu'
-
-# Cleanup orphaned packages
-alias cleanup='sudo pacman -Rns $(pacman -Qtdq)'
-
-# Add new fonts
-alias update-fc='sudo fc-cache -fv'
-
 # Recently installed packages
 alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -25 | nl"
 alias riplong="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -100 | nl"
+# Cleanup orphaned packages
+alias cleanup='sudo pacman -Rns $(pacman -Qtdq)'
 
+## NAVIGATION
+alias ..='cd ..'
+alias ...='cd ../..'
+
+alias ls='ls -h --color=auto --hyperlink=auto "$@"'
+alias ll='ls -la'
+# .[^.]*' - glob pattern to list only hidden files/dirs
+alias ls.='ls -ld .[^.]*'
+
+## FILES MANIPULATION
+alias rm='rm -I'
+alias cp='cp -vi'
+
+## SYSTEM INFO
+alias df='df -h'
+alias free='free -th'
+
+alias jctl='journalctl -p 3 -xb'
+alias userlist='cut -d: -f1 /etc/passwd'
+alias psgrep='ps aux | grep -v grep | grep -i -e VSZ -e'
+
+## OTHER
+alias cal='cal -m'
+alias grep='grep --color=auto'
+alias wget="wget --hsts-file='$XDG_CACHE_HOME/wget-hsts'"
+# Test webcam
+alias webcam='ffplay /dev/video0'
+# Set bash default init file
+alias bash="bash --init-file ~/.local/state/bash/.bashrc"
+# Add new fonts
+alias update-fc='sudo fc-cache -fv'
 # fzf
 alias vfind='vim $(find . -type f | fzf)'
 alias fzf='find . -type f | fzf'
-
-# Kubernetes 'kubectl'
-alias k='kubectl'
-
 # Rick Astley
-alias rr='curl -s -L https://raw.githubusercontent.com/keroserene/rickrollrc/master/roll.sh | bash'
+alias ra='curl -s -L https://raw.githubusercontent.com/keroserene/rickrollrc/master/roll.sh | bash'
 
 ###############
 ### HISTORY ###
