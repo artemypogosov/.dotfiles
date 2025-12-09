@@ -32,10 +32,10 @@ case "$choice" in
             ~/.local/state/bash
 
         echo "=== Installing programs... [pacman + yay] ==="
-        pacman -S - <~/.dotfiles/setup/pacman-pkgs.txt
+        #pacman -S - <~/.dotfiles/setup/pacman-pkgs.txt
         pacman -S - <~/.dotfiles/setup/pacman-lsp.txt
         pacman -S - <~/.dotfiles/setup/pacman-formatters.txt
-        yay -S - <~/.dotfiles/setup/yay-pkgs.txt
+        #yay -S - <~/.dotfiles/setup/yay-pkgs.txt
         yay -S - <~/.dotfiles/setup/yay-formatters.txt
 
         echo "=== GNU Stow: linking .dotfiles ==="
