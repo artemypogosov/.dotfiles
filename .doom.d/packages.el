@@ -57,7 +57,7 @@
 ;;; Org ;;;
 ;;;;;;;;;;;
 
-;; Personal knowledge management system
+;; Personal knowledge management system.
 ;; Always use the newest version, not Doom’s pinned version.
 ;; This is important for 'org-roam-ui'
 (unpin! org-roam)
@@ -67,6 +67,3 @@
 
 ;; Change priority symbols
 (package! org-fancy-priorities)
-
-;; Change heading symbols
-;; (package! org-superstar)

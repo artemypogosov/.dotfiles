@@ -33,30 +33,26 @@
 (setq doom-theme 'doom-gruvbox)
 
 (after! doom-themes
-  ;; Disable bold font in every mode (in ORG->'Headings style' section bold is added)
-  (setq doom-themes-enable-bold nil
-        doom-themes-enable-italic t))
+  (setq doom-themes-enable-italic t
+        ;; Disable bold font in every mode. In ORG->'Headings style' bold is enabled
+        doom-themes-enable-bold nil))
 
-(setq
-  undo-limit 80000000 ;; raise undo-limit to 80Mb
-  auto-save-default t ;; nobody likes to loose work, I certainly don't
-  truncate-string-ellipsis "…" ;; unicode ellipsis are nicer than "...", and also save space
-  password-cache-expiry nil ;; I can trust my computers... can't I?
-  delete-by-moving-to-trash t ;; remove files to trash
-  trash-directory "~/.local/share/Trash/files" ;; place for trash
-  global-auto-revert-non-file-buffers t ;; enables Auto Reverting for all types of buffers
-  lisp-indent-offset 2 ;; indentation for lisp
+(setq undo-limit 80000000                          
+      auto-save-default t                         
+      truncate-string-ellipsis "…"               
+      password-cache-expiry nil                 
+      delete-by-moving-to-trash t                  
+      trash-directory "~/.local/share/Trash/files" 
+      global-auto-revert-non-file-buffers t
 
-  ;; Third party variables
-  projectile-project-search-path '("~/Projects") ;; path for projectile to find projects
-  display-line-numbers-type 'relative ;; style of line numbers
-  evil-ex-substitute-case 'sensitive ;; case sensitive match in evil-ex-substitute command
-  evil-want-fine-undo t ;; more granular undo
-  evil-snipe-scope 'buffer ;; scope of evil-snipe search
-  auto-revert-verbose nil ;; disable auto-revert messages
-  +zen-text-scale 1 ;; scale text in zen mode
-  imenu-list-focus-after-activation t ;; focus imenu-list side window after it was toggled
-  imenu-list-auto-resize t)
+      ;; Third party variables
+      projectile-project-search-path '("~/Projects") 
+      display-line-numbers-type 'relative 
+      evil-ex-substitute-case 'sensitive 
+      evil-want-fine-undo t 
+      evil-snipe-scope 'buffer 
+      auto-revert-verbose nil 
+      +zen-text-scale 1) 
 
 ;; 'setq' vs 'setq-default'
 ;; Use 'setq' for non-buffer-local variables
@@ -65,11 +61,12 @@
 ;; Buffer local variables have a default value.
 ;; So all buffers inherit the default value.
 
-(setq-default fill-column 120) ;; display limit line
-
+;; Line-wrapping column width
+(setq-default fill-column 120) 
 (add-hook! 'prog-mode #'display-fill-column-indicator-mode)
 
-(global-auto-revert-mode t) ;; auto sync buffers when they are changed by other process
+;; Auto sync buffers when they are changed by other process
+(global-auto-revert-mode t)
 
 (defvar my/dashboard-cache nil
   "Cached ASCII banner for Doom dashboard to avoid recomputation.")
@@ -81,7 +78,6 @@
                 " █████   ██ ████ ██ ███████ ██      ███████ "
                 " ██      ██  ██  ██ ██   ██ ██           ██ "
                 " ███████ ██      ██ ██   ██  ██████ ███████ "
-                ""                                           
                 ""                                           
                 ""                                           
                 "     To see with eyes unclouded by hate."))
@@ -114,9 +110,6 @@
     (file-exists-p (expand-file-name persp-auto-save-fname persp-save-dir)))
    ((require 'desktop nil t)
     (file-exists-p (desktop-full-file-name)))))
-
-
-;; (setq +doom-dashboard-menu-sections '())
 
 (setq +doom-dashboard-menu-sections
       '(("Load session" :action doom/quickload-session :when (my/session-file-exists))
@@ -151,7 +144,7 @@
   ;; Disable size indication
   (remove-hook 'doom-modeline-mode-hook #'size-indication-mode))
 
-;; Enable file's follow mode in treemacs [M-m --> select multiple files]
+;; [M-m --> select multiple files]
 (after! treemacs
   (treemacs-follow-mode 1)
   (treemacs-indent-guide-mode 1)
@@ -176,14 +169,6 @@
           ("pr" "~/Projects" "Projects")))
   (dirvish-side-follow-mode 1))
 
-;; 'TODO'      - needs to be done
-;; 'NEXT'      - next one to be considered
-;; 'STARTED'   - in progress
-;; 'WAIT'      - blocked by something, have to wait
-;; 'HOLD'      - hold (wait) on purpose
-;; 'DONE'      - ready
-;; 'CANCELLED' - no longer needed
-
 (defconst my/org-root-dir (expand-file-name "~/Org"))
 
 ;; Cache: directory → list of org files
@@ -194,9 +179,8 @@
   (let* ((dir (expand-file-name subdir my/org-root-dir))
          (cached (gethash dir my/org-dir-cache)))
     (or cached
-        (puthash dir
-                 (directory-files-recursively dir "\\.org$")
-                 my/org-dir-cache))))
+        (puthash dir (directory-files-recursively dir "\\.org$") my/org-dir-cache))))
+
 (after! org 
   (setq org-directory my/org-root-dir
         org-startup-folded 'content
@@ -206,7 +190,6 @@
                                  (my/org-files "agenda/work")
                                  (list (expand-file-name "inbox.org" my/org-root-dir)))
         org-fancy-priorities-list '("" "" "")
-        ;; org-superstar-headline-bullets-list '( "●" "○" "⟁"  "⟐" "✿")
         org-tag-alist '(;; Affiliation
                         ("personal" . ?P) ("work" . ?W)
                         ;; Projects...
@@ -215,13 +198,13 @@
                         ;; Other
                         ("wishlist" . ?L)  ("repeated" . ?R))
         org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "STARTED(s!)" "WAIT(w@)" "HOLD(h@)" "|" "DONE(d!)" "CANCELLED(c@)"))
-        org-todo-keyword-faces '(("TODO"      :foreground "#afb224" :underline t)
-                                 ("NEXT"      :foreground "#fabd2f" :underline t)
-                                 ("STARTED"   :foreground "#b16286" :underline t)
-                                 ("HOLD"      :foreground "#458588" :underline t)
-                                 ("WAIT"      :foreground "#fe8019" :underline t)
-                                 ("DONE"      :foreground "#665c54" :underline t)
-                                 ("CANCELLED" :foreground "#cc241d" :underline t))
+        org-todo-keyword-faces '(("TODO"      :foreground "#afb224" :underline t)  ;; needs to be done
+                                 ("NEXT"      :foreground "#fabd2f" :underline t)  ;; next one to be considered
+                                 ("STARTED"   :foreground "#b16286" :underline t)  ;; in progress
+                                 ("HOLD"      :foreground "#458588" :underline t)  ;; blocked by something, have to wait
+                                 ("WAIT"      :foreground "#fe8019" :underline t)  ;; hold (wait) on purpose
+                                 ("DONE"      :foreground "#665c54" :underline t)  ;; ready
+                                 ("CANCELLED" :foreground "#cc241d" :underline t)) ;; no longer needed
         org-hide-emphasis-markers t)
   
   ;; Conditional auto-tangling
@@ -233,12 +216,13 @@
       (org-babel-tangle)))
 
   (defun my/org-auto-tangle-setup ()
-    (add-hook! 'after-save-hook :local #'my/org-auto-tangle))
+    (add-hook! 'after-save-hook
+               :local #'my/org-auto-tangle))
 
-  ;; Hooks
   (add-hook! org-mode
              #'org-fancy-priorities-mode
-             #'my/org-auto-tangle-setup))
+             #'my/org-auto-tangle-setup
+             (indent-bars-mode -1)))
 
 (custom-set-faces!
   '(org-level-1 :foreground "#83a598" :inherit outline-1 :height 1.2    :weight bold :extend t)
@@ -274,6 +258,11 @@
           (todo "" ((org-agenda-overriding-header "Inbox Notes:")
                     (org-agenda-files
                      (list (expand-file-name "inbox.org" my/org-root-dir)))))))))
+
+(after! calfw
+  (setq cfw:render-line-breaker #'cfw:render-line-breaker-wordwrap
+        cfw:display-calendar-holidays nil
+        calendar-week-start-day 1))
 
 (after! org-roam
   (setq org-roam-directory (file-name-as-directory my/org-root-dir)
@@ -316,112 +305,131 @@
       (:prefix ("r" . "roam")
        :desc "Open UI Graph" "o" #'org-roam-ui-open))
 
-(after! calfw
-  (setq cfw:render-line-breaker #'cfw:render-line-breaker-wordwrap
-        cfw:display-calendar-holidays nil
-        calendar-week-start-day 1))
-
-;; always open the preview window at the right
 (setq markdown-split-window-direction 'right)
 
-(setq lsp-enable-symbol-highlighting nil)
+(after! lsp-mode
+  (setq lsp-enable-symbol-highlighting nil
+        lsp-clients-lua-language-server-bin "/usr/bin/lua-language-server"
+        lsp-clients-lua-language-server-main-location "/usr/lib/lua-language-server/main.lua"))
 
-(after! format
-  ;; Lua
-  ;; (set-formatter! 'lua
-  ;;   (lambda ()
-  ;;     `("stylua"
-  ;;       "--stdin-filepath" ,(buffer-file-name)
-  ;;       "-"))
-  ;;   :modes '(lua-mode lua-ts-mode))
+;; Disable format-on-save for some modes where formatters are unreliable
+(setq +format-on-save-disabled-modes
+      '(sql-mode tex-mode latex-mode LaTeX-mode org-msg-edit-mode emacs-lisp-mode))
 
-  ;; ;; ------------------------------
-  ;; ;; Web (JS / TS / JSX / TSX / HTML / Vue / Svelte / Astro)
-  ;; ;; biome → prettierd → prettier
-  ;; ;; ------------------------------
-  ;; (set-formatter! 'web
-  ;;   '(("biome" "format" "--stdin-file-path" filepath)
-  ;;     ("prettierd" filepath)
-  ;;     ("prettier" "--stdin-filepath" filepath))
-  ;;   :modes '(js-mode
-  ;;            typescript-mode
-  ;;            tsx-ts-mode
-  ;;            jsx-ts-mode
-  ;;            html-mode
-  ;;            vue-mode
-  ;;            svelte-mode
-  ;;            astro-mode))
+;; Allow per-project overrides via .dir-locals.el
+(setq-default +format-with nil)
 
+(after! apheleia
+  ;; Biome
+  (set-formatter! 'biome
+    '("biome" "format" "--stdin-file-path" filepath))
 
-  ;; ------------------------------
-  ;; CSS / SCSS / LESS / PostCSS
-  ;; biome → prettierd → prettier
-  ;; ------------------------------
-  ;; (set-formatter! 'css
-  ;;   '(("biome" "format" "--stdin-file-path" filepath)
-  ;;     ("prettierd" filepath)
-  ;;     ("prettier" "--stdin-filepath" filepath))
-  ;;   :modes '(css-mode
-  ;;            scss-mode
-  ;;            less-css-mode
-  ;;            postcss-mode))
+  ;; Prettierd daemon
+  (set-formatter! 'prettierd
+    '("prettierd" filepath))
 
-  ;; ------------------------------
-  ;; JSON / JSONC
-  ;; biome → prettierd → prettier
-  ;; ------------------------------
-  ;; (set-formatter! 'json
-  ;;   '(("biome" "format" "--stdin-file-path" filepath)
-  ;;     ("prettierd" filepath)
-  ;;     ("prettier" "--stdin-filepath" filepath))
-  ;;   :modes '(json-mode jsonc-mode))
+  ;; Plain Prettier CLI
+  (set-formatter! 'prettier
+    '("prettier" "--stdin-filepath" filepath))
 
-  ;; ------------------------------
+  ;; JSON
+  (set-formatter! 'jsonfmt
+    '("prettier" "--stdin-filepath" filepath)
+    :modes '(json-mode jsonc-mode))
+
   ;; YAML
-  ;; prettierd → prettier
-  ;; ------------------------------
-  ;; (set-formatter! 'yaml
-  ;;   '(("prettierd" filepath)
-  ;;     ("prettier" "--stdin-filepath" filepath))
-  ;;   :modes '(yaml-mode))
+  (set-formatter! 'yamlfix
+    '("prettier" "--stdin-filepath" filepath)
+    :modes '(yaml-mode yaml-ts-mode))
 
-  ;; ------------------------------
-  ;; GraphQL
-  ;; prettierd → prettier
-  ;; ------------------------------
-  ;; (set-formatter! 'gql
-  ;;   '(("prettierd" filepath)
-  ;;     ("prettier" "--stdin-filepath" filepath))
-  ;;   :modes '(graphql-mode))
+  ;; Lua (Stylua)
+  (set-formatter! 'stylua
+    '("stylua"
+      ;; Let Stylua walk up the tree to find .stylua.toml
+      "--search-parent-directories"
+      ;; Tell Stylua what file is being formatted when using stdin
+      "--stdin-filepath" filepath
+      "-")
+    :modes '(lua-mode lua-ts-mode))
 
-  ;; ------------------------------
-  ;; Prisma schema
-  ;; prettierd → prettier
-  ;; ------------------------------
-  ;; (set-formatter! 'prisma
-  ;;   '(("prettierd" filepath)
-  ;;     ("prettier" "--stdin-filepath" filepath))
-  ;;   :modes '(prisma-mode))
+  ;; Shell
+  (after! sh-script
+    (set-formatter! 'shfmt
+      '("shfmt" "-ci"
+        (unless indent-tabs-mode
+          (list "-i" (number-to-string tab-width))))
+      :modes '(sh-mode bash-ts-mode))))
 
-  ;; ------------------------------
-  ;; Shell scripts
-  ;; shfmt → beautysh
-  ;; ------------------------------
-  ;; (set-formatter! 'sh
-  ;;   '(("shfmt" "-")
-  ;;     ("beautysh" "-"))
-  ;;   :modes '(sh-mode bash-ts-mode zsh-mode))
-  )
+(defun my/js-smart-formatter ()
+  "Return a formatter symbol for the current JS/TS/JSON project.
+Chooses biome/prettierd/prettier based on project config files."
+  (let* ((root (or (and (fboundp 'projectile-project-root)
+                        (projectile-project-root))
+                   default-directory))
+         (biome-configs '("biome.json"
+                          "biome.jsonc"
+                          "biome.config.js"
+                          "biome.config.cjs"
+                          "biome.config.mjs"
+                          "biome.config.ts"))
+         (prettier-configs '(".prettierrc"
+                             ".prettierrc.json"
+                             ".prettierrc.js"
+                             ".prettierrc.cjs"
+                             ".prettierrc.yaml"
+                             ".prettierrc.yml"
+                             "prettier.config.js"
+                             "prettier.config.cjs")))
+    (cond
+     ;; Any explicit Prettier config → prefer Prettierd
+     ((seq-some (lambda (f)
+                  (file-exists-p (expand-file-name f root)))
+                prettier-configs)
+      'prettierd)
 
-;; Optional: manual formatter keybinding
-(map! :leader "=" :desc "Format region/buffer" #'+format/region-or-buffer)
+     ;; Any Biome config file
+     ((seq-some (lambda (f)
+                  (file-exists-p (expand-file-name f root)))
+                biome-configs)
+      'biome)
 
-(after! company
-  (setq company-minimum-prefix-length 2
-        company-idle-delay 0.2
-        company-show-quick-access t
-        company-tooltip-limit 20
-        company-tooltip-align-annotations t))
+     ;; Biome config embedded in package.json
+     ((let ((pkg (expand-file-name "package.json" root)))
+        (and (file-exists-p pkg)
+             (with-temp-buffer
+               (insert-file-contents pkg)
+               (string-match-p "\"biome\"" (buffer-string)))))
+      'biome)
+     
+     ;; Fallback 1
+     ((executable-find "biome")     'biome)
+     ((executable-find "prettierd") 'prettierd)
+     ((executable-find "prettier")  'prettier)
+
+     ;; Fallback 2
+     (t 'prettier))))
+
+(defun my/js-assign-smart-formatter ()
+  "Decide and set `+format-with` for this JS/TS/JSON buffer."
+  (setq-local +format-with (my/js-smart-formatter)))
+
+(dolist (hook '(js2-mode-hook
+                js-mode-hook
+                js-ts-mode-hook
+                tsx-ts-mode-hook
+                typescript-ts-mode-hook
+                typescript-mode-hook
+                web-mode-hook
+                json-mode-hook
+                jsonc-mode-hook))
+  (add-hook hook #'my/js-assign-smart-formatter))
+
+;; Shell
+(setq-hook! 'sh-mode-hook +format-with 'shfmt)
+
+;; Lua
+(setq-hook! 'lua-mode-hook    +format-with 'stylua)
+(setq-hook! 'lua-ts-mode-hook +format-with 'stylua)
 
 (after! web-mode
   ;; Enable auto-closing tags in web-mode (like html files)
@@ -457,7 +465,8 @@
     ;; Pure Emmet expansion (added by me instead of 'emmet-expand-yas')
     (t #'emmet-expand-line))))
 
-(add-hook! yaml-mode #'indent-bars-mode) ;; shows vertical bars to visually indicate indentation levels
+;; Show vertical bars to visually indicate indentation levels
+(add-hook! yaml-mode #'indent-bars-mode)
 
 (after! spell-fu
   (setq-default spell-fu-idle-delay 1
@@ -465,7 +474,9 @@
 
   ;; Disable spell-fu in programming buffers
   (remove-hook 'prog-mode-hook #'spell-fu-mode)
-
+  (add-hook! 'lua-mode    (spell-fu-mode -1))
+  (add-hook! 'lua-ts-mode (spell-fu-mode -1))
+  
   ;; Enable spell-fu only in text-like modes
   (add-hook! text-mode #'spell-fu-mode))
 
@@ -657,28 +668,28 @@ Each FORM must be: (:prefix PREFIX KEY1 KEY2 ...)."
               (list `(map! :leader :prefix ,prefix ,@spec))))))))
 
 (my/unbind
-  (:prefix "w"
-    "C-<up>" "C-<down>" "C-<left>" "C-<right>" "<up>" "<down>"
-    "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "<left>" "<right>"
-    "C-=" "C-_" "d" "g" "o" ":" "+" "-" "<" ">" "_" "|" "m" "q"
-    "C-b" "C-c" "C-f" "C-h" "C-j" "C-k" "C-l" "C-n" "C-o" "C-p"
-    "C-q" "C-r" "C-s" "C-t" "C-u" "C-v" "C-w" "C-x" 
-    "C-S-h" "C-S-j" "C-S-k" "C-S-l" "C-S-r" "C-S-S" "C-S-w")
-  (:prefix "TAB" "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "d" "D" "`" "R")
-  (:prefix "b"
-    "d" "n" "p" "l" "z" "m" "M" "B" "Z" "s" "C")
-  (:prefix "c" "E")
-  (:prefix "f" "e" "s")
-  (:prefix "h"
-    "RET" "." "4" "?" "A" "b" "C" "e" "E" "F"
-    "g" "I" "K" "l" "L" "M" "n" "o" "O" "p" "P" "V"
-    "q" "i" "R" "s" "S" "u" "W" "x" "<help>" "<f1>" "C-\\")
-  (:prefix "i" "e" "p" "r" "u")
-  (:prefix "n" "a" "l" "n" "N" "*" "y" "Y")
-  (:prefix "o" "-" "A" "P")
-  (:prefix "p" ">" "f" "F" "o")
-  (:prefix "s" "e" "I" "j" "k" "K" "L" "m" "o" "O" "r" "t" "T")
-  (:prefix "t" "g" "c" "I" "v"))
+ (:prefix "w"
+          "C-<up>" "C-<down>" "C-<left>" "C-<right>" "<up>" "<down>"
+          "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "<left>" "<right>"
+          "C-=" "C-_" "d" "g" "o" ":" "+" "-" "<" ">" "_" "|" "m" "q"
+          "C-b" "C-c" "C-f" "C-h" "C-j" "C-k" "C-l" "C-n" "C-o" "C-p"
+          "C-q" "C-r" "C-s" "C-t" "C-u" "C-v" "C-w" "C-x" 
+          "C-S-h" "C-S-j" "C-S-k" "C-S-l" "C-S-r" "C-S-S" "C-S-w")
+ (:prefix "TAB" "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "d" "D" "`" "R")
+ (:prefix "b"
+          "d" "n" "p" "l" "z" "m" "M" "B" "Z" "s" "C")
+ (:prefix "c" "E")
+ (:prefix "f" "e" "s")
+ (:prefix "h"
+          "RET" "." "4" "?" "A" "b" "C" "e" "E" "F"
+          "g" "I" "K" "l" "L" "M" "n" "o" "O" "p" "P" "V"
+          "q" "i" "R" "s" "S" "u" "W" "x" "<help>" "<f1>" "C-\\")
+ (:prefix "i" "e" "p" "r" "u")
+ (:prefix "n" "a" "l" "n" "N" "*" "y" "Y")
+ (:prefix "o" "-" "P")
+ (:prefix "p" ">" "f" "F" "o")
+ (:prefix "s" "e" "I" "j" "k" "K" "L" "m" "o" "O" "r" "t" "T")
+ (:prefix "t" "g" "c" "I" "v"))
 
 (map! :leader
       (:prefix ("d" . "devdocs")
