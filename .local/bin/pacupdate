@@ -1,4 +1,3 @@
 #!/bin/bash
 
-cupd=$(checkupdates-with-aur | wc -l)
-echo "$cupd"
+checkupdates | wc -l
