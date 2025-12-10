@@ -2,6 +2,7 @@ alacritty
 arandr
 aspell
 aspell-en
+betterlockscreen
 bitwarden
 blueman
 brightnessctl
@@ -13,6 +14,7 @@ docker-compose
 downgrade
 dunst
 emacs
+expac
 fd
 file-roller
 filezilla
@@ -44,8 +46,8 @@ nodejs
 noto-fonts-emoji
 npm
 openvpn
-p7zip
-pandoc
+p7zip-gui
+pandoc-bin
 pavucontrol
 pcmanfm
 pulseaudio-alsa

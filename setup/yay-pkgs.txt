@@ -1,4 +1,4 @@
-checkupdates-with-aur
+aur-check-updates-bin
 gruvbox-dark-gtk
 gruvbox-dark-icons-gtk
 gruvbox-icon-theme
