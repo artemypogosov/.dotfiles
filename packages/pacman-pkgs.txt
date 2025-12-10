@@ -1,6 +1,7 @@
 alacritty
 arandr
 aspell
+syncthing
 aspell-en
 betterlockscreen
 bitwarden

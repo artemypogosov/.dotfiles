@@ -10,4 +10,5 @@ nitrogen
 otf-font-awesome-5
 picom-ftlabs-git
 selectdefaultapplication-git
+syncthingtray-qt6
 trayer
