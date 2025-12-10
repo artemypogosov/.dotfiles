@@ -4,6 +4,7 @@
 misc
 LICENSE
 ^/.*\.org
+other
 packages
 setup.sh
 .gitignore
