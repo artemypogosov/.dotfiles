@@ -173,9 +173,6 @@ case "$choice" in
 
         chsh -s /bin/zsh
 
-        echo "=== APPLY XRESOURCES (CURSOR, DPI, FONTS) ==="
-        xrdb -load ~/.config/X11/.Xresources
-
         echo "=== DISABLE KITTY FROM LAUNCHER ==="
         mkdir -p ~/.local/share/applications
 
