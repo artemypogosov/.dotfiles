@@ -1,5 +1,3 @@
-#!/usr/bin/env zsh
-
 #################
 ### VARIABLES ###
 #################
@@ -25,9 +23,14 @@ export MYSQL_HISTFILE=/dev/null
 export XCURSOR_THEME="Adwaita"
 export EDITOR=nvim
 export VISUAL=nvim
-export PATH="$LOCAL_BIN:$HOME/.emacs.d/bin:$HOME/go/bin:$PATH"
 
 # Cutefish
 export CF_TITLE=false
 
 export LC_TIME="en_US.UTF-8"
+
+# GO clean XDG paths
+export GOPATH="$XDG_DATA_HOME/go"
+export GOMODCACHE="$XDG_CACHE_HOME/go/mod"
+
+export PATH="$GOBIN:$XDG_CONFIG_HOME/emacs/bin:$PATH"

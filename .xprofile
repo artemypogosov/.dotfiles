@@ -19,7 +19,19 @@ xinput set-prop "SynPS/2 Synaptics TouchPad" "libinput Tapping Enabled" 1 &
 
 # Starting applications at boot time
 killall trayer &
-sleep 2 && trayer --edge bottom --align right --widthtype request --padding 5 --SetDockType true --SetPartialStrut false --expand true --monitor 1 --transparent true --alpha 256 --height 20 &
+sleep 2 &&
+  trayer \
+    --edge bottom \
+    --align right \
+    --widthtype request \
+    --padding 5 \
+    --SetDockType true \
+    --SetPartialStrut false \
+    --expand true \
+    --monitor 1 \
+    --transparent true \
+    --alpha 255 \
+    --height 20 &
 lxpolkit &
 picom &
 dunst &
