@@ -1,7 +1,6 @@
 alacritty
 arandr
 aspell
-syncthing
 aspell-en
 betterlockscreen
 bitwarden
@@ -58,7 +57,9 @@ ranger
 ripgrep
 rofi
 speedtest-cli
+spotify
 stow
+syncthing
 telegram-desktop
 tidy
 tree
