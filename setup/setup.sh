@@ -56,8 +56,9 @@ install_file() {
 
         printf "  * %-30s " "$pkg"
 
-        if pacman -Si "$pkg" >/dev/null 2>&1; then
-            if sudo pacman -S --noconfirm --needed "$pkg" >/dev/null 2>&1; then
+        # Redirect stdin so pacman/yay cannot steal it
+        if pacman -Si "$pkg" </dev/null >/dev/null 2>&1; then
+            if sudo pacman -S --noconfirm --needed "$pkg" </dev/null >/dev/null 2>&1; then
                 echo -e "${GREEN}OK${RESET}"
             else
                 echo -e "${RED}FAILED (PACMAN)${RESET}"
@@ -65,8 +66,8 @@ install_file() {
 
         else
             # Try AUR
-            if yay -Si "$pkg" >/dev/null 2>&1; then
-                if yay -S --noconfirm --needed "$pkg" >/dev/null 2>&1; then
+            if yay -Si "$pkg" </dev/null >/dev/null 2>&1; then
+                if yay -S --noconfirm --needed "$pkg" </dev/null >/dev/null 2>&1; then
                     echo -e "${GREEN}OK (AUR)${RESET}"
                 else
                     echo -e "${RED}FAILED (AUR)${RESET}"
