@@ -86,7 +86,7 @@ install_file() {
 # STARTUP #
 ###########
 
-cat computer.txt
+cat other/computer.txt
 echo
 echo "Date: $(date +"%a %b %d %H:%M:%S")"
 echo
@@ -129,6 +129,7 @@ case "$choice" in
 
         echo "=== GNU STOW: LINKING .DOTFILES ==="
 
+        cd ~/.dotfiles
         stow .
 
         echo "=== DOWNLOADING .etckeeper REPO ==="

@@ -1,7 +1,0 @@
-biome
-prettier
-eslint
-shfmt
-stylua
-stylelint
-shellcheck

@@ -22,6 +22,8 @@ filebrowser {
 
 window {
     width: 33%;
+    border: 0;
+    padding: 5px;
 }
 
 listview {
