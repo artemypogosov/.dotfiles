@@ -1,8 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# '&&' at the end means "run next command only if the previous command succeeded"
-
 #############
 # VARIABLES #
 #############
