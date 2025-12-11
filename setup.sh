@@ -205,7 +205,7 @@ case "$choice" in
 Then move ~/go into ~/.config/go using XDG BASE DIRECTORY: https://wiki.archlinux.org/title/XDG_Base_Directory
 Then add new path to $PATH in .zshenv
 
-6. Configure Syncthing
+6. Configure Syncthing [sudo systemctl enable syncthing@service --now]
 EOF
 
         sleep 3

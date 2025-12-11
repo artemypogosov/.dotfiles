@@ -98,7 +98,7 @@
        (org +roam +dragndrop)         ; organize your plain life in plain text
        (yaml +lsp)                    ; JSON, but readable
        (sh +lsp)                      ; she sells {ba,z,fi}sh shells on the C xor
-       haskell                        ; a language that's lazier than I am
+       (haskell +lsp)                 ; a language that's lazier than I am
        (lua +lsp)                     ; one-based indices? one-based indices
        emacs-lisp                     ; drown in parentheses
        markdown                       ; writing docs for people to ignore

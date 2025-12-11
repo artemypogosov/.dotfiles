@@ -431,6 +431,10 @@ Chooses biome/prettierd/prettier based on project config files."
 (setq-hook! 'lua-mode-hook    +format-with 'stylua)
 (setq-hook! 'lua-ts-mode-hook +format-with 'stylua)
 
+;; Fix 'dockfmt' path
+(add-to-list 'exec-path "~/.local/share/go/bin")
+(setenv "PATH" (concat "~/.local/share/go/bin:" (getenv "PATH")))
+
 (after! web-mode
   ;; Enable auto-closing tags in web-mode (like html files)
   (require 'sgml-mode)
@@ -729,6 +733,11 @@ Each FORM must be: (:prefix PREFIX KEY1 KEY2 ...)."
       "M" #'maximize-window
       "C" #'delete-other-windows
       "z" #'windresize)
+
+;; File
+(map! :leader
+      :prefix "f"
+      :desc "Update recent files" "z" #'recentf-cleanup)
 
 ;; Bookmarks
 (map! :leader
