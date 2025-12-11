@@ -188,6 +188,9 @@ case "$choice" in
         echo "=== COPY LIGHTDM CONFIG FILES INTO /etc/lightdm/ ==="
         sudo cp -a ~/.config/etckeeper/lightdm/. /etc/lightdm/
 
+        echo "=== COPY gtk3.0 to gtk4.0 [workaround for pavucontrol]"
+        cp ~/.config/gtk-3.0/ ~/.config/gtk-4.0/
+
         echo "================================"
         echo "=== RECOMMENDED MANUAL STEPS ==="
         echo "================================"

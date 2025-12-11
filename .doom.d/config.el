@@ -158,6 +158,7 @@
 (after! dirvish
   (setq dirvish-hide-details t
         dired-mouse-drag-files t
+        dired-kill-when-opening-new-dired-buffer t
         dirvish-mode-line-format '(:left (sort file-time symlink) :right (yank index))
         ;; Use 'b' + letter
         dirvish-quick-access-entries
@@ -168,6 +169,30 @@
           ("pi" "~/Pictures" "Pictures")
           ("pr" "~/Projects" "Projects")))
   (dirvish-side-follow-mode 1))
+
+(add-hook 'window-configuration-change-hook
+  (defun my/dired-force-omit-off ()
+    (when (derived-mode-p 'dired-mode)
+      (dired-omit-mode -1))))
+
+(after! dired-x
+  (setq dired-omit-files
+        (concat dired-omit-files "\\|^\\..+$")))
+
+(with-eval-after-load 'dirvish
+  ;; Remove 'hidden attribute if present
+  (setq dirvish-attributes
+        (remove 'hidden dirvish-attributes)))
+
+(map! :map dired-mode-map
+      :n "M-h" #'dired-omit-mode)
+
+(map! :map dirvish-mode-map
+      :n "M-h" #'dired-omit-mode)
+
+;; Hide "." and ".." hard links
+(after! dired
+  (setq dired-listing-switches "-Ahlv --group-directories-first"))
 
 (defconst my/org-root-dir (expand-file-name "~/Org"))
 
