@@ -632,6 +632,29 @@ Chooses biome/prettierd/prettier based on project config files."
                 ("#+begin_quote" . "❝")
                 ("#+end_quote"   . "❞")))
   (prettify-symbols-mode 1))
+
+(defun my/org-pretty-list-bullets (limit)
+  "Replace Org list bullets (+ and -) with prettier glyphs."
+  (when (re-search-forward
+         "^[ \t]*\\([+-]\\)\\s-+"
+         limit t)
+    (compose-region
+     (match-beginning 1)
+     (match-end 1)
+     (pcase (match-string 1)
+       ("+" "➤")
+       ("-" "➤")))
+    t))
+
+(defun my/org-enable-pretty-bullets ()
+  (font-lock-add-keywords
+   nil
+   '((my/org-pretty-list-bullets))
+   'append)
+  (font-lock-flush))
+
+(add-hook! org-mode
+  (my/org-enable-pretty-bullets))
 #+end_src
 * UNDERLINE SYMBOLS
 #+begin_src elisp
@@ -744,6 +767,9 @@ Chooses biome/prettierd/prettier based on project config files."
 #+end_src
 * NOTIFICATIONS
 #+begin_src elisp
+;; If you have a problem with duplicates in notifications, try to change
+;; 'dunst' timeout
+
 (defvar my/appt-notification-id nil)
 
 (defun my/appt-clean-message (msg)
@@ -848,9 +874,6 @@ Each FORM must be: (:prefix PREFIX KEY1 KEY2 ...)."
        :desc "Update all docs" "u" #'devdocs-update-all))
 #+end_src
 ** TODO GIT
-
-Bind different "smerge-*" commands for conflict resolving
-
 #+begin_src elisp
 (map! :leader
       :prefix ("g" . "git")

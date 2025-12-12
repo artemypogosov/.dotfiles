@@ -537,6 +537,29 @@ Chooses biome/prettierd/prettier based on project config files."
                 ("#+end_quote"   . "❞")))
   (prettify-symbols-mode 1))
 
+(defun my/org-pretty-list-bullets (limit)
+  "Replace Org list bullets (+ and -) with prettier glyphs."
+  (when (re-search-forward
+         "^[ \t]*\\([+-]\\)\\s-+"
+         limit t)
+    (compose-region
+     (match-beginning 1)
+     (match-end 1)
+     (pcase (match-string 1)
+       ("+" "➤")
+       ("-" "➤")))
+    t))
+
+(defun my/org-enable-pretty-bullets ()
+  (font-lock-add-keywords
+   nil
+   '((my/org-pretty-list-bullets))
+   'append)
+  (font-lock-flush))
+
+(add-hook! org-mode
+  (my/org-enable-pretty-bullets))
+
 (use-package! idle-underline-mode
   :hook (prog-mode . idle-underline-mode)
   :init
@@ -633,6 +656,9 @@ Chooses biome/prettierd/prettier based on project config files."
   (setq reverse-im-input-methods '("ukrainian-computer" "russian-computer"))
   :config
   (reverse-im-mode 1))
+
+;; If you have a problem with duplicates in notifications, try to change
+;; 'dunst' timeout
 
 (defvar my/appt-notification-id nil)
 

@@ -1,4 +1,4 @@
-personal_ws-1.1 en 252
+personal_ws-1.1 en 254
 absofruitly
 adminer
 agda
@@ -59,6 +59,7 @@ dotfiles
 dpkg
 dsls
 dsp
+ediff
 editorconfig
 ein
 el
@@ -189,6 +190,7 @@ scalable
 sekonic
 setq
 shimano
+smerge
 sml
 spotify
 stashchuk
