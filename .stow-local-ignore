@@ -1,8 +1,6 @@
 # Ignore list for GNU Stow
 
 \.git
-misc
-LICENSE
 ^/.*\.org
 other
 packages

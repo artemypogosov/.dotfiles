@@ -804,7 +804,7 @@ Chooses biome/prettierd/prettier based on project config files."
    ;; Refresh agenda → appt in 30sec and then every 10 minutes
    (run-at-time "30 sec" 600 #'org-agenda-to-appt)))
 #+end_src
-* TODO KEYBINDINGS
+* KEYBINDINGS
 ** UNBIND
 #+begin_src elisp
 (defmacro my/unbind (&rest forms)
@@ -873,7 +873,7 @@ Each FORM must be: (:prefix PREFIX KEY1 KEY2 ...)."
        :desc "Search on the site" "s" #'devdocs-search
        :desc "Update all docs" "u" #'devdocs-update-all))
 #+end_src
-** TODO GIT
+** GIT
 #+begin_src elisp
 (map! :leader
       :prefix ("g" . "git")
@@ -892,8 +892,8 @@ Each FORM must be: (:prefix PREFIX KEY1 KEY2 ...)."
 (after! evil-org
   (map! :localleader
         :map org-mode-map
-        :desc "Tangle buffer"
-        "s" #'org-babel-tangle))
+        :desc "Tangle buffer" "s" #'org-babel-tangle
+        :desc "Insert hline and move down" "+" #'org-table-hline-and-move))
 
 ;; ;; Calendar
 (map! :leader

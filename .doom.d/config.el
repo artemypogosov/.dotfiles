@@ -770,8 +770,8 @@ Each FORM must be: (:prefix PREFIX KEY1 KEY2 ...)."
 (after! evil-org
   (map! :localleader
         :map org-mode-map
-        :desc "Tangle buffer"
-        "s" #'org-babel-tangle))
+        :desc "Tangle buffer" "s" #'org-babel-tangle
+        :desc "Insert hline and move down" "+" #'org-table-hline-and-move))
 
 ;; ;; Calendar
 (map! :leader
