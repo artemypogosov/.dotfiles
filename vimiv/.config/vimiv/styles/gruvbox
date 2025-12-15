@@ -1,0 +1,123 @@
+[STYLE]
+
+base00 = #282828
+base01 = #3c3836
+base02 = #504945
+base03 = #665c54
+base04 = #bdae93
+base05 = #d5c4a1
+base06 = #ebdbb2
+base07 = #fbf1c7
+
+base08 = #fb4934
+base09 = #fe8019
+base0a = #fabd2f
+base0b = #b8bb26
+base0c = #8ec07c
+base0d = #83a598
+base0e = #d3869b
+base0f = #d65d0e
+
+font = 10pt Monospace
+
+
+image.bg = #282828
+image.scrollbar.width = 8px
+image.scrollbar.bg = #3c3836
+image.scrollbar.fg = #665c54
+image.scrollbar.padding = 2px
+
+
+library.font = 10pt Monospace
+library.fg = #ebdbb2
+library.padding = 2px
+library.directory.fg = #fbf1c7
+library.even.bg = #282828
+library.odd.bg = #282828
+library.selected.bg = #458588
+library.selected.fg = #fbf1c7
+library.search.highlighted.fg = #282828
+library.search.highlighted.bg = #fabd2f
+library.scrollbar.width = 8px
+library.scrollbar.bg = #3c3836
+library.scrollbar.fg = #665c54
+library.scrollbar.padding = 2px
+library.border = 2px solid #665c54
+
+
+statusbar.font = 10pt Monospace
+statusbar.bg = #3c3836
+statusbar.fg = #ebdbb2
+statusbar.error = #fb4934
+statusbar.warning = #fe8019
+statusbar.info = #83a598
+statusbar.message_border = 2px solid
+statusbar.padding = 4
+
+
+thumbnail.font = 10pt Monospace
+thumbnail.fg = #ebdbb2
+thumbnail.bg = #282828
+thumbnail.padding = 20
+thumbnail.selected.bg = #458588
+thumbnail.search.highlighted.bg = #fabd2f
+thumbnail.default.bg = #8ec07c
+thumbnail.error.bg = #fb4934
+thumbnail.frame.fg = #665c54
+
+
+completion.height = 16em
+completion.fg = #ebdbb2
+completion.even.bg = #3c3836
+completion.odd.bg = #3c3836
+completion.selected.fg = #282828
+completion.selected.bg = #fabd2f
+
+
+keyhint.padding = 2px
+keyhint.border_radius = 10px
+keyhint.suffix_color = #83a598
+
+
+manipulate.fg = #ebdbb2
+manipulate.focused.fg = #8ec07c
+manipulate.bg = #282828
+manipulate.slider.left = #458588
+manipulate.slider.handle = #665c54
+manipulate.slider.right = #3c3836
+manipulate.image.border = 2px solid
+manipulate.image.border.color = #8ec07c
+
+
+mark.color = #d3869b
+keybindings.bindings.color = #8ec07c
+keybindings.highlight.color = #d3869b
+
+
+metadata.padding = 2px
+metadata.border_radius = 10px
+metadata.bg = #AA3c3836
+
+
+image.straighten.color = #fabd2f
+
+
+prompt.font = 10pt Monospace
+prompt.fg = #ebdbb2
+prompt.bg = #3c3836
+prompt.padding = 2px
+prompt.border_radius = 10px
+prompt.border = 2px solid
+prompt.border.color = #83a598
+
+
+crop.shading = #88000000
+crop.border = 2px solid
+crop.border.color = #88bdae93
+crop.grip.color = #88fbf1c7
+crop.grip.border = 2px solid
+crop.grip.border.color = #88bdae93
+
+
+library.selected.bg.unfocus = #88458588
+thumbnail.selected.bg.unfocus = #88458588

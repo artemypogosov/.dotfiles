@@ -128,7 +128,7 @@ case "$choice" in
         echo "=== GNU STOW: LINKING .DOTFILES ==="
 
         cd ~/.dotfiles
-        stow .
+        stow -- */
 
         echo "=== DOWNLOADING .etckeeper REPO ==="
 

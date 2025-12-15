@@ -209,7 +209,7 @@ POWERLEVEL9K_CONFIG_FILE=~/.config/zsh/p10k.zsh
 ###############
 ### PLUGINS ###
 ###############
-source ~/.dotfiles/.config/zsh/powerlevel10k/powerlevel10k.zsh-theme
+source ~/.dotfiles//zsh/.config/zsh/powerlevel10k/powerlevel10k.zsh-theme
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
