@@ -3,8 +3,9 @@
 build-x86_64-linux
 xmonad-x86_64-linux
 xmonad.errors
-.config/ranger/colorschemes/
-.config/ranger/plugins/
+ranger/.config/ranger/colorschemes/
+ranger/.config/ranger/plugins/
 .ssh/id_rsa
 .ssh/id_rsa.pub
 .ssh/known_hosts*
+.secrets

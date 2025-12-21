@@ -17,8 +17,11 @@ export CARGO_HOME="$XDG_DATA_HOME/cargo"
 export MYPY_CACHE_DIR="$XDG_CACHE_HOME/mypy"
 export SCREENRC="$XDG_CONFIG_HOME/screen/screenrc"
 export ZDOTDIR="$HOME/.config/zsh"
+
+# Disable persistent history (for safety reasons)
 export LESSHISTFILE=-
 export MYSQL_HISTFILE=/dev/null
+export PSQL_HISTORY=/dev/null
 
 export XCURSOR_THEME="Adwaita"
 export EDITOR=nvim
@@ -34,3 +37,5 @@ export GOPATH="$XDG_DATA_HOME/go"
 export GOMODCACHE="$XDG_CACHE_HOME/go/mod"
 
 export PATH="$GOBIN:$XDG_CONFIG_HOME/emacs/bin:$PATH"
+
+[ -f "$HOME/.dotfiles/.secrets/.zshenv.local" ] && source "$HOME/.dotfiles/.secrets/.zshenv.local"
