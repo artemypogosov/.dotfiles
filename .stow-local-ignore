@@ -1,8 +1,0 @@
-# Ignore list for GNU Stow
-
-\.git
-^/.*\.org
-other
-packages
-setup.sh
-.gitignore

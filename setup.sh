@@ -5,7 +5,7 @@ set -euo pipefail
 # VARIABLES #
 #############
 
-SETUP_DIR="$HOME/.dotfiles/setup"
+SETUP_DIR="$HOME/.dotfiles/.packages"
 
 RED="\033[31m"
 GREEN="\033[32m"
@@ -84,7 +84,7 @@ install_file() {
 # STARTUP #
 ###########
 
-cat other/computer.txt
+cat .other/computer.txt
 echo
 echo "Date: $(date +"%a %b %d %H:%M:%S")"
 echo
@@ -128,6 +128,7 @@ case "$choice" in
         echo "=== GNU STOW: LINKING .DOTFILES ==="
 
         cd ~/.dotfiles
+        # '--' -> stop parsing options, treat evething as arguments
         stow -- */
 
         echo "=== DOWNLOADING .etckeeper REPO ==="
