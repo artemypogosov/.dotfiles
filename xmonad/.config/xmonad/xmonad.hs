@@ -74,6 +74,9 @@ myBorderWidth = 0
 myEmacs :: String
 myEmacs = "emacsclient -c -a 'emacs' "
 
+myNeovim :: String
+myNeovim = "alacritty -e zsh -lc nvim"
+
 -- border color of normal windows
 myNormColor :: String
 myNormColor   = "#000000"
@@ -178,6 +181,9 @@ myKeys c = mkNamedKeymap c $
 
   , ("M-<Escape>",   addName "Lock screen"            $ spawn "betterlockscreen --lock dimblur --display 2") --display 2)
   , ("M-r u",        addName "ru"                     $ spawn "setxkbmap ru")]
+
+  ^++^ -- Neovim
+  [ ("M-n n",        addName "Neovim" $ spawn myNeovim)]
 
   ^++^ -- Doom Emacs
   [ ("M-d d",        addName "Emacsclient"         $ spawn myEmacs)

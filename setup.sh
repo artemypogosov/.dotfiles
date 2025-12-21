@@ -128,7 +128,7 @@ case "$choice" in
         echo "=== GNU STOW: LINKING .DOTFILES ==="
 
         cd ~/.dotfiles
-        # '--' -> stop parsing options, treat evething as arguments
+        # '--' -> stop parsing options, treat everything as arguments
         stow -- */
 
         echo "=== DOWNLOADING .etckeeper REPO ==="
