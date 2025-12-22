@@ -204,21 +204,19 @@ myKeys c = mkNamedKeymap c $
   , ("M-<Return>",   addName "Launch myTerminal"         $ spawn myTerminal)
   , ("C-<Escape>",   addName "Show/hide NamedScratchpad" $ namedScratchpadAction myScratchPads "terminal")
   , ("M-r r",        addName "Launch ranger"             $ spawn (myTerminal ++ " -e ranger"))
-  , ("M-f f",        addName "Launch myFileManager"      $ spawn myFileManager)]
+  , ("M-f f",        addName "Launch myFileManager"      $ spawn myFileManager)
+    -- Neovim
+  , ("M-n n",        addName "Neovim" $ spawn myNeovim)
+    -- Doom Emacs
+  , ("M-d d",        addName "Emacsclient"         $ spawn myEmacs)
+  , ("M-d f",        addName "Emacsclient Dired"   $ spawn (myEmacs ++ "-n -c -e '(my/open-home-dired)'"))
 
   ^++^ -- System
   [ ("M-<Space>",    addName "Switch keyboard layout" $ spawn "$LOCAL_BIN/layout-switcher")
   , ("M-<End>",      addName "Zzz..."                 $ spawn "systemctl suspend")
 
-  , ("M-<Escape>",   addName "Lock screen"            $ spawn "betterlockscreen --lock dimblur --display 2") --display 2)
+  , ("M-<Escape>",   addName "Lock screen"            $ spawn "betterlockscreen --lock dimblur --display 2")
   , ("M-r u",        addName "ru"                     $ spawn "setxkbmap ru")]
-
-  ^++^ -- Neovim
-  [ ("M-n n",        addName "Neovim" $ spawn myNeovim)]
-
-  ^++^ -- Doom Emacs
-  [ ("M-d d",        addName "Emacsclient"         $ spawn myEmacs)
-  , ("M-d f",        addName "Emacsclient Dired"   $ spawn (myEmacs ++ "-n -c -e '(my/open-home-dired)'"))]
 
   ^++^ -- Screenshot
   [ ("<Print>",      addName "Flameshot GUI"                  $ spawn "flameshot gui")
