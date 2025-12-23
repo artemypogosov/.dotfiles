@@ -1,9 +1,10 @@
 local M = {}
 
 local telescope = require("telescope.builtin")
-local telescope_global = require("telescope")
+local workspaces_picker = require("custom.snacks.workspaces_picker")
 local bm = require("bookmarks")
-local Snacks = require("snacks")
+local snacks = require("snacks")
+local buf_delete = require("bufdelete")
 
 ---------------------
 -- GENERIC HELPERS --
@@ -40,7 +41,7 @@ end
 
 function M.find_git_files()
   if is_git_repo() then
-    telescope.git_files()
+    snacks.picker.git_files()
   else
     print("Not a git repository")
   end
@@ -86,20 +87,11 @@ end, {})
 ---------------------
 
 function M.find_recent_files()
-  telescope.oldfiles({
-    previewer = false,
-    layout_config = { width = 80, height = 15 },
-  })
+  snacks.picker.recent()
 end
 
 function M.switch_project()
-  telescope_global.extensions.workspaces.workspaces({
-    layout_config = {
-      width = 80,
-      height = 15,
-      prompt_position = "top",
-    },
-  })
+  workspaces_picker.open()
 end
 
 local function find_git_root()
@@ -125,12 +117,8 @@ local function get_root()
 end
 
 function M.search_project()
-  telescope.live_grep({
-    cwd = get_root(),
-    prompt_title = "Live Grep (" .. get_root() .. ")",
-    additional_args = function()
-      return { "--hidden", "--glob", "!.git/*" }
-    end,
+  snacks.picker.grep({
+    args = { "--hidden" }, -- include hidden files (dotfiles)
   })
 end
 
@@ -159,10 +147,37 @@ function M.delete_all_bookmarks()
   end
 end
 
-function M.kill_all_buffers()
-  local answer = vim.fn.input("Delete all buffers? (y/n): ")
-  if answer:lower() == "y" then
-    vim.cmd("%bd")
+local function count_normal_buffers()
+  local count = 0
+
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buflisted and vim.bo[buf].buftype == "" then
+      count = count + 1
+    end
+  end
+
+  return count
+end
+
+function M.kill_buffer()
+  local current = vim.api.nvim_get_current_buf()
+
+  -- If this is the last normal buffer, refuse
+  if count_normal_buffers() <= 1 and vim.bo[current].buflisted and vim.bo[current].buftype == "" then
+    vim.notify("Cannot kill the last buffer", vim.log.levels.WARN, { title = "Buffer" })
+    return
+  end
+
+  buf_delete.bufdelete(current, true)
+end
+
+function M.kill_all_buffers_except_current()
+  local current = vim.api.nvim_get_current_buf()
+
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if buf ~= current and vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buflisted then
+      buf_delete.bufdelete(buf, true)
+    end
   end
 end
 
@@ -171,15 +186,15 @@ end
 ------------
 
 function M.git_browse()
-  Snacks.gitbrowse()
+  snacks.gitbrowse()
 end
 
 function M.new_scratch()
-  Snacks.scratch()
+  snacks.scratch()
 end
 
 function M.select_scratch()
-  Snacks.scratch.select()
+  snacks.scratch.select()
 end
 
 local indent_enabled = true
@@ -188,9 +203,16 @@ function M.indent_lines()
   indent_enabled = not indent_enabled
 
   if indent_enabled then
-    Snacks.indent.enable()
+    snacks.indent.enable()
   else
-    Snacks.indent.disable()
+    snacks.indent.disable()
+  end
+end
+
+function M.snacks_explorer_focus()
+  local picker = snacks.picker.get({ source = "explorer" })[1]
+  if picker then
+    picker:focus()
   end
 end
 

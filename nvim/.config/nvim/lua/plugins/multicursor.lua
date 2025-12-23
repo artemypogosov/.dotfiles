@@ -47,7 +47,7 @@ return {
     end)
 
     -- Add a cursor for all matches of cursor word/selection in the document.
-    set({ "n", "x" }, "R", mc.matchAllAddCursors)
+    set({ "x" }, "R", mc.matchAllAddCursors)
 
     -- Append/insert for each line of visual selections.
     -- Similar to block selection insertion.

@@ -4,7 +4,7 @@ return {
   config = function()
     require("workspaces").setup({
       hooks = {
-        open = { "Telescope find_files previewer=false follow=true no_ignore=true hidden=true" },
+        open = { "lua Snacks.picker.files()" },
       },
     })
   end,

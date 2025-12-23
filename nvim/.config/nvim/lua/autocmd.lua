@@ -1,17 +1,10 @@
--- Change a directory when opening a file
-vim.api.nvim_create_autocmd("BufEnter", {
-  callback = function()
-    vim.cmd("silent! cd %:p:h")
-  end,
-})
-
 -- Save file on focus lost
 vim.api.nvim_create_autocmd("FocusLost", {
   pattern = "*",
   command = "silent! update", -- Saves only if there are changes
 })
 
--- Use Alt+n to switch buffers (tabs)
+-- Use Alt+n to switch workspaces
 for i = 1, 9 do
   vim.keymap.set("n", string.format("<A-%s>", i), function()
     local tab_count = vim.fn.tabpagenr("$")
@@ -41,30 +34,8 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   desc = "Highlight yanked text",
 })
 
--- Open dashboard when no buffers are left
-vim.api.nvim_create_autocmd("BufDelete", {
-  group = vim.api.nvim_create_augroup("dashboard_on_empty", { clear = true }),
-  desc = "Open Snacks dashboard when all real buffers are closed",
-  callback = function()
-    -- Get list of real buffers
-    local real_bufs = vim.tbl_filter(function(buf)
-      return vim.api.nvim_buf_is_valid(buf)
-        and vim.api.nvim_buf_is_loaded(buf)
-        and vim.bo[buf].buflisted
-        and vim.bo[buf].buftype == ""
-    end, vim.api.nvim_list_bufs())
-
-    -- If only one buffer left and it's [No Name]
-    if #real_bufs == 1 and vim.api.nvim_buf_get_name(real_bufs[1]) == "" then
-      vim.schedule(function()
-        vim.cmd("cd ~")
-        require("snacks.dashboard").open()
-      end)
-    end
-  end,
-})
-
 -- LSP-integrated file renaming
+-- TODO: remove? I have no plans to use nvimtree (use Snacks.explorer instead)
 local prev = { new_name = "", old_name = "" } -- Prevents duplicate events
 vim.api.nvim_create_autocmd("User", {
   pattern = "NvimTreeSetup",
@@ -74,6 +45,23 @@ vim.api.nvim_create_autocmd("User", {
       if prev.new_name ~= data.new_name or prev.old_name ~= data.old_name then
         data = data
         Snacks.rename.on_rename_file(data.old_name, data.new_name)
+      end
+    end)
+  end,
+})
+
+-- Open QuickFix buffer after :grep
+vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+  pattern = "grep",
+  callback = function()
+    -- Open (or update) quickfix window
+    vim.cmd("cwindow")
+
+    -- Defer until UI is stable
+    vim.schedule(function()
+      local qf = vim.fn.getqflist({ winid = 0 })
+      if qf.winid and qf.winid ~= 0 then
+        vim.api.nvim_set_current_win(qf.winid)
       end
     end)
   end,

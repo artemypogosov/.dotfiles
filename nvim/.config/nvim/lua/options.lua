@@ -76,3 +76,6 @@ opt.inccommand = "split"
 
 -- Set always visible lines at bottom while scrolling
 opt.scrolloff = 10
+
+-- views can only be fully collapsed with the global statusline
+vim.opt.laststatus = 3

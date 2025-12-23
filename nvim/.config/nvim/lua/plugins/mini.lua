@@ -13,16 +13,12 @@ return {
 }
 
 --- mini.pairs
----
 --- Write pairs for you like () {} "" etc.
 
 --- mini.comment
----
 -- 'ctrl + /' mapped to 'gcc' in both N and V modes
 -- 'dgc' - remove comment block
 -- 'gcip' - comment inner paragraph
 
 --- mini.move
----
 --- 'alt + j/k' - move lines up and down (also works for selection)
----

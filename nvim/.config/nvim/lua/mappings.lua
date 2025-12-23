@@ -1,7 +1,9 @@
 local wk = require("which-key")
-local bm = require("bookmarks")
+local bookmarks = require("bookmarks")
 local confirm_quit = require("confirm-quit")
-local Snacks = require("snacks")
+local snacks = require("snacks")
+local man_picker = require("custom.snacks.man_picker")
+local bookmark_picker = require("custom.snacks.bookmark_picker")
 local session = require("mini.sessions")
 local helpers = require("helpers")
 
@@ -11,15 +13,10 @@ wk.add({
   ------------
   { "<leader>f", group = "file" },
 
-  {
-    "<leader>ff",
-    helpers.execute_command("Telescope file_browser previewer=false"),
-    desc = "Find file",
-    mode = "n",
-  },
+  { "<leader>ff", helpers.execute_command("Oil"), desc = "Find file", mode = "n" },
   {
     "<leader>.",
-    helpers.execute_command("Telescope file_browser previewer=false"),
+    helpers.execute_command("Oil"),
     desc = "Find file",
     mode = "n",
   },
@@ -27,18 +24,23 @@ wk.add({
   {
     "<leader>fp",
     function()
-      Snacks.dashboard.pick("files", { cwd = vim.fn.stdpath("config") })
+      snacks.dashboard.pick("files", { cwd = vim.fn.stdpath("config") })
     end,
     desc = "Recent files",
     mode = "n",
   },
   {
     "<leader>fd",
-    helpers.execute_command("Telescope find_files previewer=false"),
+    helpers.execute_command("lua Snacks.picker.files()"),
     desc = "Find file from here",
     mode = "n",
   },
-  { "<leader><leader>", helpers.find_git_files, desc = "Find files in project", mode = "n" },
+  {
+    "<leader><leader>",
+    helpers.execute_command("lua Snacks.picker.files()"),
+    desc = "Find files in project",
+    mode = "n",
+  },
   { "<leader>fZ", helpers.delete_recent_files, desc = "Delete recent files", mode = "n" },
 
   ---------------
@@ -88,18 +90,14 @@ wk.add({
   --------------
   { "<leader>t", group = "toggle" },
 
-  { "<leader>tt", helpers.execute_command("NvimTreeToggle ."), desc = "Toggle sidebar", mode = "n" },
-  { "<leader>tf", helpers.execute_command("NvimTreeFocus"), desc = "Focus  sidebar", mode = "n" },
+  { "<leader>tt", helpers.execute_command("lua Snacks.explorer()"), desc = "Toggle sidebar", mode = "n" },
+  { "<leader>tf", helpers.snacks_explorer_focus, desc = "Focus  sidebar", mode = "n" },
+
   { "<leader>ti", helpers.indent_lines, desc = "Indent lines", mode = "n" },
-  {
-    "<leader>tF",
-    helpers.execute_command("NvimTreeFindFile"),
-    desc = "Point file in structure",
-    mode = "n",
-  },
+  { "<leader>tF", helpers.execute_command("NvimTreeFindFile"), desc = "Point file in structure", mode = "n" },
   { "<leader>tT", helpers.toggle_background, desc = "Toggle dark/light theme", mode = "n" },
-  { "<leader>tx", Snacks.terminal.toggle, desc = "Toggle terminal", mode = { "n", "t" } },
-  { "<leader>tX", Snacks.terminal.open, desc = "New terminal", mode = { "n", "t" } },
+  { "<leader>tx", snacks.terminal.toggle, desc = "Toggle terminal", mode = { "n", "t" } },
+  { "<leader>tX", snacks.terminal.open, desc = "New terminal", mode = { "n", "t" } },
   { "<leader>tz", helpers.execute_command("ZenMode"), desc = "Zen mode", mode = "n" },
 
   ------------------
@@ -120,13 +118,13 @@ wk.add({
 
   {
     "<leader>bb",
-    helpers.execute_command("Telescope buffers previewer=false"),
+    helpers.execute_command("lua Snacks.picker.buffers()"),
     desc = "Switch buffer",
     mode = "n",
   },
   {
     "<leader>,",
-    helpers.execute_command("Telescope buffers previewer=false"),
+    helpers.execute_command("lua Snacks.picker.buffers()"),
     desc = "Switch buffer",
     mode = "n",
   },
@@ -136,10 +134,8 @@ wk.add({
   { "<leader>bv", helpers.execute_command("vnew"), desc = "New vertical buffer", mode = "n" },
   { "<leader>b]", helpers.execute_command("bnext"), desc = "Next buffer", mode = "n" }, -- tab,
   { "<leader>b[", helpers.execute_command("bprev"), desc = "Prev buffer", mode = "n" }, -- shift + tab,
-  { "<leader>bk", helpers.execute_command("bd"), desc = "Kill buffer", mode = "n" },
-
-  { "<leader>bO", helpers.execute_command("%bd|e#"), desc = "Kill all buffers except current", mode = "n" },
-  { "<leader>bK", helpers.kill_all_buffers, desc = "Kill all buffers", mode = "n" },
+  { "<leader>bk", helpers.kill_buffer, desc = "Kill buffer", mode = "n" },
+  { "<leader>bO", helpers.kill_all_buffers_except_current, desc = "Kill all buffers except current", mode = "n" },
 
   --  { "<leader>bx", Snacks.scratch, desc = "New scratch", mode = "n" },
   { "<leader>bZ", helpers.delete_scratch_files, desc = "Delete all scratch files", mode = "n" },
@@ -182,25 +178,39 @@ wk.add({
 
   {
     "<leader>ss",
-    helpers.execute_command("Telescope current_buffer_fuzzy_find previewer=false"),
+    helpers.execute_command("lua Snacks.picker.lines()"),
     desc = "Search in buffer",
     mode = "n",
   },
   {
     "<leader>sb",
-    helpers.execute_command("Telescope current_buffer_fuzzy_find previewer=false"),
+    helpers.execute_command("lua Snacks.picker.lines()"),
     desc = "Search in buffer",
     mode = "n",
   },
 
   {
     "<leader>sB",
-    helpers.execute_command("Telescope live_grep grep_open_files=true"),
+    helpers.execute_command("lua Snacks.picker.grep_buffers()"),
     desc = "Seach all open buffers",
     mode = "n",
   },
+
   { "<leader>sp", helpers.search_project, desc = "Search in project", mode = "n" },
 
+  { "<leader>st", group = "list TODO" },
+  {
+    "<leader>stt",
+    helpers.execute_command("lua Snacks.picker.todo_comments({ keywords = { 'TODO' } })"),
+    desc = "List all TODOS",
+    mode = "n",
+  },
+  {
+    "<leader>stf",
+    helpers.execute_command("lua Snacks.picker.todo_comments({ keywords = { 'FIX', 'FIXME' } })"),
+    desc = "List all FIXME",
+    mode = "n",
+  },
   -----------
   --- GIT ---
   -----------
@@ -217,10 +227,27 @@ wk.add({
   { "<leader>gP", helpers.execute_command("Gitsigns preview_hunk"), desc = "Previw hunk [popup]", mode = "n" },
 
   { "<leader>gd", helpers.prefill_command("Gitsigns diffthis"), desc = "Diff with revision", mode = "n" },
-  { "<leader>gl", helpers.execute_command("Telescope git_commits"), desc = "Branch log", mode = "n" },
+  {
+    "<leader>gl",
+    function()
+      local file = vim.fn.expand("%:p")
+      local root = vim.fs.root(file, { ".git" })
+      if not root then
+        vim.notify("Not inside a git repository", vim.log.levels.WARN)
+        return
+      end
+
+      local cwd = vim.fn.getcwd()
+      vim.cmd("lcd " .. root)
+      snacks.picker.git_log()
+      vim.cmd("lcd " .. cwd)
+    end,
+    desc = "Branch log",
+    mode = "n",
+  },
   {
     "<leader>g.",
-    helpers.execute_command("Telescope git_bcommits path=%:p:h"),
+    helpers.execute_command("lua Snacks.picker.git_log_file()"),
     desc = "File log",
     mode = "n",
   },
@@ -232,7 +259,7 @@ wk.add({
   {
     "<leader>go",
     function()
-      Snacks.gitbrowse()
+      snacks.gitbrowse()
     end,
     desc = "Git Browse",
   },
@@ -246,27 +273,31 @@ wk.add({
   { "<leader>c", group = "code" },
   -- All mappings are located in plugins/lsp.lua
 
+  ----------
+  --- AI ---
+  ----------
+  { "<leader>a", group = "AI" },
+
   -----------------
   --- BOOKMARKS ---
   -----------------
   { "<leader>m", group = "bookmarks" },
 
-  { "<leader>mm", bm.bookmark_toggle, desc = "Set bookmark", mode = "n" },
+  { "<leader>mm", bookmarks.bookmark_toggle, desc = "Set bookmark", mode = "n" },
   { "<leader>mc", helpers.delete_all_bookmarks, desc = "Clean all bookmarks", mode = "n" },
+  -- TODO: no analog in Snacks, write my own solution
   {
     "<leader>mf",
-    ":Telescope bookmarks list previewer=false<CR>",
+    bookmark_picker.open,
     desc = "Show bookmarks",
     mode = "n",
   },
-  { "mn", bm.bookmark_next, desc = "Next bookmark", mode = "n" },
-  { "mp", bm.bookmark_prev, desc = "Prev bookmark", mode = "n" },
+  { "mn", bookmarks.bookmark_next, desc = "Next bookmark", mode = "n" },
+  { "mp", bookmarks.bookmark_prev, desc = "Prev bookmark", mode = "n" },
 
   -------------
   --- TO-DO ---
   -------------
-  { "<C-t>t", ":TodoTelescope keywords=TODO<CR>", desc = "List all TODOS", mode = "n" },
-  { "<C-t>f", ":TodoTelescope keywords=FIX,FIXME<CR>", desc = "List all FIXME", mode = "n" },
 
   ----------------
   --- COMMENTS ---
@@ -280,6 +311,8 @@ wk.add({
   { "<leader>q", group = "session" },
 
   { "<leader>qq", "<CMD>qa<CR>", desc = "Quit", mode = "n" },
+  { "<leader>qQ", confirm_quit.confirm_quit, desc = "Quit + confirm", mode = "n" },
+
   {
     "<leader>qs",
     function()
@@ -301,10 +334,9 @@ wk.add({
     function()
       session.select("delete")
     end,
-    desc = "Select session",
+    desc = "Delete session",
     mode = "n",
   },
-  { "<leader>qQ", confirm_quit.confirm_quit, desc = "Quit + confirm", mode = "n" },
 
   ------------
   --- HELP ---
@@ -314,12 +346,12 @@ wk.add({
   { "<leader>hL", helpers.execute_command("Lazy"), desc = "Lazy", mode = "n" },
   { "<leader>hM", helpers.execute_command("Mason"), desc = "Mason", mode = "n" },
 
-  { "<leader>hm", helpers.execute_command("Telescope man_pages"), desc = "Man pages", mode = "n" },
+  { "<leader>hm", man_picker.open, desc = "Man pages", mode = "n" },
   -- Handy for checking 'filetype' which is needed for plugins/formatter.lua
   { "<leader>hf", ":lua print('Filetype:', vim.bo.filetype)<CR>", desc = "Print filetype", mode = "n" },
   { "<leader>hs", ":set spell<CR>", desc = "Enable spellcheck", mode = "n" },
   { "<leader>hS", ":set nospell<CR>", desc = "Disable spellcheck", mode = "n" },
-  { "<leader>hr", ":Telescope spell_suggest<CR>", desc = "Spelling suggestions", mode = "n" },
+  { "<leader>hr", helpers.execute_command("lua Snacks.picker.spelling()"), desc = "Spelling suggestions", mode = "n" },
 
   -------------
   --- OTHER ---

@@ -8,6 +8,11 @@ return {
   },
   config = function()
     require("nvim-tree").setup({
+      update_focused_file = {
+        enable = true,
+        update_root = true,
+      },
+      respect_buf_cwd = false,
       view = {
         width = 35,
       },
