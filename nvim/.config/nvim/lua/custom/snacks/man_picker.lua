@@ -1,4 +1,3 @@
--- Explicit require: no global Snacks
 local Snacks = require("snacks")
 
 local M = {}
@@ -18,8 +17,7 @@ local function load_whatis_map()
   end
 
   for line in out:gmatch("[^\n]+") do
-    -- Example:
-    -- ls, dir, vdir (1) - list directory contents
+    -- Example: ls, dir, vdir (1) - list directory contents
     local names, section, desc = line:match("^(.-)%s+%(([%d%a]+)%)%s+%-%s+(.*)$")
 
     if names then
@@ -86,9 +84,6 @@ local function get_man_commands()
   return items
 end
 
------------------------------------------------------------------------
--- Public picker entry point
------------------------------------------------------------------------
 function M.open()
   Snacks.picker({
     title = "Man",

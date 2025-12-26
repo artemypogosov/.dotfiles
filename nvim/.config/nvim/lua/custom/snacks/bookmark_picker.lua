@@ -2,7 +2,6 @@ local Snacks = require("snacks")
 
 local M = {}
 
--- replicate plugin logic
 local function get_text(annotation)
   local config = require("bookmarks.config").config
   local pref = annotation:sub(1, 2)
