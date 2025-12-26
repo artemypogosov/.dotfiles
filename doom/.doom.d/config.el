@@ -54,6 +54,9 @@
       auto-revert-verbose nil 
       +zen-text-scale 1) 
 
+;; Auto sync buffers when they are changed by other process
+(global-auto-revert-mode t)
+
 ;; 'setq' vs 'setq-default'
 ;; Use 'setq' for non-buffer-local variables
 ;; (variables that are truly global)
@@ -63,10 +66,10 @@
 
 ;; Line-wrapping column width
 (setq-default fill-column 120) 
-(add-hook! 'prog-mode #'display-fill-column-indicator-mode)
-
-;; Auto sync buffers when they are changed by other process
-(global-auto-revert-mode t)
+(add-hook 'after-change-major-mode-hook
+          (lambda ()
+            (when (derived-mode-p 'prog-mode)
+              (display-fill-column-indicator-mode 1))))
 
 (defvar my/dashboard-cache nil
   "Cached ASCII banner for Doom dashboard to avoid recomputation.")
@@ -214,6 +217,7 @@
         org-agenda-files (append (my/org-files "agenda/personal")
                                  (my/org-files "agenda/work")
                                  (list (expand-file-name "inbox.org" my/org-root-dir)))
+        calendar-week-start-day 1
         org-fancy-priorities-list '("" "" "")
         org-tag-alist '(;; Affiliation
                         ("personal" . ?P) ("work" . ?W)
@@ -692,7 +696,10 @@ Chooses biome/prettierd/prettier based on project config files."
    (appt-activate t)
 
    ;; Refresh agenda → appt in 30sec and then every 10 minutes
-   (run-at-time "30 sec" 600 #'org-agenda-to-appt)))
+   (run-at-time "30 sec" 600
+                (lambda ()
+                  (setq appt-time-msg-list nil)
+                  (org-agenda-to-appt)))))
 
 (defmacro my/unbind (&rest forms)
   "Bulk-unbind Doom leader keys.

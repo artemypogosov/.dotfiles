@@ -1,4 +1,4 @@
-personal_ws-1.1 en 254
+personal_ws-1.1 en 255
 absofruitly
 adminer
 agda
@@ -114,6 +114,7 @@ ipaddress
 jpg
 js
 json
+jumplist
 jupyter
 komoot
 kube
