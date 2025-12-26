@@ -178,7 +178,7 @@ myKeys c = mkNamedKeymap c $
   , ("M-n n",        addName "Neovim" $ spawn myNeovim)
     -- Doom Emacs
   , ("M-d d",        addName "Emacsclient"         $ spawn myEmacs)
-  , ("M-d f",        addName "Emacsclient Dired"   $ spawn (myEmacs ++ "-n -c -e '(my/open-home-dired)'"))
+  , ("M-d f",        addName "Emacsclient Dired"   $ spawn (myEmacs ++ "-n -c -e '(my/open-home-dired)'"))]
 
   ^++^ -- System
   [ ("M-<Space>",    addName "Switch keyboard layout" $ spawn "$LOCAL_BIN/layout-switcher")
