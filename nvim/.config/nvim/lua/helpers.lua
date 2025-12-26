@@ -1,6 +1,5 @@
 local M = {}
 
-local telescope = require("telescope.builtin")
 local workspaces_picker = require("custom.snacks.workspaces_picker")
 local bm = require("bookmarks")
 local snacks = require("snacks")

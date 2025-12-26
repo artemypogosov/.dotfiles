@@ -33,7 +33,7 @@ opt.cursorline = true
 o.showtabline = 0
 
 -- Decrease update time
-vim.o.updatetime = 250
+o.updatetime = 250
 
 -- Store undos between sessions
 opt.undofile = true
@@ -48,12 +48,12 @@ opt.showmode = false
 -- Schedule the setting after `UiEnter` because it can increase startup-time.
 -- Remove this option if you want your OS clipboard to remain independent.
 vim.schedule(function()
-  vim.o.clipboard = "unnamedplus"
+  o.clipboard = "unnamedplus"
 end)
 
 -- If performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
-vim.o.confirm = true
+o.confirm = true
 
 -- Search case handling
 opt.ignorecase = true
@@ -77,5 +77,5 @@ opt.inccommand = "split"
 -- Set always visible lines at bottom while scrolling
 opt.scrolloff = 10
 
--- views can only be fully collapsed with the global statusline
-vim.opt.laststatus = 3
+-- How and where the statusline is displayed. 3 - global
+opt.laststatus = 3
