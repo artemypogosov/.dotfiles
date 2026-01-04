@@ -102,6 +102,7 @@ myStartupHook = do
   spawnOnce "$LOCAL_BIN/init-us"
   spawn "$LOCAL_BIN/keyboard-fix"
   spawn "$LOCAL_BIN/touchpad-fix"
+  spawn "$LOCAL_BIN/set-monitor"
   setWMName "LG3D"
 
 myScratchPads :: [NamedScratchpad]
