@@ -86,7 +86,7 @@ end
 
 function M.open()
   Snacks.picker({
-    title = "Man",
+    title = "Man pages",
 
     layout = { preset = "select", layout = { height = 0.25 } },
     finder = get_man_commands,

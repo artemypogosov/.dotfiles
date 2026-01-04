@@ -18,10 +18,9 @@ end
 
 function M.open()
   Snacks.picker({
-    title = "Workspaces",
-
+    title = "Projects",
+    layout = { preset = "select", layout = { height = 0.25 } },
     finder = get_workspaces,
-
     format = function(item)
       return {
         { item.name, "SnacksPickerLabel" },
