@@ -185,7 +185,7 @@ myKeys c = mkNamedKeymap c $
   [ ("M-<Space>",    addName "Switch keyboard layout" $ spawn "$LOCAL_BIN/layout-switcher")
   , ("M-<End>",      addName "Zzz..."                 $ spawn "systemctl suspend")
 
-  , ("M-<Escape>",   addName "Lock screen"            $ spawn "betterlockscreen --lock dimblur --display 1")
+  , ("M-<Escape>",   addName "Lock screen"            $ spawn "betterlockscreen --lock dimblur --display 2")
   , ("M-r u",        addName "ru"                     $ spawn "setxkbmap ru")]
 
   ^++^ -- Screenshot
