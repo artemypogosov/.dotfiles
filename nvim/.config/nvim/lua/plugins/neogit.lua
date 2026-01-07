@@ -4,6 +4,7 @@ return {
   dependencies = {
     "nvim-lua/plenary.nvim", -- required
     "sindrets/diffview.nvim", -- optional - Diff integration
-    "nvim-telescope/telescope.nvim",
+    -- TODO: remove telescope
+    -- "nvim-telescope/telescope.nvim",
   },
 }

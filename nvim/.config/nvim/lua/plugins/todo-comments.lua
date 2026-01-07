@@ -14,6 +14,17 @@ return {
   opts = {
     signs = true,
     highlight = { keyword = "fg" },
+    search = {
+      args = {
+        "--color=never",
+        "--no-heading",
+        "--with-filename",
+        "--line-number",
+        "--column",
+        "--hidden",
+        "--glob=!.git/*",
+      },
+    },
     keywords = {
       FIX = {
         icon = " ",
