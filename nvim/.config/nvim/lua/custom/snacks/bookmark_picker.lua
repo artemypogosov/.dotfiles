@@ -35,14 +35,15 @@ function M.open()
   Snacks.picker({
     title = "Bookmarks",
 
+    layout = { preset = "select", layout = { height = 0.25 } },
     finder = get_bookmarks,
 
     format = function(item)
       return {
         { tostring(item.lnum), "Comment" },
-        { " ▏ ", "Normal" },
+        { ": ", "" },
         { item.text or "", "SnacksPickerDesc" },
-        { " ▏ ", "Normal" },
+        { " ", "" },
         { vim.fn.fnamemodify(item.file, ":~:."), "SnacksPickerLabel" },
       }
     end,

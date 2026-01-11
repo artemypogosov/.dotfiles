@@ -1,11 +1,12 @@
 local wk = require("which-key")
 local bookmarks = require("bookmarks")
-local confirm_quit = require("confirm-quit")
+local quit = require("confirm-quit")
 local snacks = require("snacks")
 local man_picker = require("custom.snacks.man_picker")
 local bookmark_picker = require("custom.snacks.bookmark_picker")
 local session = require("mini.sessions")
 local helpers = require("helpers")
+local todo_comments = require("todo-comments")
 
 wk.add({
   ------------
@@ -14,34 +15,37 @@ wk.add({
   { "<leader>f", group = "file" },
 
   { "<leader>ff", helpers.execute_command("Oil"), desc = "Find file", mode = "n" },
-  {
-    "<leader>.",
-    helpers.execute_command("Oil"),
-    desc = "Find file",
-    mode = "n",
-  },
+  { "<leader>.", helpers.execute_command("Oil"), desc = "Find file", mode = "n" },
   { "<leader>fr", helpers.find_recent_files, desc = "Recent files", mode = "n" },
   {
     "<leader>fp",
     function()
-      snacks.dashboard.pick("files", { cwd = vim.fn.stdpath("config") })
+      helpers.find_files({ title = "Find file in config", cwd = vim.fn.stdpath("config") })
     end,
-    desc = "Recent files",
+    desc = "Find file in config",
     mode = "n",
   },
-  {
-    "<leader>fd",
-    helpers.execute_command("lua Snacks.picker.files()"),
-    desc = "Find file from here",
-    mode = "n",
-  },
-  {
-    "<leader><leader>",
-    helpers.execute_command("lua Snacks.picker.files()"),
-    desc = "Find files in project",
-    mode = "n",
-  },
+  { "<leader>fd", helpers.find_files_in_current_dir, desc = "Find file from here", mode = "n" },
+  { "<leader><leader>", helpers.find_files, desc = "Find files in project", mode = "n" },
   { "<leader>fZ", helpers.delete_recent_files, desc = "Delete recent files", mode = "n" },
+
+  ---------------
+  --- BUFFERS ---
+  ---------------
+  { "<leader>b", group = "buffer" },
+
+  { "<leader>bb", helpers.switch_buffers, desc = "Switch buffer", mode = "n" },
+  { "<leader>,", helpers.switch_buffers, desc = "Switch buffer", mode = "n" },
+
+  { "<leader>bn", helpers.execute_command("enew"), desc = "New buffer", mode = "n" },
+  { "<leader>bh", helpers.execute_command("new"), desc = "New horizontal buffer", mode = "n" },
+  { "<leader>bv", helpers.execute_command("vnew"), desc = "New vertical buffer", mode = "n" },
+  { "<leader>b]", helpers.execute_command("bnext"), desc = "Next buffer", mode = "n" },
+  { "<leader>b[", helpers.execute_command("bprev"), desc = "Prev buffer", mode = "n" },
+  { "<leader>bk", helpers.kill_buffer, desc = "Kill buffer", mode = "n" },
+  { "<leader>bO", helpers.kill_all_buffers_except_current, desc = "Kill all buffers except current", mode = "n" },
+
+  { "<leader>bZ", helpers.delete_scratch_files, desc = "Delete all scratch files", mode = "n" },
 
   ---------------
   --- PROJECT ---
@@ -89,16 +93,24 @@ wk.add({
   --- TOGGLE ---
   --------------
   { "<leader>t", group = "toggle" },
-
-  { "<leader>tt", helpers.execute_command("lua Snacks.explorer()"), desc = "Toggle sidebar", mode = "n" },
-  { "<leader>tf", helpers.snacks_explorer_focus, desc = "Focus  sidebar", mode = "n" },
-
+  {
+    "<leader>tt",
+    function()
+      snacks.explorer()
+    end,
+    desc = "Toggle sidebar",
+    mode = "n",
+  },
+  { "<leader>tT", helpers.snacks_explorer_focus, desc = "Focus  sidebar", mode = "n" },
   { "<leader>ti", helpers.indent_lines, desc = "Indent lines", mode = "n" },
-  { "<leader>tF", helpers.execute_command("NvimTreeFindFile"), desc = "Point file in structure", mode = "n" },
-  { "<leader>tT", helpers.toggle_background, desc = "Toggle dark/light theme", mode = "n" },
-  { "<leader>tx", snacks.terminal.toggle, desc = "Toggle terminal", mode = { "n", "t" } },
-  { "<leader>tX", snacks.terminal.open, desc = "New terminal", mode = { "n", "t" } },
   { "<leader>tz", helpers.execute_command("ZenMode"), desc = "Zen mode", mode = "n" },
+
+  ------------
+  --- OPEN ---
+  ------------
+  { "<leader>o", group = "open" },
+  { "<leader>ot", snacks.terminal.toggle, desc = "Toggle terminal", mode = { "n", "t" } },
+  { "<leader>oT", snacks.terminal.open, desc = "New terminal", mode = { "n", "t" } },
 
   ------------------
   --- WORKSPACES ---
@@ -112,52 +124,19 @@ wk.add({
   { "<leader><Tab>r", helpers.prefill_command("LualineRenameTab"), desc = "Rename workspace", mode = "n" },
 
   ---------------
-  --- BUFFERS ---
+  --- REPLACE ---
   ---------------
-  { "<leader>b", group = "buffer" },
-
-  {
-    "<leader>bb",
-    helpers.execute_command("lua Snacks.picker.buffers()"),
-    desc = "Switch buffer",
-    mode = "n",
-  },
-  {
-    "<leader>,",
-    helpers.execute_command("lua Snacks.picker.buffers()"),
-    desc = "Switch buffer",
-    mode = "n",
-  },
-
-  { "<leader>bn", helpers.execute_command("enew"), desc = "New buffer", mode = "n" },
-  { "<leader>bh", helpers.execute_command("new"), desc = "New horizontal buffer", mode = "n" },
-  { "<leader>bv", helpers.execute_command("vnew"), desc = "New vertical buffer", mode = "n" },
-  { "<leader>b]", helpers.execute_command("bnext"), desc = "Next buffer", mode = "n" }, -- tab,
-  { "<leader>b[", helpers.execute_command("bprev"), desc = "Prev buffer", mode = "n" }, -- shift + tab,
-  { "<leader>bk", helpers.kill_buffer, desc = "Kill buffer", mode = "n" },
-  { "<leader>bO", helpers.kill_all_buffers_except_current, desc = "Kill all buffers except current", mode = "n" },
-
-  --  { "<leader>bx", Snacks.scratch, desc = "New scratch", mode = "n" },
-  { "<leader>bZ", helpers.delete_scratch_files, desc = "Delete all scratch files", mode = "n" },
-  {
-    "<leader>bX",
-    helpers.execute_command("lua Snacks.scratch.select()"),
-    desc = "Select scratch",
-    mode = "n",
-  },
-
-  ------------------
-  --- SUBSTITUTE ---
-  ------------------
   { "<leader>r", group = "replace" },
 
   { "<leader>rr", "<CMD>SearchReplaceSingleBufferOpen<CR>", desc = "Replace", mode = "n" },
   { "<leader>rp", "<CMD>SearchReplaceSingleBufferCWord<CR>", desc = "Replace in place [CWord]", mode = "n" },
   { "<leader>rP", "<CMD>SearchReplaceSingleBufferCWORD<CR>", desc = "Replace in place [CWORD]", mode = "n" },
+  { "<leader>r?", "<CMD>SearchReplaceSingleBufferSelections<CR>", desc = "Show all values", mode = "n" },
 
   { "<leader>rb", group = "all open buffers" },
 
   { "<leader>rbr", "<CMD>SearchReplaceMultiBufferOpen<CR>", desc = "Replace in all open files", mode = "n" },
+  { "<leader>rb?", "<CMD>SearchReplaceMultiBufferSelections<CR>", desc = "Show all values", mode = "n" },
   {
     "<leader>rbp",
     "<CMD>SearchReplaceMultiBufferCWord<CR>",
@@ -176,48 +155,57 @@ wk.add({
   --------------
   { "<leader>s", group = "search" },
 
+  { "<leader>ss", helpers.search_buffer, desc = "Search in buffer", mode = "n" },
+  { "<leader>sb", helpers.search_buffer, desc = "Search in buffer", mode = "n" },
+  { "<leader>sB", snacks.picker.grep_buffers, desc = "Seach all open buffers", mode = "n" },
   {
-    "<leader>ss",
-    helpers.execute_command("lua Snacks.picker.lines()"),
-    desc = "Search in buffer",
-    mode = "n",
+    "<leader>sw",
+    function()
+      snacks.picker.grep_word()
+    end,
+    desc = "Search word at point/selection",
+    mode = { "n", "x" },
   },
-  {
-    "<leader>sb",
-    helpers.execute_command("lua Snacks.picker.lines()"),
-    desc = "Search in buffer",
-    mode = "n",
-  },
-
-  {
-    "<leader>sB",
-    helpers.execute_command("lua Snacks.picker.grep_buffers()"),
-    desc = "Seach all open buffers",
-    mode = "n",
-  },
-
   { "<leader>sp", helpers.search_project, desc = "Search in project", mode = "n" },
+  { "<leader>sh", snacks.picker.command_history, desc = "Search in project", mode = "n" },
 
   { "<leader>st", group = "list TODO" },
   {
     "<leader>stt",
-    helpers.execute_command("lua Snacks.picker.todo_comments({ keywords = { 'TODO' } })"),
+    function()
+      snacks.picker.todo_comments({ keywords = { "TODO" }, hidden = true })
+    end,
     desc = "List all TODOS",
     mode = "n",
   },
   {
     "<leader>stf",
-    helpers.execute_command("lua Snacks.picker.todo_comments({ keywords = { 'FIX', 'FIXME' } })"),
+    function()
+      snacks.picker.todo_comments({ keywords = { "FIXME", "FIX" }, hidden = true })
+    end,
     desc = "List all FIXME",
     mode = "n",
   },
+  {
+    "<leader>stw",
+    function()
+      snacks.picker.todo_comments({ keywords = { "WARN", "WARNING" }, hidden = true })
+    end,
+    desc = "List all WARNING",
+    mode = "n",
+  },
+
   -----------
   --- GIT ---
   -----------
   { "<leader>g", group = "git" },
 
+  { "<leader>gg", helpers.execute_command("Neogit kind=replace"), desc = "Git status", mode = "n" },
+
   { "<leader>gs", helpers.execute_command("Gitsigns stage_hunk"), desc = "Stage hunk", mode = "n" },
+  { "<leader>gS", helpers.execute_command("Gitsigns stage_buffer"), desc = "Stage file", mode = "n" },
   { "<leader>gr", helpers.execute_command("Gitsigns reset_hunk"), desc = "Reset hunk", mode = "n" },
+  { "<leader>gR", helpers.execute_command("Gitsigns reset_buffer"), desc = "Reset file", mode = "n" },
   { "<leader>gv", helpers.execute_command("Gitsigns select_hunk"), desc = "Select hunk", mode = "n" },
 
   { "<leader>g[", helpers.execute_command("Gitsigns nav_hunk prev"), desc = "Prev hunk", mode = "n" },
@@ -226,9 +214,27 @@ wk.add({
   { "<leader>gp", helpers.execute_command("Gitsigns preview_hunk_inline"), desc = "Preview hunk [inline]", mode = "n" },
   { "<leader>gP", helpers.execute_command("Gitsigns preview_hunk"), desc = "Previw hunk [popup]", mode = "n" },
 
-  { "<leader>gd", helpers.prefill_command("Gitsigns diffthis"), desc = "Diff with revision", mode = "n" },
+  { "<leader>gd", helpers.execute_command("Gitsigns diffthis"), desc = "Diff this file", mode = "n" },
+  { "<leader>gc", helpers.execute_command("Gitsigns setqflist all"), desc = "Trouble changes", mode = "n" },
+  {
+    "<leader>gC",
+    function()
+      snacks.picker.git_diff()
+    end,
+    desc = "Snacks changes",
+    mode = "n",
+  },
+  { "<leader>gw", helpers.execute_command("Gitsigns toggle_word_diff"), desc = "Toggle word diff", mode = "n" },
   {
     "<leader>gl",
+    function()
+      snacks.picker.git_log_file()
+    end,
+    desc = "File log",
+    mode = "n",
+  },
+  {
+    "<leader>gL",
     function()
       local file = vim.fn.expand("%:p")
       local root = vim.fs.root(file, { ".git" })
@@ -245,16 +251,15 @@ wk.add({
     desc = "Branch log",
     mode = "n",
   },
+
   {
-    "<leader>g.",
-    helpers.execute_command("lua Snacks.picker.git_log_file()"),
-    desc = "File log",
+    "<leader>gb",
+    function()
+      snacks.picker.git_branches()
+    end,
+    desc = "Switch branch",
     mode = "n",
   },
-
-  { "<leader>gg", helpers.execute_command("Neogit kind=replace"), desc = "Git status", mode = "n" },
-  { "<leader>gL", helpers.execute_command("Neogit log"), desc = "Neogit: log", mode = "n" },
-  { "<leader>gB", helpers.execute_command("Neogit branch"), desc = "Neogit: switch branch", mode = "n" },
 
   {
     "<leader>go",
@@ -271,39 +276,35 @@ wk.add({
   --- LSP ---
   -----------
   { "<leader>c", group = "code" },
-  -- All mappings are located in plugins/lsp.lua
+  -- All mappings are located in plugins/lsp.lua and partially in trouble.lua
+
+  -----------------------------
+  --- TROUBLE [DIAGNOSTICS] ---
+  -----------------------------
+  { "<leader>x", group = "trouble" },
+  -- All mappings in plugins/trouble.lua
 
   ----------
   --- AI ---
   ----------
   { "<leader>a", group = "AI" },
+  -- All mappings are set by Avant by now
 
   -----------------
   --- BOOKMARKS ---
   -----------------
   { "<leader>m", group = "bookmarks" },
 
-  { "<leader>mm", bookmarks.bookmark_toggle, desc = "Set bookmark", mode = "n" },
-  { "<leader>mc", helpers.delete_all_bookmarks, desc = "Clean all bookmarks", mode = "n" },
-  -- TODO: no analog in Snacks, write my own solution
+  { "<leader>ms", bookmarks.bookmark_toggle, desc = "Set bookmark", mode = "n" },
+  { "<leader>md", helpers.delete_all_bookmarks, desc = "Delete all bookmarks", mode = "n" },
   {
     "<leader>mf",
     bookmark_picker.open,
-    desc = "Show bookmarks",
+    desc = "Find bookmarks",
     mode = "n",
   },
-  { "mn", bookmarks.bookmark_next, desc = "Next bookmark", mode = "n" },
-  { "mp", bookmarks.bookmark_prev, desc = "Prev bookmark", mode = "n" },
-
-  -------------
-  --- TO-DO ---
-  -------------
-
-  ----------------
-  --- COMMENTS ---
-  ----------------
-  { "<C-/>", ":norm gcc<CR>", desc = "Toggle comment", mode = "n" },
-  { "<C-/>", ":norm gcc<CR>", desc = "Toggle multiline comment", mode = "v" },
+  { "b]", bookmarks.bookmark_next, desc = "Next bookmark", mode = "n" },
+  { "b[", bookmarks.bookmark_prev, desc = "Prev bookmark", mode = "n" },
 
   ---------------
   --- SESSION ---
@@ -311,7 +312,7 @@ wk.add({
   { "<leader>q", group = "session" },
 
   { "<leader>qq", "<CMD>qa<CR>", desc = "Quit", mode = "n" },
-  { "<leader>qQ", confirm_quit.confirm_quit, desc = "Quit + confirm", mode = "n" },
+  { "<leader>qQ", quit.confirm_quit, desc = "Quit + confirm", mode = "n" },
 
   {
     "<leader>qs",
@@ -346,23 +347,57 @@ wk.add({
   { "<leader>hL", helpers.execute_command("Lazy"), desc = "Lazy", mode = "n" },
   { "<leader>hM", helpers.execute_command("Mason"), desc = "Mason", mode = "n" },
 
+  { "<leader>ht", helpers.toggle_background, desc = "Toggle dark/light theme", mode = "n" },
   { "<leader>hm", man_picker.open, desc = "Man pages", mode = "n" },
-  -- Handy for checking 'filetype' which is needed for plugins/formatter.lua
-  { "<leader>hf", ":lua print('Filetype:', vim.bo.filetype)<CR>", desc = "Print filetype", mode = "n" },
   { "<leader>hs", ":set spell<CR>", desc = "Enable spellcheck", mode = "n" },
   { "<leader>hS", ":set nospell<CR>", desc = "Disable spellcheck", mode = "n" },
-  { "<leader>hr", helpers.execute_command("lua Snacks.picker.spelling()"), desc = "Spelling suggestions", mode = "n" },
+  { "<leader>h=", helpers.execute_command("lua Snacks.picker.spelling()"), desc = "Spelling suggestions", mode = "n" },
+  -- Handy for checking 'filetype' which is needed for plugins/formatter.lua
+  { "<leader>hf", ":lua print('Filetype:', vim.bo.filetype)<CR>", desc = "Print filetype", mode = "n" },
+  { "<leader>hh", helpers.execute_command("Noice"), desc = "Messages history", mode = "n" },
+
+  ----------------
+  --- COMMENTS ---
+  ----------------
+  { "<C-/>", ":norm gcc<CR>", desc = "Toggle comment", mode = "n" },
+  { "<C-/>", ":norm gcc<CR>", desc = "Toggle multiline comment", mode = "v" },
 
   -------------
   --- OTHER ---
   -------------
-
   { "<C-s>", "<cmd>w<CR>", desc = "Save current buffer [n]", mode = "n" },
   { "<C-s>", "<Esc><cmd>w<CR>", desc = "Save current buffer [i]", mode = "i" },
   { "<C-c>", "<cmd>%y+<CR>", desc = "Copy entire buffer", mode = "n" },
   { "<Esc>", "<cmd>noh<CR>", desc = "Clean seach highlights", mode = "n" },
-  { "<leader>M", "<cmd>messages<CR>", desc = "Messages", mode = "n" },
+  { "<leader>`", "<cmd>messages<CR>", desc = "Messages", mode = "n" },
 
-  -- Map ZZ to ConfirmQuit (saves and quits with confirmation)
-  { "ZZ", confirm_quit.confirm_quit, desc = "Confirm before ZZ (wq)" },
+  { "ZQ", quit.confirm_quit, desc = "Confirm before ZQ" },
+  {
+    "ZZ",
+    function()
+      if vim.bo.modified then
+        vim.cmd("write")
+      end
+
+      quit.confirm_quit()
+    end,
+    desc = "Confirm before ZZ",
+  },
+
+  {
+    "]t",
+    function()
+      helpers.todo_jump(todo_comments.jump_next)
+    end,
+    desc = "Next todo comment",
+    mode = "n",
+  },
+  {
+    "[t",
+    function()
+      helpers.todo_jump(todo_comments.jump_prev)
+    end,
+    desc = "Prev todo comment",
+    mode = "n",
+  },
 })

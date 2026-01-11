@@ -9,11 +9,12 @@ return {
     indent = { enabled = true },
     terminal = { enabled = true },
     explorer = { enabled = true },
-
     picker = {
       sources = {
         explorer = { hidden = true },
+        diagnostics = { hidden = true },
         lines = { layout = { preset = "select", layout = { height = 0.5 } } },
+        recent = { layout = { preset = "select", layout = { height = 0.25 } } },
         files = {
           layout = { preset = "select", layout = { height = 0.25 } },
           hidden = true,
@@ -42,7 +43,7 @@ return {
         },
         spelling = {},
         buffers = {
-          current = false,
+          -- current = false,
           sort_lastused = true,
           unloaded = false,
           layout = { preset = "select", layout = { height = 0.25 } },
@@ -66,11 +67,11 @@ return {
               session.select("read")
             end,
           },
-          { key = "r", desc = "Recent files", action = ":Telescope oldfiles previewer=false" },
+          { key = "r", desc = "Recent files", action = ":lua Snacks.picker.recent()" },
           {
             key = "p",
             desc = "Open project",
-            action = ":lua require('telescope').extensions.workspaces.workspaces({ layout_config = { width = 80, height = 15, prompt_position = 'top' } })",
+            action = ":lua require('custom.snacks.project_picker').open()",
           },
         },
         header = [[

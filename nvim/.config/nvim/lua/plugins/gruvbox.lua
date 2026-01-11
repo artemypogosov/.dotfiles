@@ -1,24 +1,33 @@
-local g = vim.g
-local o = vim.o
-
 return {
-  -- Retro groove color scheme for Vim
-  "morhetz/gruvbox",
-  lazy = false,
+  "ellisonleao/gruvbox.nvim",
   priority = 1000,
   config = function()
-    o.background = "dark" -- "light"
-    g.gruvbox_bold = 0
-    g.gruvbox_italic = 1
-    g.gruvbox_contrast_dark = "medium" -- "soft", "medium" & "hard"
-    g.gruvbox_contrast_light = "medium" -- "soft", "medium" & "hard"
-    -- Changes cursor background while search is highlighted
-    g.gruvbox_hls_cursor = "orange"
-    g.gruvbox_sign_column = "bg0"
-    g.gruvbox_invert_selection = 0
+    require("gruvbox").setup({
+      bold = false,
+      overrides = {
+        -- It tells Neovim to use 'Normal' styles for 'SignColumn'
+        SignColumn = { link = "Normal" },
 
-    -- vim.cmd.colorscheme("gruvbox")
-    vim.api.nvim_set_hl(0, "Sneak", { fg = "#FBF1C7", bg = "#928374" })
-    vim.api.nvim_set_hl(0, "SneakCurrent", { fg = "#D79921", bg = "NONE", bold = true })
+        -- Messages & command line
+        ErrorMsg = { fg = "#fb4934", bg = "NONE", bold = false },
+        WarningMsg = { fg = "#fabd2f", bg = "NONE", bold = false },
+        MoreMsg = { fg = "#b8bb26", bg = "NONE" },
+        MsgArea = { bg = "NONE", link = "Normal" },
+
+        -- Diagnostic icons
+        DiagnosticSignError = { link = "SignColumn" },
+        DiagnosticSignWarn = { link = "SignColumn" },
+        DiagnosticSignInfo = { link = "SignColumn" },
+        DiagnosticSignHint = { link = "SignColumn" },
+
+        -- If you use a plugin like Noice or Snacks
+        NormalFloat = { bg = "NONE", link = "Normal" },
+        FloatBorder = { fg = "#928374", bg = "NONE" },
+        SnacksPickerNormal = { link = "Normal" },
+        NoiceFormatConfirm = { bg = "NONE", link = "Normal" },
+        NoiceFormatConfirmDefault = { bg = "NONE", link = "Normal" },
+      },
+    })
+    vim.cmd("colorscheme gruvbox")
   end,
 }

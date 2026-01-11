@@ -10,6 +10,7 @@ local function get_workspaces()
     table.insert(items, {
       name = ws.name,
       path = ws.path,
+      text = ws.name,
     })
   end
 

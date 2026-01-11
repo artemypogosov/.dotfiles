@@ -1,6 +1,6 @@
 local M = {}
 
-local workspaces_picker = require("custom.snacks.workspaces_picker")
+local project_picker = require("custom.snacks.project_picker")
 local bm = require("bookmarks")
 local snacks = require("snacks")
 local buf_delete = require("bufdelete")
@@ -22,11 +22,7 @@ function M.execute_command(command)
 end
 
 function M.toggle_background()
-  if vim.o.background == "dark" then
-    vim.o.background = "light"
-  else
-    vim.o.background = "dark"
-  end
+  vim.o.background = vim.o.background == "dark" and "light" or "dark"
 end
 
 -----------------
@@ -85,12 +81,39 @@ end, {})
 -- PROJECT HELPERS --
 ---------------------
 
+function M.find_files(opts)
+  opts = opts or {}
+  snacks.picker.files(opts)
+end
+
+function M.find_files_in_current_dir()
+  local file = vim.api.nvim_buf_get_name(0)
+  local cwd
+
+  if file == "" then
+    vim.notify("Buffer has no file path, fallback to 'pwd'")
+    cwd = vim.fn.getcwd()
+  else
+    cwd = vim.fn.fnamemodify(file, ":h")
+  end
+
+  snacks.picker.files({ title = "Find file from here", cwd = cwd })
+end
+
 function M.find_recent_files()
   snacks.picker.recent()
 end
 
+function M.switch_buffers()
+  snacks.picker.buffers()
+end
+
+function M.search_buffer()
+  snacks.picker.lines({ title = "Search buffer" })
+end
+
 function M.switch_project()
-  workspaces_picker.open()
+  project_picker.open()
 end
 
 local function find_git_root()
@@ -213,6 +236,10 @@ function M.snacks_explorer_focus()
   if picker then
     picker:focus()
   end
+end
+
+function M.todo_jump(method)
+  method({ keywords = { "TODO", "FIXME", "FIX" } })
 end
 
 return M

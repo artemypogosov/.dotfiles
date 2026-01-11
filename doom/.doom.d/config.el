@@ -501,17 +501,31 @@ Chooses biome/prettierd/prettier based on project config files."
 ;; Show vertical bars to visually indicate indentation levels
 (add-hook! yaml-mode #'indent-bars-mode)
 
+;; (after! spell-fu
+;;   (setq-default spell-fu-idle-delay 1
+;;                 spell-fu-word-regexp "\\b\\([A-Za-z]+\\(['’][A-Za-z]+\\)?\\)\\b")
+
+;;   ;; Disable spell-fu in programming buffers
+;;   (remove-hook 'prog-mode-hook #'spell-fu-mode)
+;;   (add-hook! 'prog-mode (spell-fu-mode -1))
+;;   (add-hook! 'lua-mode    (spell-fu-mode -1))
+;;   (add-hook! 'lua-ts-mode (spell-fu-mode -1))
+  
+;;   ;; Enable spell-fu only in text-like modes
+;;   (add-hook! text-mode #'spell-fu-mode))
+
 (after! spell-fu
   (setq-default spell-fu-idle-delay 1
                 spell-fu-word-regexp "\\b\\([A-Za-z]+\\(['’][A-Za-z]+\\)?\\)\\b")
 
-  ;; Disable spell-fu in programming buffers
-  (remove-hook 'prog-mode-hook #'spell-fu-mode)
-  (add-hook! 'lua-mode    (spell-fu-mode -1))
-  (add-hook! 'lua-ts-mode (spell-fu-mode -1))
-  
+  ;; Disable spell-fu in all programming modes
+  (add-hook! prog-mode-hook (spell-fu-mode -1))
+
+  ;; Extra safety for Lua modes
+  (add-hook! (lua-mode lua-ts-mode) (spell-fu-mode -1))
+
   ;; Enable spell-fu only in text-like modes
-  (add-hook! text-mode #'spell-fu-mode))
+  (add-hook! text-mode-hook #'spell-fu-mode))
 
 ;; Disable rainbow-mode everywhere Doom enables it
 (remove-hook 'prog-mode-hook #'rainbow-mode)
@@ -661,9 +675,6 @@ Chooses biome/prettierd/prettier based on project config files."
   :config
   (reverse-im-mode 1))
 
-;; If you have a problem with duplicates in notifications, try to change
-;; 'dunst' timeout
-
 (defvar my/appt-notification-id nil)
 
 (defun my/appt-clean-message (msg)
@@ -673,33 +684,32 @@ Chooses biome/prettierd/prettier based on project config files."
           "[ \t]*:[[:alnum:]_:@]+::?$" "" msg)))
     (string-trim-right clean)))
 
-;; Run with 30sec delay after Emacs startup
-(run-with-idle-timer
- 30 nil
- (lambda ()
-   (require 'appt)
-   (require 'notifications)
+(when (daemonp)
+  (run-with-idle-timer
+   30 nil
+   (lambda ()
+     (require 'appt)
+     (require 'notifications)
 
-   (setq appt-message-warning-time 10
-         appt-display-interval 1)
+     (setq appt-message-warning-time 10
+           appt-display-interval 1)
 
-   (setq appt-disp-window-function
-         (lambda (remaining _new-time msg)
-           (let ((cleaned-msg (my/appt-clean-message msg)))
-             (setq my/appt-notification-id
-                   (notifications-notify
-                    :title (format "In %s minutes" remaining)
-                    :body cleaned-msg
-                    :urgency 'normal
-                    :replaces-id my/appt-notification-id)))))
+     (setq appt-disp-window-function
+           (lambda (remaining _new-time msg)
+             (let ((cleaned-msg (my/appt-clean-message msg)))
+               (setq my/appt-notification-id
+                     (notifications-notify
+                      :title (format "In %s minutes" remaining)
+                      :body cleaned-msg
+                      :urgency 'normal
+                      :replaces-id my/appt-notification-id)))))
 
-   (appt-activate t)
+     (appt-activate t)
 
-   ;; Refresh agenda → appt in 30sec and then every 10 minutes
-   (run-at-time "30 sec" 600
-                (lambda ()
-                  (setq appt-time-msg-list nil)
-                  (org-agenda-to-appt)))))
+     (run-at-time "30 sec" 600
+                  (lambda ()
+                    (setq appt-time-msg-list nil)
+                    (org-agenda-to-appt))))))
 
 (defmacro my/unbind (&rest forms)
   "Bulk-unbind Doom leader keys.
@@ -808,17 +818,19 @@ Each FORM must be: (:prefix PREFIX KEY1 KEY2 ...)."
         :map markdown-mode-map
         :desc "Live preview" "l" #'markdown-live-preview-mode))
 
-;; Search TODO keywords
+;; Search 'TODO' keywords
+;; Also use ]t & [t to jump between pre/next 'TODO' keywords
 (after! hl-todo
   (map! :leader
         (:prefix ("s" . "search")
-         :desc "Search TODO" "." #'hl-todo-occur
-         :desc "Search TODO from dir" "," #'hl-todo-rgrep)))
+         :desc "Search 'TODO'" "." #'hl-todo-occur
+         :desc "Search 'TODO' from dir" "," #'hl-todo-rgrep)))
 
 ;; Toggle 
 (map! :leader
       (:prefix ("t" . "toggle")
-       :desc "Toggle treemacs" "t" #'+treemacs/toggle))
+       :desc "Toggle treemacs" "t" #'+treemacs/toggle
+       :desc "Focus treemacs" "T" #'treemacs-select-window))
 
 ;; Manage workspaces
 (map! :leader

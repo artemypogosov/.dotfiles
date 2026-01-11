@@ -45,7 +45,13 @@ alias cp='cp -vi'
 alias df='df -h'
 alias free='free -th'
 
+alias nvme-smart-log='sudo nvme smart-log /dev/nvme0n1'
+
+# Real-time monitoring
+alias jctl-nvme="journalctl -f | grep -iE 'nvme|ext4|btrfs|error|io-error'"
+# Post-crash analysis; Shows only errors (priority 3)
 alias jctl='journalctl -p 3 -xb'
+
 alias userlist='cut -d: -f1 /etc/passwd'
 alias psgrep='ps aux | grep -v grep | grep -i -e VSZ -e'
 
