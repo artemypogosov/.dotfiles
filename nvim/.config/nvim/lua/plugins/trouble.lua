@@ -8,7 +8,7 @@ return {
       quickfix = {
         win = {
           position = "bottom",
-          size = 25,
+          size = 20,
         },
       },
     },
@@ -25,24 +25,19 @@ return {
       desc = "Diagnostics",
     },
     {
+      "<leader>xs",
+      "<cmd>Trouble lsp_document_symbols toggle win.size=15<cr>",
+      desc = "LSP: Document symbols",
+    },
+    {
+      "<leader>xr",
+      "<cmd>Trouble lsp_references toggle win.size=15<cr>",
+      desc = "LSP: References",
+    },
+    {
       "<leader>xt",
-      "<cmd>Trouble todo filter = {tag = {TODO,FIX,FIXME,WARN,WARNING}} win.size=15<cr>",
+      "<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME,WARN,WARNING}} win.size=15<cr>",
       desc = "Todo List",
-    },
-    {
-      "<leader>xq",
-      "<cmd>Trouble quickfix toggle<cr>",
-      desc = "Quickfix List (Trouble)",
-    },
-    {
-      "<leader>cs",
-      "<cmd>Trouble symbols toggle focus=true win.size=55<cr>",
-      desc = "Symbols",
-    },
-    {
-      "<leader>cl",
-      "<cmd>Trouble lsp toggle win.position=right win.size=55<cr>",
-      desc = "LSP: Defs/Refs/Impl...",
     },
   },
 }

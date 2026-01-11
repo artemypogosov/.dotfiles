@@ -79,14 +79,20 @@ return {
         --  Useful when your language has ways of declaring types without an actual implementation.
         map("<leader>ci", snacks.picker.lsp_implementations, "Goto Implementation")
 
+        -- Interactively shows definition, references, implementations and type definitions
+        map("<leader>cl", "<cmd>Trouble lsp toggle win.position=right win.size=55<cr>", "Defs/Refs/Impl...")
+
         -- Execute a code action, usually your cursor needs to be on top of an error
         -- or a suggestion from your LSP for this to activate.
         map("<leader>ca", vim.lsp.buf.code_action, "Goto Code Action", { "n", "x" })
 
-        map("<leader>co", snacks.picker.treesitter, "Treesitter objects")
+        -- Fuzzy find all the symbols in your current document.
+        -- Symbols are things like variables, functions, types, etc.
+        map("<leader>cs", "<cmd>Trouble symbols toggle focus=true win.size=55<cr>", "Buffer Symbols")
 
         -- Fuzzy find all the symbols in your current workspace.
         --  Similar to document symbols, except searches over your entire project.
+        map("<leader>co", snacks.picker.treesitter, "Treesitter objects")
         map("<leader>cS", snacks.picker.lsp_workspace_symbols, "Project Symbols")
 
         -- Jump to the type of the word under your cursor.
@@ -94,7 +100,7 @@ return {
         --  the definition of its *type*, not where it was *defined*.
         map("<leader>cT", snacks.picker.lsp_type_definitions, "Goto Type Definition")
 
-        -- <<DIAGNOSTICS>> --> use 'trouble' plugin instead
+        -- [DIAGNOSTICS] --> use 'trouble' plugin instead
         --
         -- Show buffer diagnostics
         -- map("<leader>cx", function()
@@ -104,13 +110,6 @@ return {
         -- Show workspace diagnostics
         -- map("<leader>cX", snacks.picker.diagnostics, "Open Buffers Diagnostics")
         --
-
-        -- <<SYMBOLS>> --> use 'trouble' plugin instead
-        --
-        -- Fuzzy find all the symbols in your current document.
-        -- Symbols are things like variables, functions, types, etc.
-
-        -- map("<leader>cs", snacks.picker.lsp_symbols, "Open Buffer Symbols")
 
         -- WARN: This is not Goto Definition, this is Goto Declaration.
         --  For example, in C this would take you to the header.

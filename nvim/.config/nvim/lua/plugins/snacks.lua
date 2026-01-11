@@ -2,7 +2,7 @@ local session = require("mini.sessions")
 
 return {
   -- snacks.nvim --> A collection of QoL (Quality of Life) plugins for Neovim
-  -- Beautiful declarative dashboards
+  -- Ctrl + q --> sends Snacks result to 'Quick Fix List'
   "folke/snacks.nvim",
   opts = {
     gitbrowse = { enabled = true },
@@ -10,6 +10,24 @@ return {
     terminal = { enabled = true },
     explorer = { enabled = true },
     picker = {
+      actions = {
+        -- Define a custom action
+        open_in_trouble = function(picker)
+          picker:action("qflist") -- This fills the list
+          vim.schedule(function()
+            vim.cmd("cclose")
+            require("trouble").open("quickfix")
+          end)
+        end,
+      },
+      win = {
+        input = {
+          keys = {
+            -- Map the key to our custom action
+            ["<c-q>"] = { "open_in_trouble", mode = { "i", "n" } },
+          },
+        },
+      },
       sources = {
         explorer = { hidden = true },
         diagnostics = { hidden = true },
@@ -55,7 +73,6 @@ return {
         },
       },
     },
-
     dashboard = {
       width = 40,
       preset = {

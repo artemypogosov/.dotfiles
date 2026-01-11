@@ -111,6 +111,7 @@ wk.add({
   { "<leader>o", group = "open" },
   { "<leader>ot", snacks.terminal.toggle, desc = "Toggle terminal", mode = { "n", "t" } },
   { "<leader>oT", snacks.terminal.open, desc = "New terminal", mode = { "n", "t" } },
+  { "<leader>oq", "<cmd>Trouble quickfix toggle<cr>", desc = "Quickfix List", mode = { "n", "t" } },
 
   ------------------
   --- WORKSPACES ---
@@ -167,8 +168,56 @@ wk.add({
     mode = { "n", "x" },
   },
   { "<leader>sp", helpers.search_project, desc = "Search in project", mode = "n" },
-  { "<leader>sh", snacks.picker.command_history, desc = "Search in project", mode = "n" },
-
+  {
+    "<leader>sc",
+    function()
+      snacks.picker.command_history()
+    end,
+    desc = "Command History",
+  },
+  {
+    "<leader>sh",
+    function()
+      snacks.picker.help()
+    end,
+    desc = "Help Pages",
+  },
+  {
+    "<leader>sj",
+    function()
+      snacks.picker.jumps()
+    end,
+    desc = "Jumps",
+  },
+  {
+    "<leader>sk",
+    function()
+      snacks.picker.keymaps()
+    end,
+    desc = "Keymaps",
+  },
+  {
+    "<leader>sm",
+    function()
+      snacks.picker.marks()
+    end,
+    desc = "Marks",
+  },
+  { "<leader>sM", man_picker.open, desc = "Man pages", mode = "n" },
+  {
+    "<leader>su",
+    function()
+      snacks.picker.undo()
+    end,
+    desc = "Undo History",
+  },
+  {
+    "<leader>s'",
+    function()
+      snacks.picker.registers()
+    end,
+    desc = "Registers",
+  },
   { "<leader>st", group = "list TODO" },
   {
     "<leader>stt",
@@ -348,7 +397,6 @@ wk.add({
   { "<leader>hM", helpers.execute_command("Mason"), desc = "Mason", mode = "n" },
 
   { "<leader>ht", helpers.toggle_background, desc = "Toggle dark/light theme", mode = "n" },
-  { "<leader>hm", man_picker.open, desc = "Man pages", mode = "n" },
   { "<leader>hs", ":set spell<CR>", desc = "Enable spellcheck", mode = "n" },
   { "<leader>hS", ":set nospell<CR>", desc = "Disable spellcheck", mode = "n" },
   { "<leader>h=", helpers.execute_command("lua Snacks.picker.spelling()"), desc = "Spelling suggestions", mode = "n" },

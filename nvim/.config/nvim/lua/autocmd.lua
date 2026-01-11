@@ -54,15 +54,12 @@ vim.api.nvim_create_autocmd("User", {
 vim.api.nvim_create_autocmd("QuickFixCmdPost", {
   pattern = "grep",
   callback = function()
-    -- Open (or update) quickfix window
-    vim.cmd("cwindow")
-
-    -- Defer until UI is stable
-    vim.schedule(function()
-      local qf = vim.fn.getqflist({ winid = 0 })
-      if qf.winid and qf.winid ~= 0 then
-        vim.api.nvim_set_current_win(qf.winid)
-      end
-    end)
+    -- Only open Trouble if there are actually items in the quickfix list
+    if #vim.fn.getqflist() > 0 then
+      -- Close the standard quickfix if it accidentally opened
+      vim.cmd("cclose")
+      -- Open Trouble's quickfix view
+      vim.cmd("Trouble quickfix open")
+    end
   end,
 })
