@@ -9,9 +9,9 @@ return {
   opts = {
     -- add any opts here
     -- this file can contain specific instructions for your project
+    mode = "legacy",
     instructions_file = "avante.md",
-    -- for example
-    provider = "openai",
+    provider = "gemini", -- openai, gemini
     providers = {
       openai = {
         endpoint = "https://api.openai.com/v1",
@@ -22,6 +22,13 @@ return {
         extra_request_body = {
           temperature = 0.75,
         },
+      },
+      gemini = {
+        -- gemini-2.5-pro
+        model = "gemini-2.5-flash",
+        timeout = 30000,
+        temperature = 0,
+        max_tokens = 8192,
       },
       -- claude = {
       -- endpoint = "https://api.anthropic.com",
@@ -34,6 +41,15 @@ return {
       -- },
       -- },
     },
+    -- Add here you custom shortcuts which will expand in a prompt
+    shortcuts = {
+      {
+        name = "refactor",
+        description = "Refactor code with best practices",
+        details = "Automatically refactor code to improve readability and follow best practices",
+        prompt = "Please refactor this code following best practices, improving readability and maintainability while preserving functionality.",
+      },
+    },
     input = {
       provider = "snacks",
     },
@@ -42,7 +58,6 @@ return {
       "MunifTanjim/nui.nvim",
       --- The below dependencies are optional,
       "nvim-mini/mini.pick", -- for file_selector provider mini.pick
-      -- "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
       "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
       "ibhagwan/fzf-lua", -- for file_selector provider fzf
       "stevearc/dressing.nvim", -- for input provider dressing

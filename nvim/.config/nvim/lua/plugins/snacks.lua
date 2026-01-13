@@ -61,7 +61,7 @@ return {
         },
         spelling = {},
         buffers = {
-          -- current = false,
+          current = false,
           sort_lastused = true,
           unloaded = false,
           layout = { preset = "select", layout = { height = 0.25 } },

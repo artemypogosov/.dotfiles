@@ -59,6 +59,13 @@ return {
           enabled = false,
         },
         documentation = { auto_show = true, auto_show_delay_ms = 500 },
+        menu = {
+          draw = {
+            columns = {
+              { "kind_icon", gap = 1, "label" },
+            },
+          },
+        },
       },
       signature = { enabled = true },
 
