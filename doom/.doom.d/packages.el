@@ -36,6 +36,9 @@
 ;; Enables other keyboard layouts for keybindings
 (package! reverse-im)
 
+;; Completion At Point (replacement of 'company-files')
+(package! cape)
+
 ;;;;;;;;;;;;;;;;;;;
 ;;; DEVELOPMENT ;;;
 ;;;;;;;;;;;;;;;;;;;

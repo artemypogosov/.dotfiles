@@ -850,7 +850,7 @@ Each FORM must be: (:prefix PREFIX KEY1 KEY2 ...)."
       :desc "Quit Emacs and ask to save" "Q" #'evil-quit-all)
 
 ;; Complete file path
-(map! :i "M-p" #'company-files)
+(map! :i "M-p" #'cape-file)
 
 ;; Save buffer with C-s
 (after! evil
