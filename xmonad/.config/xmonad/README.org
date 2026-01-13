@@ -82,7 +82,7 @@ myBrowser :: String
 myBrowser = "qutebrowser"
 
 myFileManager :: String
-myFileManager = "pcmanfm"
+myFileManager = "thunar"
 
 myFont :: String
 myFont = "xft:Ubuntu:regular:size=9:antialias=true:hinting=true"

@@ -51,7 +51,7 @@ openvpn
 p7zip-gui
 pandoc-bin
 pavucontrol
-pcmanfm
+thunar
 pulseaudio-alsa
 qbittorrent
 qutebrowser
