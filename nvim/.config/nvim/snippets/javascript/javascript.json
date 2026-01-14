@@ -1,0 +1,10 @@
+{
+  "console.log a variable": {
+    "prefix": "qlog",
+    "body": "console.log('${1}:', ${1})"
+  },
+  "const arrow function assignment": {
+    "prefix": "qcf",
+    "body": "const ${1:name} = (${2:arguments}) => {\n\treturn ${0}\n}"
+  }
+}

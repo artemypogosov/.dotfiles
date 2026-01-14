@@ -1,33 +1,33 @@
--- Set langmap very early
-local function escape(str)
-  local escape_chars = [[;,."|\]]
-  return vim.fn.escape(str, escape_chars)
-end
+local en = [[abcdefghijklmnopqrstuvwxyz+-)(*]]
+local en_shift = [[ABCDEFGHIJKLMNOPQRSTUVWXYZ+-)(*]]
 
-local en = [[`qwertyuiop[]asdfghjkl;'zxcvbnm]]
 local ru = [[ёйцукенгшщзхъфывапролджэячсмить]]
-local en_shift = [[~QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>]]
-local ru_shift = [[ËЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ]]
+local ru_shift = [[ЁЙЦУКЕНГШЩЗХЪФЫВАРРОЛДЖЭЯЧСМИТЬ]]
 
-vim.opt.langmap = vim.fn.join({
-  escape(ru_shift) .. ";" .. escape(en_shift),
-  escape(ru) .. ";" .. escape(en),
-}, ",")
+local ua = [[йцукенгшщзхїфівапролджєячсмить*]]
+local ua_shift = [[ЙЦУКЕНГШЩЗХЇФІВАПРОЛДЖЄЯЧСМИТЬ*]]
 
 return {
   "Wansmer/langmapper.nvim",
   lazy = false,
-  priority = 100, -- ensure early load
+  priority = 100,
   config = function()
     local langmapper = require("langmapper")
 
     langmapper.setup({
-      hack_keymap = true, -- wrap all future keymaps
-      map_all_ctrl = true, -- wrap Ctrl-mappings
+      layouts = {
+        ru = {
+          default_layout = en .. en_shift,
+          layout = ru .. ru_shift,
+        },
+        ua = {
+          default_layout = en .. en_shift,
+          layout = ua .. ua_shift,
+        },
+      },
+      hack_keymap = true,
+      map_all_ctrl = true,
       use_layouts = { "ru", "ua" },
     })
-
-    -- Do NOT call automapping() to avoid nil errors
-    -- All mappings defined after this setup will work automatically
   end,
 }
