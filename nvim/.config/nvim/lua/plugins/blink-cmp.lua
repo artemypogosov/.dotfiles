@@ -73,9 +73,6 @@ return {
       -- elsewhere in your config, without redefining it, due to `opts_extend`
       sources = {
         default = { "avante", "lsp", "path", "snippets" },
-        per_filetype = {
-          codecompanion = { "codecompanion" },
-        },
         -- Place your providers here
         providers = {
           avante = {
