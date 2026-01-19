@@ -7,7 +7,6 @@ return {
   ---@module 'avante'
   ---@type avante.Config
   opts = {
-    -- add any opts here
     -- this file can contain specific instructions for your project
     mode = "legacy",
     instructions_file = "avante.md",
@@ -49,6 +48,9 @@ return {
         details = "Automatically refactor code to improve readability and follow best practices",
         prompt = "Please refactor this code following best practices, improving readability and maintainability while preserving functionality.",
       },
+    },
+    behaviour = {
+      auto_set_keymaps = false,
     },
     input = {
       provider = "snacks",
@@ -92,3 +94,29 @@ return {
     },
   },
 }
+
+-----------
+-- KEYS --
+-----------
+
+-- C-n/p - next/prev prompt
+
+-- diff = {
+--   ours = "co",
+--   theirs = "ct",
+--   all_theirs = "ca",
+--   cursor = "cc",
+--   next = "]x",
+--   prev = "[x",
+-- },
+-- jump = {
+--   next = "]]",
+--   prev = "[[",
+-- },
+-- submit = {
+--   normal = "<CR>",
+--   insert = "<C-s>",
+-- },
+-- sidebar = {
+--   add_file = "@",
+-- }

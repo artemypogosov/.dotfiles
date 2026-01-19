@@ -749,7 +749,7 @@ Each FORM must be: (:prefix PREFIX KEY1 KEY2 ...)."
           "C-S-h" "C-S-j" "C-S-k" "C-S-l" "C-S-r" "C-S-S" "C-S-w")
  (:prefix "TAB" "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "d" "D" "`" "R")
  (:prefix "b"
-          "d" "n" "p" "l" "z" "m" "M" "B" "Z" "s" "C")
+          "d" "n" "p" "l" "z" "m" "M" "Z" "s" "C")
  (:prefix "c" "E")
  (:prefix "f" "e" "s")
  (:prefix "h"

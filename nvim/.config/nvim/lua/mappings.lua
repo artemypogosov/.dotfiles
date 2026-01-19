@@ -336,8 +336,40 @@ wk.add({
   ----------
   --- AI ---
   ----------
-  { "<leader>a", group = "AI" },
-  -- All mappings are set by Avant by now
+
+  -- Avante
+
+  { "<leader>a", group = "Avante" },
+
+  { "<leader>aa", "<cmd>AvanteToggle<CR>", desc = "Ask", mode = { "n", "v" } },
+  { "<leader>ae", "<cmd>AvanteEdit<CR>", desc = "Edit", mode = { "n", "v" } },
+  { "<leader>an", "<cmd>AvanteChatNew<CR>", desc = "Chat New", mode = { "n" } },
+  { "<leader>ah", "<cmd>AvanteHistory<CR>", desc = "History", mode = { "n" } },
+  { "<leader>aC", "<cmd>AvanteClear<CR>", desc = "Clear Chat", mode = { "n" } },
+  { "<leader>af", "<cmd>AvanteFocus<CR>", desc = "Focus", mode = { "n" } },
+  { "<leader>aR", "<cmd>AvanteRefresh<CR>", desc = "Refresh All Windows", mode = { "n" } },
+  { "<leader>aS", "<cmd>AvanteStop<CR>", desc = "Stop Request", mode = { "n" } },
+  { "<leader>a?", "<cmd>AvanteModels<CR>", desc = "Switch Model", mode = { "n" } },
+
+  -- ChatGPT
+
+  -- edit_with_instructions = {
+  --   keymaps = {
+  --     toggle_help = "<C-h>", (list of all keys)
+  -- },
+  { "<leader>;", group = "ChatGPT" },
+
+  { "<leader>;c", "<cmd>ChatGPT<CR>", desc = "ChatGPT" },
+  { "<leader>;i", "<cmd>ChatGPTEditWithInstruction<CR>", desc = "Edit with instruction", mode = { "n", "v" } },
+
+  { "<leader>;g", "<cmd>ChatGPTRun grammar_correction<CR>", desc = "Grammar Correction", mode = { "n", "v" } },
+  { "<leader>;d", "<cmd>ChatGPTRun docstring<CR>", desc = "Docstring", mode = { "n", "v" } },
+  { "<leader>;t", "<cmd>ChatGPTRun add_tests<CR>", desc = "Add Tests", mode = { "n", "v" } },
+  { "<leader>;o", "<cmd>ChatGPTRun optimize_code<CR>", desc = "Optimize Code", mode = { "n", "v" } },
+  { "<leader>;s", "<cmd>ChatGPTRun summarize<CR>", desc = "Summarize", mode = { "n", "v" } },
+  { "<leader>;f", "<cmd>ChatGPTRun fix_bugs<CR>", desc = "Fix Bugs", mode = { "n", "v" } },
+  { "<leader>;e", "<cmd>ChatGPTRun explain_code<CR>", desc = "Explain Code", mode = { "n", "v" } },
+  { "<leader>;x", "<cmd>ChatGPTRun explain_diagnostic<CR>", desc = "Explain Error", mode = { "n", "v" } },
 
   -----------------
   --- BOOKMARKS ---
@@ -418,6 +450,7 @@ wk.add({
   { "<C-c>", "<cmd>%y+<CR>", desc = "Copy entire buffer", mode = "n" },
   { "<Esc>", "<cmd>noh<CR>", desc = "Clean seach highlights", mode = "n" },
   { "<leader>`", "<cmd>messages<CR>", desc = "Messages", mode = "n" },
+  { "<leader>/", helpers.search_project, desc = "Search in project", mode = "n" },
 
   { "ZQ", quit.confirm_quit, desc = "Confirm before ZQ" },
   {
