@@ -63,3 +63,10 @@ vim.api.nvim_create_autocmd("QuickFixCmdPost", {
     end
   end,
 })
+
+-- Disable Copilot by default at startup
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    vim.cmd("Copilot disable")
+  end,
+})

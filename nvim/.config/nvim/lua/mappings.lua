@@ -371,6 +371,24 @@ wk.add({
   { "<leader>;e", "<cmd>ChatGPTRun explain_code<CR>", desc = "Explain Code", mode = { "n", "v" } },
   { "<leader>;x", "<cmd>ChatGPTRun explain_diagnostic<CR>", desc = "Explain Error", mode = { "n", "v" } },
 
+  -- Copilot
+  {
+    "<leader>cc",
+    helpers.execute_command("Copilot enable", function()
+      vim.notify("Copilot: enabled", vim.log.levels.INFO)
+    end),
+    desc = "Copilot: enable",
+    mode = { "n", "v" },
+  },
+  {
+    "<leader>cC",
+    helpers.execute_command("Copilot disable", function()
+      vim.notify("Copilot: disabled", vim.log.levels.INFO)
+    end),
+    desc = "Copilot: disable",
+    mode = { "n", "v" },
+  },
+
   -----------------
   --- BOOKMARKS ---
   -----------------

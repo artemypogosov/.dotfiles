@@ -15,9 +15,13 @@ function M.prefill_command(command)
   end
 end
 
-function M.execute_command(command)
+function M.execute_command(command, after)
   return function()
     vim.cmd(command)
+
+    if after then
+      after()
+    end
   end
 end
 
