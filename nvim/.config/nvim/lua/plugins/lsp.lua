@@ -63,6 +63,9 @@ return {
           vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = desc })
         end
 
+        -- []d --> jump between warnings
+        -- Shift + K --> get info lookup (almost like in emacs)
+
         -- Rename the variable under your cursor.
         --  Most Language Servers support renaming across files, etc.
         map("<leader>cr", vim.lsp.buf.rename, "Rename")
@@ -134,9 +137,9 @@ return {
         --
         -- This may be unwanted, since they displace some of your code
         if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
-          map("<leader>th", function()
+          map("<leader>ch", function()
             vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
-          end, "[T]oggle Inlay [H]ints")
+          end, "Toggle Inlay Hints")
         end
       end,
     })
@@ -171,28 +174,17 @@ return {
     })
 
     -- LSP servers and clients are able to communicate to each other what features they support.
-    --  By default, Neovim doesn't support everything that is in the LSP specification.
-    --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
     --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
     local original_capabilities = vim.lsp.protocol.make_client_capabilities()
     local capabilities = require("blink-cmp").get_lsp_capabilities(original_capabilities)
 
     -- Enable the following language servers
-    --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-    --
-    --  Add any additional override configuration in the following tables. Available keys are:
-    --  - cmd (table): Override the default command used to start the server
-    --  - filetypes (table): Override the default list of associated filetypes for the server
-    --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
-    --  - settings (table): Override the default settings passed when initializing the server.
-    --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
     local servers = {
       -- Core Web Languages
-      ts_ls = {}, -- TypeScript / JavaScript
-      html = {}, -- HTML
-      cssls = {}, -- CSS / SCSS / LESS
-      jsonls = {}, -- JSON
-      yamlls = {}, -- YAML
+      html = {},
+      cssls = {},
+      jsonls = {},
+      yamlls = {},
 
       -- Framework ecosystems
       svelte = {}, -- Svelte
@@ -206,55 +198,67 @@ return {
       bashls = {}, -- Shell scripts
       dockerls = {}, -- Docker
       prismals = {}, -- Prisma schema
-
       lua_ls = {
         settings = {
           Lua = {
+            hint = { enable = true },
             workspace = { checkThirdParty = false },
             telemetry = { enable = false },
-            diagnostics = {
-              disable = { "missing-fields" },
-            },
+            diagnostics = { disable = { "missing-fields" } },
           },
         },
       },
     }
 
     -- Ensure the servers and tools above are installed
-    --
-    -- To check the current status of installed tools and/or manually install
-    -- other tools, you can run
-    --    :Mason
-    --
-    -- You can press `g?` for help in this menu.
-    --
-    -- `mason` had to be setup earlier: to configure its options see the
-    -- `dependencies` table for `nvim-lspconfig` above.
-    --
-    -- You can add other tools here that you want Mason to install
-    -- for you, so that they are available from within Neovim.
-
     local ensure_installed = vim.tbl_keys(servers or {})
-    -- Only LSP servers here. You can add formatters inside {}, but it is better to handle
-    -- formatters binaries using 'Pacman' package manager
-    vim.list_extend(ensure_installed, {})
+    -- Manual addition of ts_ls to ensure it's installed by Mason
+    table.insert(ensure_installed, "ts_ls")
     require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
     require("mason-lspconfig").setup({
-      ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-      automatic_installation = true,
       handlers = {
         function(server_name)
+          -- SKIP ts_ls here to avoid the "nil" settings error from automatic setup
+          if server_name == "ts_ls" then
+            return
+          end
+
           local server = servers[server_name] or {}
-          -- This handles overriding only values explicitly passed
-          -- by the server configuration above. Useful when disabling
-          -- certain features of an LSP (for example, turning off formatting for ts_ls)
           server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
           require("lspconfig")[server_name].setup(server)
         end,
       },
     })
+
+    --- THE MANUAL WORKING SETUP FOR TS_LS (STOPS THE WARNING AND ENABLES HINTS) ---
+    vim.lsp.config("ts_ls", {
+      capabilities = capabilities,
+      settings = {
+        typescript = {
+          inlayHints = {
+            includeInlayParameterNameHints = "all",
+            includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+            includeInlayFunctionParameterTypeHints = true,
+            includeInlayVariableTypeHints = true,
+            includeInlayPropertyDeclarationTypeHints = true,
+            includeInlayFunctionLikeReturnTypeHints = true,
+            includeInlayEnumMemberValueHints = true,
+          },
+        },
+        javascript = {
+          inlayHints = {
+            includeInlayParameterNameHints = "all",
+            includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+            includeInlayFunctionParameterTypeHints = true,
+            includeInlayVariableTypeHints = true,
+            includeInlayPropertyDeclarationTypeHints = true,
+            includeInlayFunctionLikeReturnTypeHints = true,
+            includeInlayEnumMemberValueHints = true,
+          },
+        },
+      },
+    })
+    vim.lsp.enable("ts_ls")
   end,
 }
-
--- []d - jump between warnings

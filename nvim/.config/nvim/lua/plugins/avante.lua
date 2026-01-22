@@ -5,6 +5,13 @@
 -- A/a --> apply all/cursor
 -- r/e --> retry/edit user previous request
 -- @/d --> add/remove file
+
+local function add(a, b)
+  return a + b
+end
+
+local result = add(5, 3)
+
 return {
   "yetone/avante.nvim",
   build = vim.fn.has("win32") ~= 0 and "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false"
@@ -17,7 +24,7 @@ return {
     mode = "legacy",
     -- This file can contain specific instructions for your project
     instructions_file = "avante.md",
-    provider = "gemini", -- openai, gemini
+    provider = "gemini", -- openai, copilot, gemini, gemini-cli
     providers = {
       openai = {
         endpoint = "https://api.openai.com/v1",
@@ -54,14 +61,14 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
       "MunifTanjim/nui.nvim",
+      "stevearc/dressing.nvim", -- for input provider dressing
+      "folke/snacks.nvim", -- for input provider snacks
+      "nvim-mini/mini.icons", -- or nvim-tree/nvim-web-devicons
+      "zbirenbaum/copilot.lua", -- for providers='copilot'
       --- The below dependencies are optional,
       -- "nvim-mini/mini.pick", -- for file_selector provider mini.pick
       -- "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
       -- "ibhagwan/fzf-lua", -- for file_selector provider fzf
-      "stevearc/dressing.nvim", -- for input provider dressing
-      "folke/snacks.nvim", -- for input provider snacks
-      "echasnovski/mini.icons", -- or nvim-tree/nvim-web-devicons
-      "zbirenbaum/copilot.lua", -- for providers='copilot'
       {
         -- Make sure to set this up properly if you have lazy=true
         "MeanderingProgrammer/render-markdown.nvim",

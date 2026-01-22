@@ -359,7 +359,7 @@ wk.add({
   -- },
   { "<leader>;", group = "ChatGPT" },
 
-  { "<leader>;c", "<cmd>ChatGPT<CR>", desc = "ChatGPT" },
+  { "<leader>;c", "<cmd>ChatGPT<CR>", desc = "ChatGPT", mode = { "n", "v" } },
   { "<leader>;i", "<cmd>ChatGPTEditWithInstruction<CR>", desc = "Edit with instruction", mode = { "n", "v" } },
 
   { "<leader>;g", "<cmd>ChatGPTRun grammar_correction<CR>", desc = "Grammar Correction", mode = { "n", "v" } },
