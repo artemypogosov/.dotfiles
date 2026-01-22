@@ -2,7 +2,7 @@ local noice = require("noice")
 
 return {
   "nvim-lualine/lualine.nvim",
-  dependencies = { "nvim-tree/nvim-web-devicons" },
+  dependencies = { "nvim-mini/mini.icons" },
   opts = {
     options = {
       -- theme = "gruvbox",
@@ -52,4 +52,14 @@ return {
       lualine_z = { "searchcount" },
     },
   },
+  config = function(_, opts)
+    -- mini.icons
+    require("mini.icons").setup()
+
+    -- replace nvim-web-devicons with mini.icons
+    require("mini.icons").mock_nvim_web_devicons()
+
+    -- setup lualine with provided opts
+    require("lualine").setup(opts)
+  end,
 }
