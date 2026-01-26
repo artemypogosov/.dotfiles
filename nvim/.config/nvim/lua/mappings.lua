@@ -7,6 +7,7 @@ local bookmark_picker = require("custom.snacks.bookmark_picker")
 local session = require("mini.sessions")
 local helpers = require("helpers")
 local todo_comments = require("todo-comments")
+-- local unclash = require("unclash")
 
 wk.add({
   ------------
@@ -260,7 +261,12 @@ wk.add({
   { "<leader>g[", helpers.execute_command("Gitsigns nav_hunk prev"), desc = "Prev hunk", mode = "n" },
   { "<leader>g]", helpers.execute_command("Gitsigns nav_hunk next"), desc = "Next hunk", mode = "n" },
 
-  { "<leader>gp", helpers.execute_command("Gitsigns preview_hunk_inline"), desc = "Preview hunk [inline]", mode = "n" },
+  {
+    "<leader>gp",
+    helpers.execute_command("Gitsigns preview_hunk_inline"),
+    desc = "Preview hunk [inline]",
+    mode = "n",
+  },
   { "<leader>gP", helpers.execute_command("Gitsigns preview_hunk"), desc = "Previw hunk [popup]", mode = "n" },
 
   { "<leader>gd", helpers.execute_command("Gitsigns diffthis"), desc = "Diff this file", mode = "n" },
@@ -320,6 +326,63 @@ wk.add({
 
   { "<M-a>", helpers.execute_command("GitsignsBlameToggle"), desc = "Git side annotations", mode = "n" },
   { "<M-A>", helpers.execute_command("Gitsigns blame_line"), desc = "Git popup annotations", mode = "n" },
+
+  -----------------------------
+  --- RESOLVE GIT CONFLICTS ---
+  -----------------------------
+
+  { "<leader>d", group = "resolve conflicts" },
+  { "<leader>dz", helpers.execute_command("pwd"), desc = "test command", mode = "n" },
+
+  -- { "<leader>u", group = "resolve conflicts" },
+  -- {
+  --   "<leader>u]",
+  --   function()
+  --     require("unclash").next_conflict()
+  --   end,
+  --   desc = "Next Conflict",
+  -- },
+  -- {
+  --   "<leader>u[",
+  --   function()
+  --     require("unclash").prev_conflict()
+  --   end,
+  --   desc = "Previous Conflict",
+  -- },
+
+  -- {
+  --   "<leader>uo",
+  --   function()
+  --     require("unclash").open_merge_editor()
+  --   end,
+  --   desc = "Open Merge Editor",
+  -- },
+
+  -- {
+  --   "<leader>uc",
+  --   function()
+  --     require("unclash").accept_current()
+  --   end,
+  --   desc = "Accept Current",
+  -- },
+  -- {
+  --   "<leader>ui",
+  --   function()
+  --     require("unclash").accept_incoming()
+  --   end,
+  --   desc = "Accept Incoming",
+  -- },
+  -- {
+  --   "<leader>ub",
+  --   function()
+  --     require("unclash").accept_both()
+  --   end,
+  --   desc = "Accept Both",
+  -- },
+
+  ------------
+  --- DIFF ---
+  ------------
 
   -----------
   --- LSP ---
@@ -449,7 +512,12 @@ wk.add({
   { "<leader>ht", helpers.toggle_background, desc = "Toggle dark/light theme", mode = "n" },
   { "<leader>hs", ":set spell<CR>", desc = "Enable spellcheck", mode = "n" },
   { "<leader>hS", ":set nospell<CR>", desc = "Disable spellcheck", mode = "n" },
-  { "<leader>h=", helpers.execute_command("lua Snacks.picker.spelling()"), desc = "Spelling suggestions", mode = "n" },
+  {
+    "<leader>h=",
+    helpers.execute_command("lua Snacks.picker.spelling()"),
+    desc = "Spelling suggestions",
+    mode = "n",
+  },
   -- Handy for checking 'filetype' which is needed for plugins/formatter.lua
   { "<leader>hf", ":lua print('Filetype:', vim.bo.filetype)<CR>", desc = "Print filetype", mode = "n" },
   { "<leader>hh", helpers.execute_command("Noice"), desc = "Messages history", mode = "n" },
@@ -499,4 +567,9 @@ wk.add({
     desc = "Prev todo comment",
     mode = "n",
   },
+  -- Window sizing
+  { "<C-Up>", "<cmd>resize +2<CR>", mode = "n", desc = "Increase window height" },
+  { "<C-Down>", "<cmd>resize -2<CR>", mode = "n", desc = "Decrease window height" },
+  { "<C-Left>", "<cmd>vertical resize +2<CR>", mode = "n", desc = "Increase window width" },
+  { "<C-Right>", "<cmd>vertical resize -2<CR>", mode = "n", desc = "Decrease window width" },
 })

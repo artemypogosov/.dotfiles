@@ -24,6 +24,7 @@
   - [[#ai][AI]]
   - [[#lsp][LSP]]
   - [[#formatters][FORMATTERS]]
+  - [[#flycheck][FLYCHECK]]
   - [[#web-mode][WEB MODE]]
   - [[#yaml-mode][YAML MODE]]
 - [[#spell-checking][SPELL CHECKING]]
@@ -550,6 +551,13 @@ Chooses biome/prettierd/prettier based on project config files."
 (add-to-list 'exec-path "~/.local/share/go/bin")
 (setenv "PATH" (concat "~/.local/share/go/bin:" (getenv "PATH")))
 #+end_src
+** FLYCHECK
+#+begin_src elisp
+(defun my-ediff-disable-flycheck ()
+  (flycheck-mode -1))
+
+(add-hook 'ediff-prepare-buffer-hook #'my-ediff-disable-flycheck)
+#+end_src
 ** WEB MODE
 #+begin_src elisp
 (after! web-mode
@@ -593,19 +601,6 @@ Chooses biome/prettierd/prettier based on project config files."
 #+end_src
 * SPELL CHECKING
 #+begin_src elisp
-;; (after! spell-fu
-;;   (setq-default spell-fu-idle-delay 1
-;;                 spell-fu-word-regexp "\\b\\([A-Za-z]+\\(['’][A-Za-z]+\\)?\\)\\b")
-
-;;   ;; Disable spell-fu in programming buffers
-;;   (remove-hook 'prog-mode-hook #'spell-fu-mode)
-;;   (add-hook! 'prog-mode (spell-fu-mode -1))
-;;   (add-hook! 'lua-mode    (spell-fu-mode -1))
-;;   (add-hook! 'lua-ts-mode (spell-fu-mode -1))
-  
-;;   ;; Enable spell-fu only in text-like modes
-;;   (add-hook! text-mode #'spell-fu-mode))
-
 (after! spell-fu
   (setq-default spell-fu-idle-delay 1
                 spell-fu-word-regexp "\\b\\([A-Za-z]+\\(['’][A-Za-z]+\\)?\\)\\b")
