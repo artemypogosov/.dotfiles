@@ -1,7 +1,7 @@
 {
   "console.log a variable": {
     "prefix": "qlog",
-    "body": "console.log('${1}:', ${1})"
+    "body": "console.log('${1}:', ${2})"
   },
   "const arrow function assignment": {
     "prefix": "qcf",

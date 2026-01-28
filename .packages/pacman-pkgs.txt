@@ -2,6 +2,7 @@ alacritty
 arandr
 aspell
 aspell-en
+ast-grep
 betterlockscreen
 bitwarden
 blueman
@@ -51,7 +52,6 @@ openvpn
 p7zip-gui
 pandoc-bin
 pavucontrol
-thunar
 pulseaudio-alsa
 qbittorrent
 qutebrowser
@@ -63,6 +63,7 @@ spotify
 stow
 syncthing
 telegram-desktop
+thunar
 tidy
 tree
 tree-sitter

@@ -75,7 +75,10 @@ opt.fillchars = { eob = " " }
 opt.inccommand = "split"
 
 -- Set always visible lines at bottom while scrolling
-opt.scrolloff = 10
+-- opt.scrolloff = 10
 
 -- How and where the statusline is displayed. 3 - global
 opt.laststatus = 3
+
+-- Copilot no <tab> map
+vim.g.copilot_no_tab_map = true

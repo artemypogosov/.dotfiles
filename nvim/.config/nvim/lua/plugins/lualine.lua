@@ -48,7 +48,24 @@ return {
       },
       lualine_c = {},
       lualine_x = { "diagnostics", "branch" },
-      lualine_y = { "filetype", "lsp_status" },
+      lualine_y = {
+        "filetype",
+        -- "lsp_status" without copilot label
+        {
+          function()
+            local clients = vim.lsp.get_clients({ bufnr = 0 })
+            local names = {}
+            for _, client in ipairs(clients) do
+              -- Use find to catch "GitHub Copilot" or "copilot"
+              if not client.name:lower():find("copilot") then
+                table.insert(names, client.name)
+              end
+            end
+            return #names > 0 and table.concat(names, ", ") or "No LSP"
+          end,
+          icon = "",
+        },
+      },
       lualine_z = { "searchcount" },
     },
   },
