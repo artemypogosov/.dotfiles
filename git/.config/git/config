@@ -10,3 +10,15 @@
 	email = artemypogosov@gmail.com
 [core]
 	editor = nvim
+[merge]
+	tool = diffview
+	conflictstyle = zdiff3
+[mergetool "codediff"]
+	cmd = nvim \"$MERGED\" -c \"CodeDiff merge \\\"$MERGED\\\"\"
+[mergetool "diffview"]
+	cmd = nvim -f -c \"DiffviewOpen\"
+	prompt = false
+	keepBackup = false
+[mergetool]
+	prompt = false
+	keepBackup = false

@@ -129,7 +129,7 @@ wk.add({
   ---------------
   { "<leader>r", group = "replace" },
 
-  { "<leader>rr", "<CMD>SearchReplaceSingleBufferOpen<CR>", desc = "Replace", mode = "n" },
+  { "<leader>rr", "<CMD>SearchReplaceSingleBufferOpen<CR>", desc = "Replace", mode = { "n", "v" } },
   { "<leader>rp", "<CMD>SearchReplaceSingleBufferCWord<CR>", desc = "Replace in place [CWord]", mode = "n" },
   { "<leader>rP", "<CMD>SearchReplaceSingleBufferCWORD<CR>", desc = "Replace in place [CWORD]", mode = "n" },
   { "<leader>r?", "<CMD>SearchReplaceSingleBufferSelections<CR>", desc = "Show all values", mode = "n" },
@@ -260,7 +260,12 @@ wk.add({
   { "<leader>g[", helpers.execute_command("Gitsigns nav_hunk prev"), desc = "Prev hunk", mode = "n" },
   { "<leader>g]", helpers.execute_command("Gitsigns nav_hunk next"), desc = "Next hunk", mode = "n" },
 
-  { "<leader>gp", helpers.execute_command("Gitsigns preview_hunk_inline"), desc = "Preview hunk [inline]", mode = "n" },
+  {
+    "<leader>gp",
+    helpers.execute_command("Gitsigns preview_hunk_inline"),
+    desc = "Preview hunk [inline]",
+    mode = "n",
+  },
   { "<leader>gP", helpers.execute_command("Gitsigns preview_hunk"), desc = "Previw hunk [popup]", mode = "n" },
 
   { "<leader>gd", helpers.execute_command("Gitsigns diffthis"), desc = "Diff this file", mode = "n" },
@@ -321,6 +326,27 @@ wk.add({
   { "<M-a>", helpers.execute_command("GitsignsBlameToggle"), desc = "Git side annotations", mode = "n" },
   { "<M-A>", helpers.execute_command("Gitsigns blame_line"), desc = "Git popup annotations", mode = "n" },
 
+  -----------------------------
+  --- RESOLVE GIT CONFLICTS ---
+  -----------------------------
+
+  { "<leader>d", group = "resolve conflicts" },
+
+  { "<leader>dd", helpers.execute_command("DiffviewOpen"), desc = "Open Diff View", mode = "n" },
+  { "<leader>dh", helpers.execute_command("DiffviewFileHistory %"), desc = "Diff history of current file", mode = "n" },
+  { "<leader>dH", helpers.execute_command("DiffviewFileHistory"), desc = "Diff history all files", mode = "n" },
+  -- Run this command from the PR branch
+  {
+    "<leader>dP",
+    helpers.execute_command("DiffviewOpen origin/HEAD...HEAD --imply-local"),
+    desc = "Review PR",
+    mode = "n",
+  },
+
+  { "<leader>d1", helpers.execute_command("DiffviewOpen HEAD~1"), desc = "Diff HEAD~1", mode = "n" },
+  { "<leader>d2", helpers.execute_command("DiffviewOpen HEAD~2"), desc = "Diff HEAD~2", mode = "n" },
+  { "<leader>d3", helpers.execute_command("DiffviewOpen HEAD~3"), desc = "Diff HEAD~3", mode = "n" },
+
   -----------
   --- LSP ---
   -----------
@@ -331,7 +357,7 @@ wk.add({
   --- TROUBLE [DIAGNOSTICS] ---
   -----------------------------
   { "<leader>x", group = "trouble" },
-  -- All mappings in plugins/trouble.lua
+  -- All mappings are located in plugins/trouble.lua
 
   ----------
   --- AI ---
@@ -449,7 +475,12 @@ wk.add({
   { "<leader>ht", helpers.toggle_background, desc = "Toggle dark/light theme", mode = "n" },
   { "<leader>hs", ":set spell<CR>", desc = "Enable spellcheck", mode = "n" },
   { "<leader>hS", ":set nospell<CR>", desc = "Disable spellcheck", mode = "n" },
-  { "<leader>h=", helpers.execute_command("lua Snacks.picker.spelling()"), desc = "Spelling suggestions", mode = "n" },
+  {
+    "<leader>h=",
+    helpers.execute_command("lua Snacks.picker.spelling()"),
+    desc = "Spelling suggestions",
+    mode = "n",
+  },
   -- Handy for checking 'filetype' which is needed for plugins/formatter.lua
   { "<leader>hf", ":lua print('Filetype:', vim.bo.filetype)<CR>", desc = "Print filetype", mode = "n" },
   { "<leader>hh", helpers.execute_command("Noice"), desc = "Messages history", mode = "n" },
@@ -469,7 +500,14 @@ wk.add({
   { "<Esc>", "<cmd>noh<CR>", desc = "Clean seach highlights", mode = "n" },
   { "<leader>`", "<cmd>messages<CR>", desc = "Messages", mode = "n" },
   { "<leader>/", helpers.search_project, desc = "Search in project", mode = "n" },
-
+  {
+    "<C-l>",
+    'copilot#Accept("\\<CR>")',
+    desc = "Copilot Accept",
+    expr = true,
+    replace_keycodes = false,
+    mode = "i",
+  },
   { "ZQ", quit.confirm_quit, desc = "Confirm before ZQ" },
   {
     "ZZ",
@@ -499,4 +537,9 @@ wk.add({
     desc = "Prev todo comment",
     mode = "n",
   },
+  -- Window sizing
+  { "<C-Up>", "<cmd>resize +2<CR>", mode = "n", desc = "Increase window height" },
+  { "<C-Down>", "<cmd>resize -2<CR>", mode = "n", desc = "Decrease window height" },
+  { "<C-Right>", "<cmd>vertical resize +2<CR>", mode = "n", desc = "Increase window width" },
+  { "<C-Left>", "<cmd>vertical resize -2<CR>", mode = "n", desc = "Decrease window width" },
 })
