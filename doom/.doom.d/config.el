@@ -464,6 +464,8 @@ Chooses biome/prettierd/prettier based on project config files."
 (add-to-list 'exec-path "~/.local/share/go/bin")
 (setenv "PATH" (concat "~/.local/share/go/bin:" (getenv "PATH")))
 
+(add-hook! 'ediff-prepare-buffer-hook (flycheck-mode -1))
+
 (after! web-mode
   ;; Enable auto-closing tags in web-mode (like html files)
   (require 'sgml-mode)
@@ -500,19 +502,6 @@ Chooses biome/prettierd/prettier based on project config files."
 
 ;; Show vertical bars to visually indicate indentation levels
 (add-hook! yaml-mode #'indent-bars-mode)
-
-;; (after! spell-fu
-;;   (setq-default spell-fu-idle-delay 1
-;;                 spell-fu-word-regexp "\\b\\([A-Za-z]+\\(['’][A-Za-z]+\\)?\\)\\b")
-
-;;   ;; Disable spell-fu in programming buffers
-;;   (remove-hook 'prog-mode-hook #'spell-fu-mode)
-;;   (add-hook! 'prog-mode (spell-fu-mode -1))
-;;   (add-hook! 'lua-mode    (spell-fu-mode -1))
-;;   (add-hook! 'lua-ts-mode (spell-fu-mode -1))
-  
-;;   ;; Enable spell-fu only in text-like modes
-;;   (add-hook! text-mode #'spell-fu-mode))
 
 (after! spell-fu
   (setq-default spell-fu-idle-delay 1
