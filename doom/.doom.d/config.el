@@ -348,18 +348,19 @@
 ;; Allow per-project overrides via .dir-locals.el
 (setq-default +format-with nil)
 
+;; Fix 'dockfmt' path
+(add-to-list 'exec-path "~/.local/share/go/bin")
+(setenv "PATH" (concat "~/.local/share/go/bin:" (getenv "PATH")))
+
+;; Hello
 (after! apheleia
   ;; Biome
   (set-formatter! 'biome
     '("biome" "format" "--stdin-file-path" filepath))
 
-  ;; Prettierd daemon
-  (set-formatter! 'prettierd
-    '("prettierd" filepath))
-
-  ;; Plain Prettier CLI
-  (set-formatter! 'prettier
-    '("prettier" "--stdin-filepath" filepath))
+  ;; Prettier (Daemon and CLI)
+  (set-formatter! 'prettierd '("prettierd" filepath))
+  (set-formatter! 'prettier '("prettier" "--stdin-filepath" filepath))
 
   ;; JSON
   (set-formatter! 'jsonfmt
@@ -382,12 +383,9 @@
     :modes '(lua-mode lua-ts-mode))
 
   ;; Shell
-  (after! sh-script
-    (set-formatter! 'shfmt
-      '("shfmt" "-ci"
-        (unless indent-tabs-mode
-          (list "-i" (number-to-string tab-width))))
-      :modes '(sh-mode bash-ts-mode))))
+  (set-formatter! 'shfmt
+    '("shfmt" "-filename" filepath "-")
+    :modes '(sh-mode bash-ts-mode zsh-ts-mode)))
 
 (defun my/js-smart-formatter ()
   "Return a formatter symbol for the current JS/TS/JSON project.
@@ -456,13 +454,12 @@ Chooses biome/prettierd/prettier based on project config files."
 ;; Shell
 (setq-hook! 'sh-mode-hook +format-with 'shfmt)
 
+;; Yaml
+(setq-hook! '(yaml-mode-hook yaml-ts-mode-hook) +format-with 'yamlfix)
+
 ;; Lua
 (setq-hook! 'lua-mode-hook    +format-with 'stylua)
 (setq-hook! 'lua-ts-mode-hook +format-with 'stylua)
-
-;; Fix 'dockfmt' path
-(add-to-list 'exec-path "~/.local/share/go/bin")
-(setenv "PATH" (concat "~/.local/share/go/bin:" (getenv "PATH")))
 
 (add-hook! 'ediff-prepare-buffer-hook (flycheck-mode -1))
 
