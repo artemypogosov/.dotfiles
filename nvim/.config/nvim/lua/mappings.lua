@@ -7,6 +7,7 @@ local bookmark_picker = require("custom.snacks.bookmark_picker")
 local session = require("mini.sessions")
 local helpers = require("helpers")
 local todo_comments = require("todo-comments")
+local grug_far = require("grug-far")
 
 wk.add({
   ------------
@@ -129,26 +130,34 @@ wk.add({
   ---------------
   { "<leader>r", group = "replace" },
 
-  { "<leader>rr", "<CMD>SearchReplaceSingleBufferOpen<CR>", desc = "Replace", mode = { "n", "v" } },
-  { "<leader>rp", "<CMD>SearchReplaceSingleBufferCWord<CR>", desc = "Replace in place [CWord]", mode = "n" },
-  { "<leader>rP", "<CMD>SearchReplaceSingleBufferCWORD<CR>", desc = "Replace in place [CWORD]", mode = "n" },
+  { "<leader>rr", "<CMD>SearchReplaceSingleBufferOpen<CR>", desc = "Replace", mode = { "n" } },
+  { "<leader>rp", "<CMD>SearchReplaceSingleBufferCWord<CR>", desc = "Replace in place", mode = "n" },
   { "<leader>r?", "<CMD>SearchReplaceSingleBufferSelections<CR>", desc = "Show all values", mode = "n" },
 
-  { "<leader>rb", group = "all open buffers" },
-
-  { "<leader>rbr", "<CMD>SearchReplaceMultiBufferOpen<CR>", desc = "Replace in all open files", mode = "n" },
-  { "<leader>rb?", "<CMD>SearchReplaceMultiBufferSelections<CR>", desc = "Show all values", mode = "n" },
+  { "<leader>rR", "<CMD>GrugFar<CR>", desc = "Replace in project", mode = "n" },
   {
-    "<leader>rbp",
-    "<CMD>SearchReplaceMultiBufferCWord<CR>",
-    desc = "Replace in place [CWord] in all open files",
+    "<leader>rf",
+    function()
+      grug_far.open({ prefills = { paths = vim.fn.expand("%") } })
+    end,
+    desc = "Replace in buffer [grug]",
     mode = "n",
   },
   {
-    "<leader>rbP",
-    "<CMD>SearchReplaceMultiBufferCWORD<CR>",
-    desc = "Replace in place [CWORD] in all open files",
+    "<leader>rP",
+    function()
+      grug_far.open({ prefills = { search = vim.fn.expand("<cword>") } })
+    end,
+    desc = "Replace in place [project]",
     mode = "n",
+  },
+  {
+    "<leader>rv",
+    function()
+      grug_far.open({ visualSelectionUsage = "operate-within-range" })
+    end,
+    desc = "Replace in range",
+    mode = "v",
   },
 
   --------------

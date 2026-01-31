@@ -56,6 +56,9 @@ return {
         git_log_file = {
           current_file = true,
         },
+        grep_word = {
+          hidden = true,
+        },
         git_log = {
           -- current_file = true,
         },
