@@ -819,56 +819,51 @@ Chooses biome/prettierd/prettier based on project config files."
 ** UNBIND
 #+begin_src elisp
 (defmacro my/unbind (&rest forms)
-  "Bulk-unbind Doom leader keys.
-Each FORM must be: (:prefix PREFIX KEY1 KEY2 ...)."
+  "Bulk-unbind Doom leader keys using hash-map style plist input.
+Each FORM should be a plist: (:prefix \"p\" :keys (\"a\" \"b\")).
+If :keys is omitted, unbinds the prefix itself."
   `(progn
      ,@(cl-loop
         for form in forms
-        append
-        (progn
-          ;; Validate structure
-          (unless (and (listp form)
-                       (>= (length form) 3)
-                       (eq (car form) :prefix))
-            (error "my/unbind: invalid form: %S" form))
+        collect
+        (let ((prefix (plist-get form :prefix))
+              (keys   (plist-get form :keys)))
+          (unless prefix
+            (error "my/unbind: :prefix is required in form: %S" form))
 
-          (let* ((prefix (cadr form))
-                 (keys   (cddr form)))
-            (unless (stringp prefix)
-              (error "my/unbind: prefix must be a string: %S" prefix))
-            (dolist (k keys)
-              (unless (stringp k)
-                (error "my/unbind: key must be string: %S" k)))
-
-            ;; Build "k1 nil k2 nil k3 nil"
-            (let (spec)
-              (dolist (k keys)
-                (setq spec (append spec (list k nil))))
-              (list `(map! :leader :prefix ,prefix ,@spec))))))))
+          (if keys
+              ;; Case 1: Unbind specific keys under the prefix
+              (let (spec)
+                (dolist (k keys)
+                  (setq spec (append spec (list k nil))))
+                `(map! :leader :prefix ,prefix ,@spec))
+            
+            ;; Case 2: Unbind the prefix itself
+            `(map! :leader ,prefix nil))))))
 
 (my/unbind
+ (:prefix "X")
  (:prefix "w"
-          "C-<up>" "C-<down>" "C-<left>" "C-<right>" "<up>" "<down>"
-          "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "<left>" "<right>"
-          "C-=" "C-_" "d" "g" "o" ":" "+" "-" "<" ">" "_" "|" "m" "q"
-          "C-b" "C-c" "C-f" "C-h" "C-j" "C-k" "C-l" "C-n" "C-o" "C-p"
-          "C-q" "C-r" "C-s" "C-t" "C-u" "C-v" "C-w" "C-x" 
-          "C-S-h" "C-S-j" "C-S-k" "C-S-l" "C-S-r" "C-S-S" "C-S-w")
- (:prefix "TAB" "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "d" "D" "`" "R")
- (:prefix "b"
-          "d" "n" "p" "l" "z" "m" "M" "Z" "s" "C")
- (:prefix "c" "E")
- (:prefix "f" "e" "s")
+  :keys ("C-<up>" "C-<down>" "C-<left>" "C-<right>" "<up>" "<down>"
+         "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "<left>" "<right>"
+         "C-=" "C-_" "d" "g" "o" ":" "+" "-" "<" ">" "_" "|" "m" "q"
+         "C-b" "C-c" "C-f" "C-h" "C-j" "C-k" "C-l" "C-n" "C-o" "C-p"
+         "C-q" "C-r" "C-s" "C-t" "C-u" "C-v" "C-w" "C-x" 
+         "C-S-h" "C-S-j" "C-S-k" "C-S-l" "C-S-r" "C-S-S" "C-S-w"))
+ (:prefix "TAB" :keys ("0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "d" "D" "`" "R"))
+ (:prefix "b"   :keys ("d" "n" "p" "l" "z" "m" "M" "Z" "s" "C"))
+ (:prefix "c"   :keys ("E"))
+ (:prefix "f"   :keys ("e" "s"))
  (:prefix "h"
-          "RET" "." "4" "?" "A" "b" "C" "e" "E" "F"
-          "g" "I" "K" "l" "L" "M" "n" "o" "O" "p" "P" "V"
-          "q" "i" "R" "s" "S" "u" "W" "x" "<help>" "<f1>" "C-\\")
- (:prefix "i" "e" "p" "r" "u")
- (:prefix "n" "a" "l" "n" "N" "*" "y" "Y")
- (:prefix "o" "-" "P")
- (:prefix "p" ">" "f" "F" "o")
- (:prefix "s" "e" "I" "j" "k" "K" "L" "m" "o" "O" "r" "t" "T")
- (:prefix "t" "g" "c" "I" "v"))
+  :keys ("RET" "." "4" "?" "A" "b" "C" "e" "E" "F"
+         "g" "I" "K" "l" "L" "M" "n" "o" "O" "p" "P" "V"
+         "q" "i" "R" "s" "S" "u" "W" "x" "<help>" "<f1>" "C-\\"))
+ (:prefix "i"   :keys ("e" "p" "r" "u"))
+ (:prefix "n"   :keys ("a" "l" "n" "N" "*" "y" "Y"))
+ (:prefix "o"   :keys ("-" "P"))
+ (:prefix "p"   :keys (">" "f" "F" "o"))
+ (:prefix "s"   :keys ("e" "I" "j" "k" "K" "L" "m" "o" "O" "r" "t" "T"))
+ (:prefix "t"   :keys ("g" "c" "I" "v")))
 #+end_src
 ** DEVDOCS
 #+begin_src elisp
