@@ -1,4 +1,5 @@
 return {
+  -- Create key bindings that stick.
   "folke/which-key.nvim",
   lazy = true,
   event = "VeryLazy",

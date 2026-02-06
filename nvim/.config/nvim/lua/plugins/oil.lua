@@ -1,4 +1,5 @@
 return {
+  -- Neovim file explorer: edit your filesystem like a buffer
   "stevearc/oil.nvim",
   ---@module 'oil'
   ---@type oil.SetupOpts

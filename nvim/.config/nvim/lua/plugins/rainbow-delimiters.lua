@@ -1,4 +1,5 @@
 return {
+  -- Rainbow delimiters for Neovim with Tree-sitter
   "HiPhish/rainbow-delimiters.nvim",
   event = "VeryLazy",
   config = function()

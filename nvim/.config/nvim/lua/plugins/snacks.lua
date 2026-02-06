@@ -1,14 +1,51 @@
 local session = require("mini.sessions")
 
 return {
-  -- snacks.nvim --> A collection of QoL (Quality of Life) plugins for Neovim
+  -- A collection of QoL (Quality of Life) plugins for Neovim
   -- Ctrl + q --> sends Snacks result to 'Quick Fix List'
   "folke/snacks.nvim",
+  init = function()
+    vim.api.nvim_create_autocmd("ColorScheme", {
+      desc = "Clean up LSP highlights and set Snacks underlines",
+      callback = function()
+        local hl_groups = {
+          "LspReferenceText",
+          "LspReferenceRead",
+          "LspReferenceWrite",
+          "SnacksWords",
+          "SnacksWordsRead",
+          "SnacksWordsWrite",
+        }
+        for _, group in ipairs(hl_groups) do
+          vim.api.nvim_set_hl(0, group, { underline = true, bg = "none", force = true })
+        end
+      end,
+    })
+  end,
   opts = {
-    gitbrowse = { enabled = true },
-    indent = { enabled = true },
-    terminal = { enabled = true },
-    explorer = { enabled = true },
+    gitbrowse = {},
+    indent = {},
+    terminal = {},
+    explorer = {},
+    rename = {},
+    bufdelete = {},
+    scratch = {
+      win = {
+        width = 170,
+        height = 50,
+      },
+    },
+    words = { debounce = 150 },
+    notifier = { style = "minimal", top_down = false },
+    zen = {
+      toggles = {
+        dim = false,
+        mini_diff_signs = true,
+      },
+      win = {
+        backdrop = { transparent = false, blend = 75 },
+      },
+    },
     picker = {
       actions = {
         -- Define a custom action
@@ -59,8 +96,8 @@ return {
         grep_word = {
           hidden = true,
         },
-        git_log = {
-          -- current_file = true,
+        grep = {
+          hidden = true,
         },
         spelling = {},
         buffers = {

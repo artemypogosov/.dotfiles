@@ -35,18 +35,20 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 })
 
 -- LSP-integrated file renaming
--- TODO: remove? I have no plans to use nvimtree (use Snacks.explorer instead)
-local prev = { new_name = "", old_name = "" } -- Prevents duplicate events
+-- Oil
 vim.api.nvim_create_autocmd("User", {
-  pattern = "NvimTreeSetup",
-  callback = function()
-    local events = require("nvim-tree.api").events
-    events.subscribe(events.Event.NodeRenamed, function(data)
-      if prev.new_name ~= data.new_name or prev.old_name ~= data.old_name then
-        data = data
-        Snacks.rename.on_rename_file(data.old_name, data.new_name)
+  pattern = "OilActionsPost",
+  callback = function(event)
+    -- Check if Snacks is actually loaded
+    if not _G.Snacks then
+      return
+    end
+
+    for _, action in ipairs(event.data.actions) do
+      if action.type == "move" then
+        Snacks.rename.on_rename_file(action.src_url, action.dest_url)
       end
-    end)
+    end
   end,
 })
 
@@ -68,5 +70,21 @@ vim.api.nvim_create_autocmd("QuickFixCmdPost", {
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
     vim.cmd("Copilot disable")
+  end,
+})
+
+-- LSP Progress
+vim.api.nvim_create_autocmd("LspProgress", {
+  ---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
+  callback = function(ev)
+    local spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
+    vim.notify(vim.lsp.status(), "info", {
+      id = "lsp_progress",
+      title = "LSP Progress",
+      opts = function(notif)
+        notif.icon = ev.data.params.value.kind == "end" and " "
+          or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
+      end,
+    })
   end,
 })

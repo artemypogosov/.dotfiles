@@ -1,4 +1,5 @@
 return {
+  -- An interactive and powerful Git interface for Neovim, inspired by Magit
   "NeogitOrg/neogit",
   event = "VeryLazy",
   dependencies = {

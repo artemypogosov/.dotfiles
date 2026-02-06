@@ -1,6 +1,5 @@
--- Library of 40+ independent Lua modules improving Neovim experience with minimal effort
-
 return {
+  -- Library of 40+ independent Lua modules improving Neovim experience with minimal effort
   "nvim-mini/mini.nvim",
   version = false,
   config = function()

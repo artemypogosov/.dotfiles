@@ -91,7 +91,6 @@ function M.open()
     layout = { preset = "select", layout = { height = 0.25 } },
     finder = get_man_commands,
 
-    -- Snacks requires highlight chunks (NOT strings)
     format = function(item)
       return {
         { item.text, "SnacksPickerLabel" },

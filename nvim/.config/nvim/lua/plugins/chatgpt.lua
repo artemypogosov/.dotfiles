@@ -1,10 +1,9 @@
--- ChatGPT Neovim Plugin: Effortless Natural Language Generation with OpenAI's ChatGPT API
-
 -- Some keys to remember:
 -- Edit with instructions window:
 -- Ctrl+h -  toggle_help (list of all keys)
 
 return {
+  -- ChatGPT Neovim Plugin: Effortless Natural Language Generation with OpenAI's ChatGPT API
   "jackMort/ChatGPT.nvim",
   event = "VeryLazy",
   config = function()
@@ -16,8 +15,6 @@ return {
         presence_penalty = 0,
         max_completion_tokens = 4095,
         n = 1,
-        -- temperature = 0.2,
-        -- top_p = 0.1,
       },
       edit_with_instructions = {
         keymaps = {
@@ -27,7 +24,6 @@ return {
       popup_input = {
         placeholder = "",
       },
-      -- default
       context = {
         project = {
           enabled = true,
@@ -44,7 +40,7 @@ return {
   dependencies = {
     "MunifTanjim/nui.nvim",
     "nvim-lua/plenary.nvim",
-    "folke/trouble.nvim", -- optional
+    "folke/trouble.nvim",
     -- Looks like ChatGPT.nvim is the only plugin in my config which uses telescope.nvim as a dependency
     "nvim-telescope/telescope.nvim",
   },

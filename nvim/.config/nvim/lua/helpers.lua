@@ -1,9 +1,9 @@
 local M = {}
 
-local project_picker = require("custom.snacks.project_picker")
+local vim = vim
 local bm = require("bookmarks")
 local snacks = require("snacks")
-local buf_delete = require("bufdelete")
+local project_picker = require("custom.snacks.project_picker")
 
 ---------------------
 -- GENERIC HELPERS --
@@ -25,10 +25,6 @@ function M.execute_command(command, after)
   end
 end
 
-function M.toggle_background()
-  vim.o.background = vim.o.background == "dark" and "light" or "dark"
-end
-
 -----------------
 -- GIT HELPERS --
 -----------------
@@ -37,69 +33,6 @@ local function is_git_repo()
   local git_dir = vim.fn.finddir(".git", vim.fn.expand("%:p:h") .. ";")
   return git_dir ~= ""
 end
-
-function M.find_git_files()
-  if is_git_repo() then
-    snacks.picker.git_files()
-  else
-    print("Not a git repository")
-  end
-end
-
-function M.project_session_name()
-  if is_git_repo() then
-    local root = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
-    return vim.fn.fnamemodify(root, ":t")
-  else
-    return vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
-  end
-end
-
-vim.api.nvim_create_user_command("GitsignsBlameToggle", function()
-  -- 1. Get current state
-  local cur_win = vim.api.nvim_get_current_win()
-  local cur_buf = vim.api.nvim_get_current_buf()
-
-  -- Check if this specific buffer has a 'blame_window' associated with it
-  -- OR if the current window IS the blame window itself
-  local tracked_blame_win = vim.t.gitsigns_blame_win
-  local source_win = vim.t.gitsigns_source_win
-
-  -- 2. TOGGLE OFF: If blame window is open and valid, close it
-  if tracked_blame_win and vim.api.nvim_win_is_valid(tracked_blame_win) then
-    vim.api.nvim_win_close(tracked_blame_win, true)
-
-    -- Return focus to the source window if we know where it is
-    if source_win and vim.api.nvim_win_is_valid(source_win) then
-      vim.api.nvim_set_current_win(source_win)
-    end
-
-    -- Clear the tracking
-    vim.t.gitsigns_blame_win = nil
-    vim.t.gitsigns_source_win = nil
-    return
-  end
-
-  -- 3. GIT CHECK: Only when trying to OPEN
-  if not vim.b.gitsigns_status_dict then
-    return
-  end
-
-  -- 4. TOGGLE ON: Open Blame
-  local original_win = cur_win
-  vim.cmd("Gitsigns blame")
-
-  -- Gitsigns opens a new window; we wait a tiny bit to capture its ID
-  vim.defer_fn(function()
-    local new_win = vim.api.nvim_get_current_win()
-    if new_win ~= original_win then
-      -- Store the IDs in the Tab scope (vim.t) so they persist
-      -- and are accessible from any window in this tab
-      vim.t.gitsigns_blame_win = new_win
-      vim.t.gitsigns_source_win = original_win
-    end
-  end, 50) -- 50ms delay to ensure Gitsigns has finished the split
-end, {})
 
 ---------------------
 -- PROJECT HELPERS --
@@ -136,36 +69,25 @@ function M.search_buffer()
   snacks.picker.lines({ title = "Search buffer" })
 end
 
+function M.search_opened_buffer()
+  snacks.picker.grep_buffers({ title = "Search opened buffer" })
+end
+
 function M.switch_project()
   project_picker.open()
 end
 
-local function find_git_root()
-  local cwd = vim.loop.cwd()
-  local ok, result = pcall(vim.fn.systemlist, "git -C " .. vim.fn.shellescape(cwd) .. " rev-parse --show-toplevel")
-  if ok and result and result[1] and result[1] ~= "" then
-    return result[1]
-  end
-end
-
-local function get_lsp_root()
-  local buf = vim.api.nvim_get_current_buf()
-  local clients = vim.lsp.get_clients({ bufnr = buf })
-  for _, client in ipairs(clients) do
-    if client.config and client.config.root_dir then
-      return client.config.root_dir
-    end
-  end
-end
-
-local function get_root()
-  return find_git_root() or get_lsp_root() or vim.loop.cwd()
-end
-
 function M.search_project()
-  snacks.picker.grep({
-    args = { "--hidden" }, -- include hidden files (dotfiles)
-  })
+  snacks.picker.grep()
+end
+
+function M.project_session_name()
+  if is_git_repo() then
+    local root = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
+    return vim.fn.fnamemodify(root, ":t")
+  else
+    return vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+  end
 end
 
 ---------------------
@@ -193,28 +115,8 @@ function M.delete_all_bookmarks()
   end
 end
 
-local function count_normal_buffers()
-  local count = 0
-
-  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buflisted and vim.bo[buf].buftype == "" then
-      count = count + 1
-    end
-  end
-
-  return count
-end
-
 function M.kill_buffer()
-  local current = vim.api.nvim_get_current_buf()
-
-  -- If this is the last normal buffer, refuse
-  if count_normal_buffers() <= 1 and vim.bo[current].buflisted and vim.bo[current].buftype == "" then
-    vim.notify("Cannot kill the last buffer", vim.log.levels.WARN, { title = "Buffer" })
-    return
-  end
-
-  buf_delete.bufdelete(current, true)
+  snacks.bufdelete()
 end
 
 function M.kill_all_buffers_except_current()
@@ -222,7 +124,7 @@ function M.kill_all_buffers_except_current()
 
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
     if buf ~= current and vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buflisted then
-      buf_delete.bufdelete(buf, true)
+      snacks.bufdelete(buf)
     end
   end
 end
@@ -243,6 +145,14 @@ function M.select_scratch()
   snacks.scratch.select()
 end
 
+function M.snacks_explorer_focus()
+  local picker = snacks.picker.get({ source = "explorer" })[1]
+  if picker then
+    picker:focus()
+  end
+end
+
+-- 'indent_enabled' must be outside of function (because it holds state)
 local indent_enabled = true
 
 function M.indent_lines()
@@ -255,11 +165,89 @@ function M.indent_lines()
   end
 end
 
-function M.snacks_explorer_focus()
-  local picker = snacks.picker.get({ source = "explorer" })[1]
-  if picker then
-    picker:focus()
+-------------
+-- REPLACE --
+-------------
+
+function M.search_replace()
+  local mode = vim.api.nvim_get_mode().mode
+  local range = "%"
+  local search = ""
+
+  if mode:match("[vV\22]") then
+    -- VISUAL MODE: Target selection, empty search
+    range = "'<,'>"
+    search = ""
+  else
+    -- NORMAL MODE: Target whole file, grab word under cursor (The "Point" logic)
+    range = "%"
+    search = vim.fn.expand("<cword>")
   end
+
+  local movement = (search == "") and "<Left><Left><Left><Left>" or "<Left><Left><Left>"
+
+  local cmd = ":<C-u>" .. range .. "s#" .. search .. "##gI" .. movement
+  local keys = vim.api.nvim_replace_termcodes(cmd, true, false, true)
+  vim.api.nvim_feedkeys(keys, "n", false)
+end
+
+function M.search_replace_menu()
+  local options = {
+    { key = "w", cmd = vim.fn.expand("<cword>") },
+    { key = "W", cmd = vim.fn.expand("<cWORD>") },
+    { key = "e", cmd = vim.fn.expand("<cexpr>") },
+    { key = "f", cmd = vim.fn.expand("<cfile>") },
+  }
+
+  -- Create the display text
+  local lines = {}
+  for _, opt in ipairs(options) do
+    table.insert(lines, string.format("[%s]: %s", opt.key, opt.cmd))
+  end
+
+  -- Create a scratch buffer for the menu
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+
+  -- Open a small split at the bottom
+  local win = vim.api.nvim_open_win(buf, false, {
+    relative = "editor",
+    row = vim.o.lines - #lines - 3,
+    col = 0,
+    width = vim.o.columns,
+    height = #lines,
+    style = "minimal",
+    border = "single",
+  })
+
+  -- Wait for a single character input
+  vim.schedule(function()
+    local char = vim.fn.nr2char(vim.fn.getchar())
+    vim.api.nvim_win_close(win, true) -- Close menu immediately after keypress
+
+    for _, opt in ipairs(options) do
+      if char == opt.key then
+        local cmd = ":%s#" .. opt.cmd .. "##gI<Left><Left><Left>"
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(cmd, true, false, true), "n", false)
+        return
+      end
+    end
+  end)
+end
+
+------------
+-- OTHER --
+------------
+
+function M.quit()
+  local choice = vim.fn.confirm("Do you really want to quit?", "&Yes\n&No", 2)
+  if choice == 1 then
+    vim.cmd("qa")
+  end
+end
+
+function M.toggle_background()
+  vim.o.background = vim.o.background == "dark" and "light" or "dark"
 end
 
 function M.todo_jump(method)

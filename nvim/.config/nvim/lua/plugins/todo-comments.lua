@@ -1,4 +1,3 @@
--- Colors for folke/todo-comments.nvim
 local info = "#B8BB26"
 local warning = "#FE8019"
 local hint = "#D5C4A1"
@@ -7,6 +6,7 @@ local test = "#D3869B"
 local default = "#FABD2F"
 
 return {
+  -- Highlight, list and search todo comments in your projects
   "folke/todo-comments.nvim",
   lazy = true,
   event = "BufRead",

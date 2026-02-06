@@ -1,4 +1,5 @@
 return {
+  -- Lua port of the most famous vim colorscheme
   "ellisonleao/gruvbox.nvim",
   priority = 1000,
   config = function()

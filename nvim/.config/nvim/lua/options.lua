@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 local opt = vim.opt
 local o = vim.o
 local g = vim.g
@@ -7,6 +8,7 @@ local g = vim.g
 g.mapleader = " "
 g.maplocalleader = " "
 
+-- Use Nerd Font
 g.have_nerd_font = true
 
 -- Make line numbers default
@@ -41,7 +43,7 @@ opt.undofile = true
 -- Enable mouse mode, can be handy for resizing splits
 opt.mouse = "a"
 
--- Don't show the mode, since it's already in the statusline
+-- Don't show the Vim mode, since it's already in the statusline
 opt.showmode = false
 
 -- Sync clipboard between OS and Neovim.
@@ -72,10 +74,10 @@ opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 opt.fillchars = { eob = " " }
 
 -- Command preview for 'substitute'
-opt.inccommand = "split"
+opt.inccommand = "nosplit"
 
 -- Set always visible lines at bottom while scrolling
--- opt.scrolloff = 10
+opt.scrolloff = 10
 
 -- How and where the statusline is displayed. 3 - global
 opt.laststatus = 3

@@ -10,16 +10,6 @@ return {
     },
     dependencies = {
       {
-        "hrsh7th/nvim-cmp",
-        opts = function(_, opts)
-          opts.sources = opts.sources or {}
-          table.insert(opts.sources, {
-            name = "lazydev",
-            group_index = 0, -- disables LuaLS completions if using LazyDev
-          })
-        end,
-      },
-      {
         "saghen/blink.cmp",
         opts = {
           sources = {
@@ -35,9 +25,5 @@ return {
         },
       },
     },
-  },
-  {
-    "folke/neodev.nvim",
-    enabled = false, -- Disabled to avoid conflicts with lazydev.nvim
   },
 }

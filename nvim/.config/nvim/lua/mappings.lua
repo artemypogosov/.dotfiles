@@ -1,6 +1,5 @@
 local wk = require("which-key")
 local bookmarks = require("bookmarks")
-local quit = require("confirm-quit")
 local snacks = require("snacks")
 local man_picker = require("custom.snacks.man_picker")
 local bookmark_picker = require("custom.snacks.bookmark_picker")
@@ -15,7 +14,6 @@ wk.add({
   ------------
   { "<leader>f", group = "file" },
 
-  { "<leader>ff", helpers.execute_command("Oil"), desc = "Find file", mode = "n" },
   { "<leader>.", helpers.execute_command("Oil"), desc = "Find file", mode = "n" },
   { "<leader>fr", helpers.find_recent_files, desc = "Recent files", mode = "n" },
   {
@@ -35,18 +33,17 @@ wk.add({
   ---------------
   { "<leader>b", group = "buffer" },
 
-  { "<leader>bb", helpers.switch_buffers, desc = "Switch buffer", mode = "n" },
   { "<leader>,", helpers.switch_buffers, desc = "Switch buffer", mode = "n" },
-
-  { "<leader>bn", helpers.execute_command("enew"), desc = "New buffer", mode = "n" },
-  { "<leader>bh", helpers.execute_command("new"), desc = "New horizontal buffer", mode = "n" },
-  { "<leader>bv", helpers.execute_command("vnew"), desc = "New vertical buffer", mode = "n" },
   { "<leader>b]", helpers.execute_command("bnext"), desc = "Next buffer", mode = "n" },
   { "<leader>b[", helpers.execute_command("bprev"), desc = "Prev buffer", mode = "n" },
   { "<leader>bk", helpers.kill_buffer, desc = "Kill buffer", mode = "n" },
   { "<leader>bO", helpers.kill_all_buffers_except_current, desc = "Kill all buffers except current", mode = "n" },
-
   { "<leader>bZ", helpers.delete_scratch_files, desc = "Delete all scratch files", mode = "n" },
+
+  { "<leader>bs", group = "scratch" },
+  { "<leader>bsn", helpers.new_scratch, desc = "New scratch buffer", mode = "n" },
+  { "<leader>bss", helpers.select_scratch, desc = "Select scratch", mode = "n" },
+  { "<leader>bsd", helpers.delete_scratch_files, desc = "Delete all scratch files", mode = "n" },
 
   ---------------
   --- PROJECT ---
@@ -85,9 +82,14 @@ wk.add({
   { "<leader>wc", "<C-\\><C-n><C-w>c", desc = "Close", mode = { "n", "t" } },
   { "<leader>wC", "<C-\\><C-n><C-w>o", desc = "Close other windows", mode = { "n", "t" } },
 
-  { "<leader>wM", helpers.execute_command("MaximizerToggle"), desc = "Maximize window", mode = { "n", "t" } },
-  { "<leader>wmh", helpers.execute_command("resize 40"), desc = "Increase height", mode = { "n", "t" } },
-  { "<leader>wmw", helpers.execute_command("vertical resize 110"), desc = "Increase width", mode = { "n", "t" } },
+  {
+    "<leader>wM",
+    function()
+      snacks.zen.zoom()
+    end,
+    desc = "Maximize window",
+    mode = { "n", "t" },
+  },
   { "<leader>w=", "<C-\\><C-n><C-w>=", desc = "=", mode = { "n", "t" } },
 
   --------------
@@ -104,7 +106,17 @@ wk.add({
   },
   { "<leader>tT", helpers.snacks_explorer_focus, desc = "Focus  sidebar", mode = "n" },
   { "<leader>ti", helpers.indent_lines, desc = "Indent lines", mode = "n" },
-  { "<leader>tz", helpers.execute_command("ZenMode"), desc = "Zen mode", mode = "n" },
+  { "<leader>t*", helpers.toggle_background, desc = "Toggle dark/light theme", mode = "n" },
+  {
+    "<leader>tz",
+    function()
+      snacks.zen()
+    end,
+    desc = "Zen mode",
+    mode = "n",
+  },
+  { "<leader>ts", ":set spell<CR>", desc = "Enable spellcheck", mode = "n" },
+  { "<leader>tS", ":set nospell<CR>", desc = "Disable spellcheck", mode = "n" },
 
   ------------
   --- OPEN ---
@@ -130,34 +142,32 @@ wk.add({
   ---------------
   { "<leader>r", group = "replace" },
 
-  { "<leader>rr", "<CMD>SearchReplaceSingleBufferOpen<CR>", desc = "Replace", mode = { "n" } },
-  { "<leader>rp", "<CMD>SearchReplaceSingleBufferCWord<CR>", desc = "Replace in place", mode = "n" },
-  { "<leader>r?", "<CMD>SearchReplaceSingleBufferSelections<CR>", desc = "Show all values", mode = "n" },
-
-  { "<leader>rR", "<CMD>GrugFar<CR>", desc = "Replace in project", mode = "n" },
   {
-    "<leader>rf",
+    "<leader>rr",
     function()
-      grug_far.open({ prefills = { paths = vim.fn.expand("%") } })
+      helpers.search_replace()
     end,
-    desc = "Replace in buffer [grug]",
-    mode = "n",
+    desc = "Replace",
+    mode = { "n", "x" },
   },
   {
     "<leader>rP",
     function()
       grug_far.open({ prefills = { search = vim.fn.expand("<cword>") } })
     end,
-    desc = "Replace in place [project]",
+    desc = "Replace at point [project]",
     mode = "n",
   },
+  { "<leader>r?", helpers.search_replace_menu, desc = "Show all values", mode = "n" },
+
+  { "<leader>rR", "<CMD>GrugFar<CR>", desc = "Replace [project]", mode = "n" },
   {
-    "<leader>rv",
+    "<leader>rp",
     function()
-      grug_far.open({ visualSelectionUsage = "operate-within-range" })
+      grug_far.open({ prefills = { paths = vim.fn.expand("%"), search = vim.fn.expand("<cword>") } })
     end,
-    desc = "Replace in range",
-    mode = "v",
+    desc = "Replace at point",
+    mode = "n",
   },
 
   --------------
@@ -166,8 +176,7 @@ wk.add({
   { "<leader>s", group = "search" },
 
   { "<leader>ss", helpers.search_buffer, desc = "Search in buffer", mode = "n" },
-  { "<leader>sb", helpers.search_buffer, desc = "Search in buffer", mode = "n" },
-  { "<leader>sB", snacks.picker.grep_buffers, desc = "Seach all open buffers", mode = "n" },
+  { "<leader>sS", helpers.search_opened_buffer, desc = "Search all open buffers", mode = "n" },
   {
     "<leader>sw",
     function()
@@ -177,6 +186,7 @@ wk.add({
     mode = { "n", "x" },
   },
   { "<leader>sp", helpers.search_project, desc = "Search in project", mode = "n" },
+  { "<leader>/", helpers.search_project, desc = "Search in project", mode = "n" },
   {
     "<leader>sc",
     function()
@@ -192,27 +202,13 @@ wk.add({
     desc = "Help Pages",
   },
   {
-    "<leader>sj",
-    function()
-      snacks.picker.jumps()
-    end,
-    desc = "Jumps",
-  },
-  {
     "<leader>sk",
     function()
       snacks.picker.keymaps()
     end,
     desc = "Keymaps",
   },
-  {
-    "<leader>sm",
-    function()
-      snacks.picker.marks()
-    end,
-    desc = "Marks",
-  },
-  { "<leader>sM", man_picker.open, desc = "Man pages", mode = "n" },
+  { "<leader>sm", man_picker.open, desc = "Man pages", mode = "n" },
   {
     "<leader>su",
     function()
@@ -227,6 +223,7 @@ wk.add({
     end,
     desc = "Registers",
   },
+
   { "<leader>st", group = "list TODO" },
   {
     "<leader>stt",
@@ -269,13 +266,13 @@ wk.add({
   { "<leader>g[", helpers.execute_command("Gitsigns nav_hunk prev"), desc = "Prev hunk", mode = "n" },
   { "<leader>g]", helpers.execute_command("Gitsigns nav_hunk next"), desc = "Next hunk", mode = "n" },
 
+  { "<leader>gp", helpers.execute_command("Gitsigns preview_hunk"), desc = "Previw hunk [popup]", mode = "n" },
   {
-    "<leader>gp",
+    "<leader>gP",
     helpers.execute_command("Gitsigns preview_hunk_inline"),
     desc = "Preview hunk [inline]",
     mode = "n",
   },
-  { "<leader>gP", helpers.execute_command("Gitsigns preview_hunk"), desc = "Previw hunk [popup]", mode = "n" },
 
   { "<leader>gd", helpers.execute_command("Gitsigns diffthis"), desc = "Diff this file", mode = "n" },
   { "<leader>gc", helpers.execute_command("Gitsigns setqflist all"), desc = "Trouble changes", mode = "n" },
@@ -335,9 +332,9 @@ wk.add({
   { "<M-a>", helpers.execute_command("GitsignsBlameToggle"), desc = "Git side annotations", mode = "n" },
   { "<M-A>", helpers.execute_command("Gitsigns blame_line"), desc = "Git popup annotations", mode = "n" },
 
-  -----------------------------
-  --- RESOLVE GIT CONFLICTS ---
-  -----------------------------
+  ------------------------------------
+  --- DIFF & RESOLVE GIT CONFLICTS ---
+  ------------------------------------
 
   { "<leader>d", group = "resolve conflicts" },
 
@@ -362,9 +359,9 @@ wk.add({
   { "<leader>c", group = "code" },
   -- All mappings are located in plugins/lsp.lua and partially in trouble.lua
 
-  -----------------------------
-  --- TROUBLE [DIAGNOSTICS] ---
-  -----------------------------
+  ---------------
+  --- TROUBLE ---
+  ---------------
   { "<leader>x", group = "trouble" },
   -- All mappings are located in plugins/trouble.lua
 
@@ -375,7 +372,47 @@ wk.add({
   -- Avante
 
   { "<leader>a", group = "Avante" },
-
+  { "<leader>a.", group = "actions" },
+  {
+    "<leader>a.f",
+    function()
+      require("avante.api").ask({
+        question = "Fix bugs in the following code. Respond with ONLY the fixed code. No markdown fences, no explanations.",
+      })
+    end,
+    desc = "Fix Errors",
+    mode = { "n", "v" },
+  },
+  {
+    "<leader>a.d",
+    function()
+      require("avante.api").ask({
+        question = "Add a high quality docstring to the following code. Include parameter types, return types, and any errors that might be raised. Respond with ONLY the complete code including the docstring. No markdown fences, no explanations.",
+      })
+    end,
+    desc = "Add docstring",
+    mode = { "n", "v" },
+  },
+  {
+    "<leader>a.e",
+    function()
+      require("avante.api").ask({
+        question = "Explain selected code. Use markdown format with clear sections",
+      })
+    end,
+    desc = "Explain",
+    mode = { "n", "v" },
+  },
+  {
+    "<leader>a.o",
+    function()
+      require("avante.api").ask({
+        question = "Optimize the following code for better performance and readability. Respond with ONLY the optimized code. No markdown fences, no explanations.",
+      })
+    end,
+    desc = "Optimize",
+    mode = { "n", "v" },
+  },
   { "<leader>aa", "<cmd>AvanteToggle<CR>", desc = "Ask", mode = { "n", "v" } },
   { "<leader>ae", "<cmd>AvanteEdit<CR>", desc = "Edit", mode = { "n", "v" } },
   { "<leader>an", "<cmd>AvanteChatNew<CR>", desc = "Chat New", mode = { "n" } },
@@ -399,7 +436,6 @@ wk.add({
 
   { "<leader>;g", "<cmd>ChatGPTRun grammar_correction<CR>", desc = "Grammar Correction", mode = { "n", "v" } },
   { "<leader>;d", "<cmd>ChatGPTRun docstring<CR>", desc = "Docstring", mode = { "n", "v" } },
-  { "<leader>;t", "<cmd>ChatGPTRun add_tests<CR>", desc = "Add Tests", mode = { "n", "v" } },
   { "<leader>;o", "<cmd>ChatGPTRun optimize_code<CR>", desc = "Optimize Code", mode = { "n", "v" } },
   { "<leader>;s", "<cmd>ChatGPTRun summarize<CR>", desc = "Summarize", mode = { "n", "v" } },
   { "<leader>;f", "<cmd>ChatGPTRun fix_bugs<CR>", desc = "Fix Bugs", mode = { "n", "v" } },
@@ -446,7 +482,7 @@ wk.add({
   { "<leader>q", group = "session" },
 
   { "<leader>qq", "<CMD>qa<CR>", desc = "Quit", mode = "n" },
-  { "<leader>qQ", quit.confirm_quit, desc = "Quit + confirm", mode = "n" },
+  { "<leader>qQ", helpers.quit, desc = "Quit + confirm", mode = "n" },
 
   {
     "<leader>qs",
@@ -480,10 +516,6 @@ wk.add({
 
   { "<leader>hL", helpers.execute_command("Lazy"), desc = "Lazy", mode = "n" },
   { "<leader>hM", helpers.execute_command("Mason"), desc = "Mason", mode = "n" },
-
-  { "<leader>ht", helpers.toggle_background, desc = "Toggle dark/light theme", mode = "n" },
-  { "<leader>hs", ":set spell<CR>", desc = "Enable spellcheck", mode = "n" },
-  { "<leader>hS", ":set nospell<CR>", desc = "Disable spellcheck", mode = "n" },
   {
     "<leader>h=",
     helpers.execute_command("lua Snacks.picker.spelling()"),
@@ -506,9 +538,8 @@ wk.add({
   { "<C-s>", "<cmd>w<CR>", desc = "Save current buffer [n]", mode = "n" },
   { "<C-s>", "<Esc><cmd>w<CR>", desc = "Save current buffer [i]", mode = "i" },
   { "<C-c>", "<cmd>%y+<CR>", desc = "Copy entire buffer", mode = "n" },
-  { "<Esc>", "<cmd>noh<CR>", desc = "Clean seach highlights", mode = "n" },
+  { "<Esc>", "<cmd>noh<CR>", desc = "Clean search highlights", mode = "n" },
   { "<leader>`", "<cmd>messages<CR>", desc = "Messages", mode = "n" },
-  { "<leader>/", helpers.search_project, desc = "Search in project", mode = "n" },
   {
     "<C-l>",
     'copilot#Accept("\\<CR>")',
@@ -517,7 +548,7 @@ wk.add({
     replace_keycodes = false,
     mode = "i",
   },
-  { "ZQ", quit.confirm_quit, desc = "Confirm before ZQ" },
+  { "ZQ", helpers.quit, desc = "Confirm before ZQ" },
   {
     "ZZ",
     function()
@@ -525,11 +556,10 @@ wk.add({
         vim.cmd("write")
       end
 
-      quit.confirm_quit()
+      helpers.quit()
     end,
     desc = "Confirm before ZZ",
   },
-
   {
     "]t",
     function()
@@ -546,6 +576,7 @@ wk.add({
     desc = "Prev todo comment",
     mode = "n",
   },
+
   -- Window sizing
   { "<C-Up>", "<cmd>resize +2<CR>", mode = "n", desc = "Increase window height" },
   { "<C-Down>", "<cmd>resize -2<CR>", mode = "n", desc = "Decrease window height" },

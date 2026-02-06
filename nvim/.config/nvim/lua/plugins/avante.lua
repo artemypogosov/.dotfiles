@@ -1,18 +1,11 @@
--- Use your Neovim like using Cursor AI IDE!
-
 -- Some keys to remember:
 -- Ctrl + n/p --> next/prev prompt
 -- A/a --> apply all/cursor
 -- r/e --> retry/edit user previous request
 -- @/d --> add/remove file
 
-local function add(a, b)
-  return a + b
-end
-
-local result = add(5, 3)
-
 return {
+  -- Use your Neovim like using Cursor AI IDE!
   "yetone/avante.nvim",
   build = vim.fn.has("win32") ~= 0 and "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false"
     or "make",
@@ -64,11 +57,6 @@ return {
       "stevearc/dressing.nvim", -- for input provider dressing
       "folke/snacks.nvim", -- for input provider snacks
       "nvim-mini/mini.icons", -- or nvim-tree/nvim-web-devicons
-      "zbirenbaum/copilot.lua", -- for providers='copilot'
-      --- The below dependencies are optional,
-      -- "nvim-mini/mini.pick", -- for file_selector provider mini.pick
-      -- "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
-      -- "ibhagwan/fzf-lua", -- for file_selector provider fzf
       {
         -- Make sure to set this up properly if you have lazy=true
         "MeanderingProgrammer/render-markdown.nvim",

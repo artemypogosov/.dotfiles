@@ -1,4 +1,5 @@
 return {
+  -- Multiple cursors in Neovim which work how you expect
   "jake-stewart/multicursor.nvim",
   branch = "1.0",
   config = function()
@@ -11,11 +12,11 @@ return {
     set({ "n", "x" }, "<M-d>", function()
       mc.matchAddCursor(1)
     end)
-    set({ "n", "x" }, "<M-s>", function()
-      mc.matchSkipCursor(1)
-    end)
     set({ "n", "x" }, "<M-D>", function()
       mc.matchAddCursor(-1)
+    end)
+    set({ "n", "x" }, "<M-s>", function()
+      mc.matchSkipCursor(1)
     end)
     set({ "n", "x" }, "<M-S>", function()
       mc.matchSkipCursor(-1)

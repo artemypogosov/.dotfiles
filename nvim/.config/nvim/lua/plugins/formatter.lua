@@ -10,7 +10,7 @@ return {
       lua = { "stylua" },
 
       -- Markup & Templates
-      html = { "biome", "prettierd", "prettier", stop_after_first = true },
+      html = { "prettierd", "prettier", "biome", stop_after_first = true },
       markdown = { "prettierd", "prettier" },
       mdx = { "biome", "prettierd", "prettier", stop_after_first = true },
 
@@ -44,6 +44,15 @@ return {
       sh = { "shfmt", "beautysh", stop_after_first = true },
       bash = { "shfmt", "beautysh", stop_after_first = true },
       zsh = { "shfmt", "beautysh", stop_after_first = true },
+    },
+    formatters = {
+      biome = {
+        args = { "check", "--write", "--stdin-file-path", "$FILENAME" },
+        -- Only run biome if a biome.json exists and isn't broken
+        condition = function(_, ctx)
+          return vim.fs.root(ctx.filename, { "biome.json", "biome.jsonc" }) ~= nil
+        end,
+      },
     },
     format_on_save = {
       -- These options will be passed to conform.format()

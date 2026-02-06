@@ -4,6 +4,7 @@
 -- :LspInfo - get info about current LSP status
 
 return {
+  -- Quickstart configs for Nvim LSP
   "neovim/nvim-lspconfig",
   dependencies = {
     -- Automatically install LSPs and related tools to stdpath for Neovim
@@ -12,9 +13,6 @@ return {
     { "mason-org/mason.nvim", opts = {} },
     "mason-org/mason-lspconfig.nvim",
     "WhoIsSethDaniel/mason-tool-installer.nvim",
-
-    -- Useful status updates for LSP.
-    { "j-hui/fidget.nvim", opts = {} },
 
     -- Allows extra capabilities provided by blink.cmp
     "saghen/blink.cmp",
