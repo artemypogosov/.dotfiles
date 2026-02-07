@@ -52,6 +52,7 @@
       evil-want-fine-undo t 
       evil-snipe-scope 'buffer 
       auto-revert-verbose nil 
+      scroll-margin 10
       +zen-text-scale 1) 
 
 ;; Auto sync buffers when they are changed by other process

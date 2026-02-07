@@ -106,6 +106,7 @@
       evil-want-fine-undo t 
       evil-snipe-scope 'buffer 
       auto-revert-verbose nil 
+      scroll-margin 10
       +zen-text-scale 1) 
 
 ;; Auto sync buffers when they are changed by other process
@@ -548,10 +549,6 @@ Chooses biome/prettierd/prettier based on project config files."
 (setq-hook! 'lua-mode-hook    +format-with 'stylua)
 (setq-hook! 'lua-ts-mode-hook +format-with 'stylua)
 #+end_src
-
-#+RESULTS:
-| doom--setq-+format-with-for-lua-ts-mode-h | #[(&rest _) ((spell-fu-mode -1)) (t)] | doom--enable-+lua-love-mode-in-lua-ts-mode-h |
-
 ** FLYCHECK
 #+begin_src elisp
 (add-hook! 'ediff-prepare-buffer-hook (flycheck-mode -1))

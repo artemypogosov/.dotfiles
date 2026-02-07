@@ -123,9 +123,9 @@ myManageHook = composeAll . concat $
     , [title     =? t --> doFloat       | t <- myTFloats]
     , [resource  =? i --> doIgnore      | i <- myIgnores]
     , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo "web"   | x <- my1Shifts]
-    , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo "dev"   | x <- my2Shifts]
+    -- , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo "dev"   | x <- my2Shifts]
     , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo "chat"  | x <- my3Shifts]
-    , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo "music"  | x <- my4Shifts]
+    , [(className =? x <||> title =? x <||> resource =? x) --> doShiftAndGo "music" | x <- my4Shifts]
     , [namedScratchpadManageHook myScratchPads]]
   where
     doShiftAndGo = doF . liftM2 (.) W.greedyView W.shift
@@ -134,8 +134,8 @@ myManageHook = composeAll . concat $
                , "Arandr", "Galculator"]
     myTFloats = ["Downloads", "Save As..."]
     myIgnores = ["desktop_window"]
-    my1Shifts = ["google-chrome", "qutebrowser"]
-    my2Shifts = ["emacs"]
+    my1Shifts = ["qutebrowser"]
+    -- my2Shifts = ["emacs"]
     my3Shifts = ["Telegram"]
     my4Shifts = ["Spotify"]
 
