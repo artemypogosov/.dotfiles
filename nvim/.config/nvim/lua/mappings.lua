@@ -444,7 +444,7 @@ wk.add({
 
   -- Copilot
   {
-    "<leader>cc",
+    "<leader>tc",
     helpers.execute_command("Copilot enable", function()
       vim.notify("Copilot: enabled", vim.log.levels.INFO)
     end),
@@ -452,12 +452,21 @@ wk.add({
     mode = { "n", "v" },
   },
   {
-    "<leader>cC",
+    "<leader>tC",
     helpers.execute_command("Copilot disable", function()
       vim.notify("Copilot: disabled", vim.log.levels.INFO)
     end),
     desc = "Copilot: disable",
     mode = { "n", "v" },
+  },
+  { "<M-i>", "<Plug>(copilot-suggest)", mode = "i", desc = "Trigger Copilot" },
+  {
+    "<M-a>",
+    'copilot#Accept("\\<CR>")',
+    desc = "Copilot Accept",
+    expr = true,
+    replace_keycodes = false,
+    mode = "i",
   },
 
   -----------------
@@ -540,14 +549,6 @@ wk.add({
   { "<C-c>", "<cmd>%y+<CR>", desc = "Copy entire buffer", mode = "n" },
   { "<Esc>", "<cmd>noh<CR>", desc = "Clean search highlights", mode = "n" },
   { "<leader>`", "<cmd>messages<CR>", desc = "Messages", mode = "n" },
-  {
-    "<C-l>",
-    'copilot#Accept("\\<CR>")',
-    desc = "Copilot Accept",
-    expr = true,
-    replace_keycodes = false,
-    mode = "i",
-  },
   { "ZQ", helpers.quit, desc = "Confirm before ZQ" },
   {
     "ZZ",

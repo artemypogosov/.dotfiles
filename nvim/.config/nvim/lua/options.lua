@@ -77,7 +77,7 @@ opt.fillchars = { eob = " " }
 opt.inccommand = "nosplit"
 
 -- Set always visible lines at bottom while scrolling
-opt.scrolloff = 10
+opt.scrolloff = 5
 
 -- How and where the statusline is displayed. 3 - global
 opt.laststatus = 3
