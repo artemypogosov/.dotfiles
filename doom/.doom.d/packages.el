@@ -56,6 +56,13 @@
 (package! idle-underline-mode
   :recipe (:host github :repo "artemypogosov/idle-underline-mode"))
 
+
+;;;;;;;;;;
+;;; AI ;;;
+;;;;;;;;;;
+
+(package! minuet)
+
 ;;;;;;;;;;;
 ;;; Org ;;;
 ;;;;;;;;;;;

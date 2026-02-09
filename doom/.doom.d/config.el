@@ -52,7 +52,7 @@
       evil-want-fine-undo t 
       evil-snipe-scope 'buffer 
       auto-revert-verbose nil 
-      scroll-margin 10
+      scroll-margin 5
       +zen-text-scale 1) 
 
 ;; Auto sync buffers when they are changed by other process
@@ -336,6 +336,24 @@
        :desc "Open UI Graph" "o" #'org-roam-ui-open))
 
 (setq markdown-split-window-direction 'right)
+
+(use-package! minuet
+  :defer t
+  :config
+  (setq minuet-provider 'gemini)
+  (plist-put minuet-gemini-options :model "gemini-2.0-flash")
+  (plist-put minuet-gemini-options :api-key "GEMINI_API_KEY")
+
+  (add-hook 'minuet-active-mode-hook #'evil-normalize-keymaps)
+
+  (map! :i  "M-y"   #'minuet-complete-with-minibuffer
+        :i  "M-i"   #'minuet-show-suggestion
+        (:map minuet-active-mode-map
+         :i "M-["   #'minuet-previous-suggestion
+         :i "M-]"   #'minuet-next-suggestion
+         :i "M-A"   #'minuet-accept-suggestion
+         :i "M-a"   #'minuet-accept-suggestion-line
+         :i "M-c"   #'minuet-dismiss-suggestion)))
 
 (after! lsp-mode
   (setq lsp-enable-symbol-highlighting nil
@@ -753,6 +771,21 @@ If :keys is omitted, unbinds the prefix itself."
        :desc "Select docs" "L" #'devdocs-peruse
        :desc "Search on the site" "s" #'devdocs-search
        :desc "Update all docs" "u" #'devdocs-update-all))
+
+(defun my/toggle-minuet ()
+  "Toggle Minuet auto-suggestions globally."
+  (interactive)
+  (if (bound-and-true-p minuet-auto-suggestion-mode)
+      (progn
+        (minuet-auto-suggestion-mode -1)
+        (message "Minuet AI: Off"))
+    (progn
+      ;; This will trigger the loading of the minuet package if it hasn't loaded yet
+      (minuet-auto-suggestion-mode 1)
+      (message "Minuet AI: On"))))
+
+(map! :leader
+      :desc "Toggle Minuet AI" "t m" #'my/toggle-minuet)
 
 (map! :leader
       :prefix ("g" . "git")
