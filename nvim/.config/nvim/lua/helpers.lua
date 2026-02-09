@@ -239,8 +239,8 @@ end
 -- OTHER --
 ------------
 
-function M.quit()
-  local choice = vim.fn.confirm("Do you really want to quit?", "&Yes\n&No", 2)
+function M.quit(message)
+  local choice = vim.fn.confirm(message, "&Yes\n&No", 2)
   if choice == 1 then
     vim.cmd("qa")
   end

@@ -549,7 +549,13 @@ wk.add({
   { "<C-c>", "<cmd>%y+<CR>", desc = "Copy entire buffer", mode = "n" },
   { "<Esc>", "<cmd>noh<CR>", desc = "Clean search highlights", mode = "n" },
   { "<leader>`", "<cmd>messages<CR>", desc = "Messages", mode = "n" },
-  { "ZQ", helpers.quit, desc = "Confirm before ZQ" },
+  {
+    "ZQ",
+    function()
+      helpers.quit("Quit?")
+    end,
+    desc = "Confirm before ZQ",
+  },
   {
     "ZZ",
     function()
@@ -557,7 +563,7 @@ wk.add({
         vim.cmd("write")
       end
 
-      helpers.quit()
+      helpers.quit("Save ant quit?")
     end,
     desc = "Confirm before ZZ",
   },
