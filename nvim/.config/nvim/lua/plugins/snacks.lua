@@ -72,6 +72,7 @@ return {
         recent = { layout = { preset = "select", layout = { height = 0.25 } } },
         files = {
           layout = { preset = "select", layout = { height = 0.25 } },
+          ignored = true,
           hidden = true,
           args = {
             "--type",
@@ -83,8 +84,6 @@ return {
             "node_modules",
             "--exclude",
             ".cache",
-            "--exclude",
-            ".local",
           },
           matcher = {
             fuzzy = false,
