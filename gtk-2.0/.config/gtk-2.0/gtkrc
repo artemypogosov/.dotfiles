@@ -1,0 +1,2 @@
+include "/usr/share/themes/Gruvbox-Material-Dark-HIDPI/gtk-2.0/gtkrc"
+gtk-theme-name="Gruvbox-Material-Dark-HIDPI"

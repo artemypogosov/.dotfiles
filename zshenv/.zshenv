@@ -36,6 +36,8 @@ export LC_TIME="en_US.UTF-8"
 export GOPATH="$XDG_DATA_HOME/go"
 export GOMODCACHE="$XDG_CACHE_HOME/go/mod"
 
+export GTK2_RC_FILES="$HOME/.config/gtk-2.0/gtkrc"
+
 export PATH="$GOBIN:$XDG_CONFIG_HOME/emacs/bin:$PATH"
 
 [ -f "$HOME/.dotfiles/.secrets/.zshenv.local" ] && source "$HOME/.dotfiles/.secrets/.zshenv.local"

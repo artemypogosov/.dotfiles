@@ -44,6 +44,7 @@ alias cp='cp -vi'
 ## SYSTEM INFO
 alias df='df -h'
 alias free='free -th'
+alias cpufreq="watch -n 1 \"grep 'cpu MHz' /proc/cpuinfo\""
 
 alias nvme-smart-log='sudo nvme smart-log /dev/nvme0n1'
 
