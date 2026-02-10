@@ -3,37 +3,46 @@
 # Sync dotfiles repo and ensure that dotfiles are tangled correctly afterward
 
 BLUE='\033[1;34m'
-RED='\033[1;30m'
+RED='\033[1;31m'
 NC='\033[0m'
 
-# Go to .dotfiles dir to run 'stow .' later
+# Go to .dotfiles dir
 cd ~/.dotfiles || exit
 
-echo "$PWD"
-printf '%s\n' "${BLUE}Stashing existing changes...${NC}"
-stash_result=$(git stash push -m "sync-dotfiles: Before syncing dotfiles")
-needs_pop=1
-if [ "$stash_result" = "No local changes to save" ]; then
-   needs_pop=0
+printf '%s\n' "$PWD"
+
+printf '%b%s%b\n' "$BLUE" "Stashing existing changes..." "$NC"
+# Use git stash push and check exit status
+if git stash push -m "sync-dotfiles: Before syncing dotfiles" | grep -q "No local changes to save"; then
+  needs_pop=0
+else
+  needs_pop=1
 fi
 
-printf '%s\n' "${BLUE}Pulling updates from dotfiles repo...${NC}"
+printf '%b%s%b\n' "$BLUE" "Pulling updates from dotfiles repo..." "$NC"
 echo
 git pull origin master
 echo
 
-if [ $needs_pop -eq 1 ]; then
-   printf '%s\n' "${BLUE}Popping stashed changes...${NC}"
-   echo
-   git stash pop
+if [ "$needs_pop" -eq 1 ]; then
+  printf '%b%s%b\n' "$BLUE" "Popping stashed changes..." "$NC"
+  echo
+  git stash pop
 fi
 
 unmerged_files=$(git diff --name-only --diff-filter=U)
 if [ -n "$unmerged_files" ]; then
-   printf '%s\n' "${RED}The following files have merge conflicts after popping the stash:${NC}"
-   echo
-   printf '%s\n' "$unmerged_files"
+  printf '%b%s%b\n' "$RED" "The following files have merge conflicts after popping the stash:" "$NC"
+  echo
+  printf '%s\n' "$unmerged_files"
 else
-   # Run stow to ensure all new dotfiles are linked
-   stow -- */
+  printf '%b%s%b\n' "$BLUE" "Restowing packages..." "$NC"
+  # Iterate through directories to prevent stow from failing on empty or malformed globs
+  for dir in */; do
+    if [ -d "$dir" ]; then
+      # Remove trailing slash for stow package naming
+      package="${dir%/}"
+      stow --restow --no-folding "$package"
+    fi
+  done
 fi

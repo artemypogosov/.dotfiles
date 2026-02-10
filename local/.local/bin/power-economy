@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# CONFIGURATION
+LOW_FREQ="2.2GHz"
+HIGH_FREQ="4.0GHz"
+OFF_MONITOR="HDMI-A-0"
+STAY_MONITOR="HDMI-A-1"
+
+WALLPAPER_SINGLE="$HOME/Pictures/wallpapers/dual-monitor/winter-cosmonaut.jpg"
+WALLPAPER_DUAL="$HOME/Pictures/wallpapers/dual-monitor/winter-cosmonaut.jpg"
+
+# Ask for sudo password once at the start of the script
+sudo -v || exit 1
+
+if [ "$1" == "on" ]; then
+	echo "Activating Power Saving Mode..."
+
+	# Disable the left primary monitor
+	# We explicitly tell xrandr to make the other one primary to avoid layout glitches
+	xrandr --output "$STAY_MONITOR" --primary --auto
+	xrandr --output "$OFF_MONITOR" --off
+	echo "Monitor $OFF_MONITOR has been turned OFF."
+
+	#  Set Wallpaper for the single remaining monitor
+	nitrogen --set-zoom-fill "$WALLPAPER_SINGLE" --head=0
+	echo "Wallpaper adjusted for single monitor."
+
+	# CPU Frequency Scaling
+	sudo cpupower frequency-set -g powersave --related
+	sudo cpupower frequency-set -u "$LOW_FREQ" --related
+	echo "CPU frequency capped at $LOW_FREQ."
+
+	echo "----------------------------------------"
+	echo "ECONOMY MODE ACTIVE"
+
+elif [ "$1" == "off" ]; then
+	echo "Restoring Full Performance..."
+
+	# Restore the left monitor and set it back as Primary
+	# We use --left-of to ensure the physical order is correct
+	xrandr --output "$OFF_MONITOR" --auto --primary --left-of "$STAY_MONITOR"
+	echo "Monitor $OFF_MONITOR has been turned ON (Primary/Left)."
+
+	# Restore Wallpaper for both monitors
+	# Nitrogen Zoom Fill will stretch/scale the image across your setup
+	nitrogen --set-zoom-fill "$WALLPAPER_DUAL"
+	echo "Wallpaper restored for both monitors."
+
+	# Reset CPU limits
+	sudo cpupower frequency-set -u "$HIGH_FREQ" --related
+	sudo cpupower frequency-set -g schedutil --related
+	echo "CPU frequency limits removed."
+
+	echo "----------------------------------------"
+	echo "PERFORMANCE MODE ACTIVE"
+
+else
+	echo "Usage: ./power-economy [on|off]"
+fi
