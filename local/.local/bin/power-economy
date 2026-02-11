@@ -47,8 +47,8 @@ elif [ "$1" == "off" ]; then
 	echo "Wallpaper restored for both monitors."
 
 	# Reset CPU limits
-	sudo cpupower frequency-set -u "$HIGH_FREQ" --related
 	sudo cpupower frequency-set -g schedutil --related
+	sudo cpupower frequency-set -u "$HIGH_FREQ" --related
 	echo "CPU frequency limits removed."
 
 	echo "----------------------------------------"

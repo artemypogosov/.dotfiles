@@ -355,6 +355,14 @@
          :i "M-a"   #'minuet-accept-suggestion-line
          :i "M-c"   #'minuet-dismiss-suggestion)))
 
+(defun my/get-gemini-key ()
+  "Retrieve Gemini API key from environment variables."
+  (or (getenv "GEMINI_API_KEY")
+      (user-error "Gemini API key not found in environment variables!")))
+
+(setq gptel-model  'gemini-2.5-flash
+      gptel-backend (gptel-make-gemini "Gemini" :key #'my/get-gemini-key :stream t))
+
 (after! lsp-mode
   (setq lsp-enable-symbol-highlighting nil
         lsp-clients-lua-language-server-bin "/usr/bin/lua-language-server"
