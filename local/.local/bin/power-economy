@@ -2,7 +2,7 @@
 
 # CONFIGURATION
 LOW_FREQ="2.2GHz"
-HIGH_FREQ="4.0GHz"
+HIGH_FREQ="4.5GHz"
 OFF_MONITOR="HDMI-A-0"
 STAY_MONITOR="HDMI-A-1"
 
@@ -47,7 +47,7 @@ elif [ "$1" == "off" ]; then
 	echo "Wallpaper restored for both monitors."
 
 	# Reset CPU limits
-	sudo cpupower frequency-set -g schedutil --related
+	sudo cpupower frequency-set -g performance --related
 	sudo cpupower frequency-set -u "$HIGH_FREQ" --related
 	echo "CPU frequency limits removed."
 
