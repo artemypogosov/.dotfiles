@@ -20,8 +20,16 @@
 
 ;; Face style to use with comments and keywords
 (custom-set-faces!
-  '(font-lock-comment-face :slant italic)
-  '(font-lock-keyword-face :slant italic))
+  ;; Keywords
+  '(font-lock-keyword-face :slant italic)
+  ;; Standard comments
+  '(font-lock-comment-face :foreground "#928374" :slant italic)
+  '(font-lock-comment-delimiter-face :foreground "#928374" :slant italic)
+  ;; Documentation blocks and JSDoc tags (@param, @returns, etc.)
+  '(font-lock-doc-face :foreground "#928374" :slant italic)
+  '(font-lock-doc-markup-face :foreground "#928374" :slant italic)
+  '(tree-sitter-hl-face:comment :foreground "#928374" :slant italic)
+  '(tree-sitter-hl-face:doc :foreground "#928374" :slant italic))
 
 ;; Use Noto Color Emoji for emoji characters
 ;; Also used to draw icons in modeline
@@ -339,6 +347,7 @@
 
 (use-package! minuet
   :defer t
+  :init (map! :i "M-i" 'minuet-show-suggestion)
   :config
   (setq minuet-provider 'gemini)
   (plist-put minuet-gemini-options :model "gemini-2.0-flash")
@@ -347,7 +356,6 @@
   (add-hook 'minuet-active-mode-hook #'evil-normalize-keymaps)
 
   (map! :i  "M-y"   #'minuet-complete-with-minibuffer
-        :i  "M-i"   #'minuet-show-suggestion
         (:map minuet-active-mode-map
          :i "M-["   #'minuet-previous-suggestion
          :i "M-]"   #'minuet-next-suggestion
@@ -355,13 +363,42 @@
          :i "M-a"   #'minuet-accept-suggestion-line
          :i "M-c"   #'minuet-dismiss-suggestion)))
 
-(defun my/get-gemini-key ()
-  "Retrieve Gemini API key from environment variables."
-  (or (getenv "GEMINI_API_KEY")
-      (user-error "Gemini API key not found in environment variables!")))
+(defvar my/gptel-directives
+  '((default . "You are a large language model living in Emacs and a helpful assistant. Respond concisely")
+    (buffer . "You are a large language model living in Emacs and a helpful assistant.
+Strict Constraints:
 
-(setq gptel-model  'gemini-2.5-flash
-      gptel-backend (gptel-make-gemini "Gemini" :key #'my/get-gemini-key :stream t))
+1. No Markdown: Do not use triple backticks (```) or language identifiers.
+2. Commented Explanations: any explanation MUST be wrapped in comment blocks.
+3. Laconism: Respond concisely. ")
+    (code . "You are a Senior Full-Stack Software Engineer. Your output is a raw code-streaming interface.
+Strict Constraints:
+
+1. Zero Prose: Strictly adhere to a zero-prose policy. No prefaces or summaries.
+2. No Markdown: Do not use triple backticks (```) or language identifiers.
+3. Raw Implementation: Output only the code. If context is provided, output only the modified lines or replacement block.
+4. Professional Rigor: Follow SOLID principles and project naming conventions.
+5. Commented Explanations: If any explanation is absolutely necessary, it MUST be wrapped in comment blocks.
+
+Begin the raw code transmission immediately.")
+    (writing . "You are a large language model and a writing assistant. Respond concisely.")))
+(after! gptel  
+  (defun my/get-gemini-key ()
+    "Retrieve Gemini API key from environment variables."
+    (or (getenv "GEMINI_API_KEY")
+        (user-error "Gemini API key not found in environment variables!")))
+  (setq gptel-model  'gemini-2.5-flash
+        gptel-backend (gptel-make-gemini "Gemini" :key #'my/get-gemini-key :stream t)
+        gptel-default-mode 'org-mode
+        gptel-directives my/gptel-directives
+        gptel-include-reasoning nil
+        gptel-track-media t
+        gptel-highlight-methods '(face)
+        gptel-display-buffer-action 
+        '((display-buffer-reuse-window 
+           display-buffer-in-side-window)
+          (side . right)
+          (window-width . 0.40))))
 
 (after! lsp-mode
   (setq lsp-enable-symbol-highlighting nil
@@ -560,6 +597,8 @@ Chooses biome/prettierd/prettier based on project config files."
   :config
   (add-hook! prog-mode #'colorful-mode))
 
+(add-hook! prog-mode #'rainbow-delimiters-mode)
+
 (add-hook! org-mode
   (setq-local prettify-symbols-alist
               '(("#+begin_src"   . "»")
@@ -692,10 +731,7 @@ Chooses biome/prettierd/prettier based on project config files."
 
 (defun my/appt-clean-message (msg)
   "Remove trailing Org tags from appt message while keeping time and title."
-  (let ((clean
-         (replace-regexp-in-string
-          "[ \t]*:[[:alnum:]_:@]+::?$" "" msg)))
-    (string-trim-right clean)))
+  (string-trim-right (replace-regexp-in-string "[ \t]*:[[:alnum:]_:@]+::?$" "" msg)))
 
 (when (daemonp)
   (run-with-idle-timer
@@ -709,16 +745,13 @@ Chooses biome/prettierd/prettier based on project config files."
 
      (setq appt-disp-window-function
            (lambda (remaining _new-time msg)
-             (let ((cleaned-msg (my/appt-clean-message msg)))
-               (setq my/appt-notification-id
+             (setq my/appt-notification-id
                      (notifications-notify
                       :title (format "In %s minutes" remaining)
-                      :body cleaned-msg
+                      :body (my/appt-clean-message msg)
                       :urgency 'normal
-                      :replaces-id my/appt-notification-id)))))
-
+                      :replaces-id my/appt-notification-id))))
      (appt-activate t)
-
      (run-at-time "30 sec" 600
                   (lambda ()
                     (setq appt-time-msg-list nil)
@@ -794,6 +827,11 @@ If :keys is omitted, unbinds the prefix itself."
 
 (map! :leader
       :desc "Toggle Minuet AI" "t m" #'my/toggle-minuet)
+
+(map! :leader
+      :desc "Toggle highlight mode" "o l h" #'gptel-highlight-mode
+      :desc "Toggle gptel mode" "o l g" #'gptel-mode
+      :desc "Remove all context" "o l R" #'gptel-context-remove-all)
 
 (map! :leader
       :prefix ("g" . "git")

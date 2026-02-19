@@ -56,6 +56,9 @@
 (package! idle-underline-mode
   :recipe (:host github :repo "artemypogosov/idle-underline-mode"))
 
+;; Emacs rainbow delimiters mode
+(package! rainbow-delimiters)
+
 ;;;;;;;;;;
 ;;; AI ;;;
 ;;;;;;;;;;
