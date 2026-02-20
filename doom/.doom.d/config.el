@@ -52,8 +52,6 @@
       delete-by-moving-to-trash t                  
       trash-directory "~/.local/share/Trash/files" 
       global-auto-revert-non-file-buffers t
-
-      ;; Third party variables
       projectile-project-search-path '("~/Projects") 
       display-line-numbers-type 'relative 
       evil-ex-substitute-case 'sensitive 
@@ -80,8 +78,7 @@
             (when (derived-mode-p 'prog-mode)
               (display-fill-column-indicator-mode 1))))
 
-(defvar my/dashboard-cache nil
-  "Cached ASCII banner for Doom dashboard to avoid recomputation.")
+(defvar my/dashboard-cache nil)
 
 (defun my/dashboard-render-banner ()
   "Generate and cache the Doom dashboard banner only once."
@@ -104,7 +101,6 @@
       (buffer-string))))
 
 (defun my/generate-dashboard ()
-  "Insert cached dashboard banner."
   (insert
    (propertize
     (or my/dashboard-cache (setq my/dashboard-cache (my/dashboard-render-banner)))
@@ -156,7 +152,6 @@
   ;; Disable size indication
   (remove-hook 'doom-modeline-mode-hook #'size-indication-mode))
 
-;; [M-m --> select multiple files]
 (after! treemacs
   (treemacs-follow-mode 1)
   (treemacs-indent-guide-mode 1)
@@ -192,7 +187,6 @@
         (concat dired-omit-files "\\|^\\..+$")))
 
 (with-eval-after-load 'dirvish
-  ;; Remove 'hidden attribute if present
   (setq dirvish-attributes
         (remove 'hidden dirvish-attributes)))
 
@@ -363,6 +357,10 @@
          :i "M-a"   #'minuet-accept-suggestion-line
          :i "M-c"   #'minuet-dismiss-suggestion)))
 
+(defun my/get-gemini-key ()
+  (or (getenv "GEMINI_API_KEY")
+      (user-error "Gemini API key not found in environment variables!")))
+
 (defvar my/gptel-directives
   '((default . "You are a large language model living in Emacs and a helpful assistant. Respond concisely")
     (buffer . "You are a large language model living in Emacs and a helpful assistant.
@@ -382,16 +380,15 @@ Strict Constraints:
 
 Begin the raw code transmission immediately.")
     (writing . "You are a large language model and a writing assistant. Respond concisely.")))
-(after! gptel  
-  (defun my/get-gemini-key ()
-    "Retrieve Gemini API key from environment variables."
-    (or (getenv "GEMINI_API_KEY")
-        (user-error "Gemini API key not found in environment variables!")))
-  (setq gptel-model  'gemini-2.5-flash
+
+(after! gptel
+  (setq gptel-model 'gemini-2.5-flash
         gptel-backend (gptel-make-gemini "Gemini" :key #'my/get-gemini-key :stream t)
         gptel-default-mode 'org-mode
         gptel-directives my/gptel-directives
         gptel-include-reasoning nil
+        gptel-quick-word-count 200
+        gptel-quick-timeout 60
         gptel-track-media t
         gptel-highlight-methods '(face)
         gptel-display-buffer-action 
@@ -399,6 +396,38 @@ Begin the raw code transmission immediately.")
            display-buffer-in-side-window)
           (side . right)
           (window-width . 0.40))))
+
+(after! gptel-quick
+  (setq gptel-quick-word-count 400
+        gptel-quick-timeout 60)
+
+  (setq gptel-quick-posframe-parameters
+        '(:internal-border-width 15
+          :internal-border-color "#4c566a"
+          :border-width 1
+          :border-color "#51afef"
+          :max-height 25
+          :min-width 85))
+
+  (setq gptel-quick-system-message
+        (lambda (_)
+          "Briefly explain the code. Logical completeness only. Zero prose. No filler."))
+
+  (advice-add 'gptel-quick--callback-posframe :after
+              (lambda (&rest _)
+                (when-let ((buf (get-buffer " *gptel-quick*")))
+                  (with-current-buffer buf
+                    (markdown-mode)
+                    (setq-local markdown-hide-markup t)
+                    (display-line-numbers-mode -1)
+                    (if (fboundp 'spell-fu-mode) (spell-fu-mode -1))
+                    (font-lock-flush)
+                    (font-lock-ensure)))))
+  
+  (advice-add 'gptel-quick :around
+              (lambda (orig-fun &rest args)
+                (let ((gptel-max-tokens 1200))
+                  (apply orig-fun args)))))
 
 (after! lsp-mode
   (setq lsp-enable-symbol-highlighting nil
@@ -416,7 +445,6 @@ Begin the raw code transmission immediately.")
 (add-to-list 'exec-path "~/.local/share/go/bin")
 (setenv "PATH" (concat "~/.local/share/go/bin:" (getenv "PATH")))
 
-;; Hello
 (after! apheleia
   ;; Biome
   (set-formatter! 'biome
@@ -593,7 +621,7 @@ Chooses biome/prettierd/prettier based on project config files."
   :custom
   (colorful-use-prefix t)
   (colorful-prefix-string "•")
-  (colorful-only-strings 'only-prog) ;; highlight only color literals in strings in prog-mode
+  (colorful-only-strings 'only-prog)
   :config
   (add-hook! prog-mode #'colorful-mode))
 
@@ -604,7 +632,12 @@ Chooses biome/prettierd/prettier based on project config files."
               '(("#+begin_src"   . "»")
                 ("#+end_src"     . "«")
                 ("#+begin_quote" . "❝")
-                ("#+end_quote"   . "❞")))
+                ("#+end_quote"   . "❞")
+                
+                ("#+BEGIN_SRC"   . "»")
+                ("#+END_SRC"     . "«")
+                ("#+BEGIN_QUOTE" . "❝")
+                ("#+END_QUOTE"   . "❞")))
   (prettify-symbols-mode 1))
 
 (defun my/org-pretty-list-bullets (limit)
@@ -924,7 +957,6 @@ If :keys is omitted, unbinds the prefix itself."
 
 ;; Comment line and move down
 (defun my/comment-line-and-next ()
-  "Comment the current line."
   (interactive)
   (evilnc-comment-or-uncomment-lines 1))
 
