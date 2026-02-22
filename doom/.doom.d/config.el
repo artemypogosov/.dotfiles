@@ -193,9 +193,6 @@
 (map! :map dired-mode-map
       :n "M-h" #'dired-omit-mode)
 
-(map! :map dirvish-mode-map
-      :n "M-h" #'dired-omit-mode)
-
 ;; Hide "." and ".." hard links
 (after! dired
   (setq dired-listing-switches "-Ahlv --group-directories-first"))
@@ -222,13 +219,7 @@
                                  (list (expand-file-name "inbox.org" my/org-root-dir)))
         calendar-week-start-day 1
         org-fancy-priorities-list '("" "" "")
-        org-tag-alist '(;; Affiliation
-                        ("personal" . ?P) ("work" . ?W)
-                        ;; Projects...
-                        ;; Activities
-                        ("shopping" . ?S) ("gym" . ?G) ("birthday" . ?B)
-                        ;; Other
-                        ("wishlist" . ?L)  ("repeated" . ?R))
+        org-tag-alist '(("personal" . ?P) ("work" . ?W) ("repeated" . ?R))
         org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "STARTED(s!)" "WAIT(w@)" "HOLD(h@)" "|" "DONE(d!)" "CANCELLED(c@)"))
         org-todo-keyword-faces '(("TODO"      :foreground "#afb224" :underline t)  ;; needs to be done
                                  ("NEXT"      :foreground "#fabd2f" :underline t)  ;; next one to be considered
@@ -299,11 +290,21 @@
 (after! org-roam
   (setq org-roam-directory (file-name-as-directory my/org-root-dir)
         org-roam-capture-templates
-        '(("d" "Default [Org/notes/]" plain
+        '(("a" "Agenda Personal [Org/agenda/personal]" plain
+           "%?"
+           :if-new (file+head "agenda/personal/${slug}.org" "#+title: ${title}\n")
+           :unnarrowed t)
+          
+          ("A" "Agenda Work [Org/agenda/work]" plain
+           "%?"
+           :if-new (file+head "agenda/work/${slug}.org" "#+title: ${title}\n")
+           :unnarrowed t)
+          
+          ("d" "Default [Org/notes/]" plain
            "%?"
            :if-new (file+head "notes/${slug}.org" "#+title: ${title}\n")
            :unnarrowed t)
-
+          
           ("l" "Linux Tools [computer_science/linux/tools/]" plain
            "%?"
            :if-new (file+head "computer_science/linux/tools/${slug}.org"
@@ -323,6 +324,7 @@
            :unnarrowed t)))
   (org-roam-db-autosync-mode 1))
 
+;; UI graph
 (use-package! org-roam-ui
   :after org-roam
   :commands (org-roam-ui-mode org-roam-ui-open)
@@ -331,11 +333,6 @@
         org-roam-ui-follow t
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start nil))
-
-(map! :leader
-      :prefix ("n" . "notes")
-      (:prefix ("r" . "roam")
-       :desc "Open UI Graph" "o" #'org-roam-ui-open))
 
 (setq markdown-split-window-direction 'right)
 
@@ -592,18 +589,28 @@ Chooses biome/prettierd/prettier based on project config files."
 ;; Show vertical bars to visually indicate indentation levels
 (add-hook! yaml-mode #'indent-bars-mode)
 
-(after! spell-fu
-  (setq-default spell-fu-idle-delay 1
-                spell-fu-word-regexp "\\b\\([A-Za-z]+\\(['’][A-Za-z]+\\)?\\)\\b")
-
-  ;; Disable spell-fu in all programming modes
-  (add-hook! prog-mode-hook (spell-fu-mode -1))
-
-  ;; Extra safety for Lua modes
-  (add-hook! (lua-mode lua-ts-mode) (spell-fu-mode -1))
-
-  ;; Enable spell-fu only in text-like modes
-  (add-hook! text-mode-hook #'spell-fu-mode))
+;; Vim text-objects alternative for the lazy
+(use-package! expand-region
+  :defer t
+  :init (map! :nv "M-e" #'er/expand-region)
+  :config
+  (map! :leader
+        (:prefix ("e" . "expand-region")
+         :desc "Mark JS function"          "f" #'er/mark-js-function
+         :desc "Mark JS inner return"      "r" #'er/mark-js-inner-return
+         :desc "Mark JS outer return"      "R" #'er/mark-js-outer-return
+         :desc "Mark JS if"                "i" #'er/mark-js-if
+         :desc "Mark JS call"              "c" #'er/mark-js-call
+         :desc "Mark JS comment"           "C" #'er/mark-comment
+         :desc "Mark inside pairs"         "b" #'er/mark-inside-pairs
+         :desc "Mark outside pairs"        "B" #'er/mark-outside-pairs
+         :desc "Mark inside quotes"        "q" #'er/mark-inside-quotes
+         :desc "Mark outside quotes"       "Q" #'er/mark-outside-quotes
+         :desc "Mark paragraph"            "p" #'er/mark-paragraph
+         :desc "Mark url"                  "u" #'er/mark-url
+         :desc "Mark html attribute"       "a" #'er/mark-html-attribute
+         :desc "Mark JS object property"   "o" #'er/mark-js-object-property
+         :desc "Mark org code block"       "e" #'er/mark-org-code-block)))
 
 ;; Disable rainbow-mode everywhere Doom enables it
 (remove-hook 'prog-mode-hook #'rainbow-mode)
@@ -625,7 +632,30 @@ Chooses biome/prettierd/prettier based on project config files."
   :config
   (add-hook! prog-mode #'colorful-mode))
 
+(use-package! idle-underline-mode
+  :hook (prog-mode . idle-underline-mode)
+  :config
+  (setq idle-underline-idle-time 0.2
+        idle-underline-ignore-context '(string comment))
+  (set-face-attribute 'idle-underline nil
+                      :underline t
+                      :inherit nil
+                      :background 'unspecified))
+
 (add-hook! prog-mode #'rainbow-delimiters-mode)
+
+(after! spell-fu
+  (setq-default spell-fu-idle-delay 1
+                spell-fu-word-regexp "\\b\\([A-Za-z]+\\(['’][A-Za-z]+\\)?\\)\\b")
+
+  ;; Disable spell-fu in all programming modes
+  (add-hook! prog-mode-hook (spell-fu-mode -1))
+
+  ;; Extra safety for Lua modes
+  (add-hook! (lua-mode lua-ts-mode) (spell-fu-mode -1))
+
+  ;; Enable spell-fu only in text-like modes
+  (add-hook! text-mode-hook #'spell-fu-mode))
 
 (add-hook! org-mode
   (setq-local prettify-symbols-alist
@@ -663,19 +693,6 @@ Chooses biome/prettierd/prettier based on project config files."
 (add-hook! org-mode
   (my/org-enable-pretty-bullets))
 
-(use-package! idle-underline-mode
-  :hook (prog-mode . idle-underline-mode)
-  :init
-  (setq idle-underline-idle-time 0.2
-        ;; Do not underline when a cursor is on string/comment
-        idle-underline-ignore-context '(string comment)))
-
-(after! idle-underline-mode
-  (set-face-attribute 'idle-underline nil
-                      :underline t
-                      :inherit nil
-                      :background 'unspecified))
-
 (use-package! visual-replace
   :defer t
   :init
@@ -710,29 +727,6 @@ Chooses biome/prettierd/prettier based on project config files."
          :desc "Replace with confirm"   "c" #'my/visual-replace-with-query))
   
   (define-key visual-replace-mode-map (kbd "+") visual-replace-secondary-mode-map))
-
-;; Vim text-objects alternative for the lazy
-(use-package! expand-region
-  :defer t
-  :init (map! :nv "M-e" #'er/expand-region)
-  :config
-  (map! :leader
-        (:prefix ("e" . "expand-region")
-         :desc "Mark JS function"          "f" #'er/mark-js-function
-         :desc "Mark JS inner return"      "r" #'er/mark-js-inner-return
-         :desc "Mark JS outer return"      "R" #'er/mark-js-outer-return
-         :desc "Mark JS if"                "i" #'er/mark-js-if
-         :desc "Mark JS call"              "c" #'er/mark-js-call
-         :desc "Mark JS comment"           "C" #'er/mark-comment
-         :desc "Mark inside pairs"         "b" #'er/mark-inside-pairs
-         :desc "Mark outside pairs"        "B" #'er/mark-outside-pairs
-         :desc "Mark inside quotes"        "q" #'er/mark-inside-quotes
-         :desc "Mark outside quotes"       "Q" #'er/mark-outside-quotes
-         :desc "Mark paragraph"            "p" #'er/mark-paragraph
-         :desc "Mark url"                  "u" #'er/mark-url
-         :desc "Mark html attribute"       "a" #'er/mark-html-attribute
-         :desc "Mark JS object property"   "o" #'er/mark-js-object-property
-         :desc "Mark org code block"       "e" #'er/mark-org-code-block)))
 
 (use-package! drag-stuff
   :init
@@ -868,7 +862,8 @@ If :keys is omitted, unbinds the prefix itself."
 
 (map! :leader
       :prefix ("g" . "git")
-      :desc "Rebase autosquash" "ca" #'magit-rebase-autosquash)
+      :desc "Rebase autosquash" "ca" #'magit-rebase-autosquash
+      :desc "Diff current file" "d" #'vc-ediff)
 
 (after! git-timemachine
   (evil-define-key 'normal git-timemachine-mode-map
@@ -877,17 +872,23 @@ If :keys is omitted, unbinds the prefix itself."
   (evil-define-key 'motion git-timemachine-mode-map
     (kbd "?") #'git-timemachine-help))
 
-;; ;; Tangle org-file
+;; Tangle org-file
 (after! evil-org
   (map! :localleader
         :map org-mode-map
         :desc "Tangle buffer" "s" #'org-babel-tangle
         :desc "Insert hline and move down" "+" #'org-table-hline-and-move))
 
-;; ;; Calendar
+;; Calendar
 (map! :leader
       (:prefix ("o" . "open")
        :desc "Open calendar" "c" #'=calendar))
+
+;; Open ROAM Graph
+(map! :leader
+      :prefix ("n" . "notes")
+      (:prefix ("r" . "roam")
+       :desc "Open UI Graph" "o" #'org-roam-ui-open))
 
 ;; Windows manipulation
 (map! :leader
@@ -899,7 +900,8 @@ If :keys is omitted, unbinds the prefix itself."
 ;; File
 (map! :leader
       :prefix "f"
-      :desc "Update recent files" "z" #'recentf-cleanup)
+      :desc "Update recent files" "z" #'recentf-cleanup
+      :desc "Find file at point" "a" #'find-file-at-point)
 
 ;; Bookmarks
 (map! :leader
