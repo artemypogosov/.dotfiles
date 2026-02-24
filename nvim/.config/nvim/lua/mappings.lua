@@ -255,7 +255,7 @@ wk.add({
   -----------
   { "<leader>g", group = "git" },
 
-  { "<leader>gg", helpers.execute_command("Neogit kind=replace"), desc = "Git status", mode = "n" },
+  { "<leader>gg", helpers.execute_command("Neogit kind=tab"), desc = "Git status", mode = "n" },
 
   { "<leader>gs", helpers.execute_command("Gitsigns stage_hunk"), desc = "Stage hunk", mode = "n" },
   { "<leader>gS", helpers.execute_command("Gitsigns stage_buffer"), desc = "Stage file", mode = "n" },

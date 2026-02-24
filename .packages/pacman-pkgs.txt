@@ -3,6 +3,7 @@ arandr
 aspell
 aspell-en
 ast-grep
+bat
 betterlockscreen
 bitwarden
 blueman
