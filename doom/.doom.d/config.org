@@ -319,11 +319,17 @@
   '(org-level-3 :foreground "#9e7edf" :inherit outline-3 :height 1.05   :weight bold :extend t)
   '(org-level-4 :foreground "#5e8b4d" :inherit outline-4 :height 1.025  :weight bold :extend t)
   '(org-level-5 :foreground "#d44c3b" :inherit outline-5 :height 1.0125 :weight bold :extend t)
-  '(org-link    :foreground "#64a2f4"))
+  '(org-link    :foreground "#83a598"))
 #+end_src
 ** AGENDA
 #+begin_src elisp
 (setq org-deadline-warning-days 7
+      org-agenda-skip-function-global
+      '(lambda ()
+         (let ((category (org-get-category)))
+           (if (string= category "birthdays")
+               (save-excursion (outline-next-heading) (point))
+             nil)))
       org-agenda-custom-commands
       '(("p" "Personal"
          ((agenda "" ((org-agenda-files (my/org-files "agenda/personal"))))
