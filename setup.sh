@@ -154,7 +154,7 @@ case "$choice" in
             case "$dm_choice" in
                 y | Y)
                     nitrogen --set-zoom-fill "$HOME/Pictures/wallpapers/dual-monitor/stray.png"
-                    betterlockscreen -u "$HOME/Pictures/wallpapers/dual-monitor/stray.png" --span --display 2
+                    betterlockscreen -u "$HOME/Pictures/wallpapers/dual-monitor/stray.png" --span
                     ;;
                 n | N)
                     nitrogen --set-zoom-fill "$HOME/Pictures/wallpapers/stray.png"
@@ -208,6 +208,35 @@ Then move ~/go into ~/.config/go using XDG BASE DIRECTORY: https://wiki.archlinu
 Then add new path to $PATH in .zshenv
 
 6. Configure Syncthing [sudo systemctl enable syncthing@service --now]
+
+7. Setup betterlockscreen service by running: sudo -E systemctl edit betterlockscreen@artemy.service
+
+[Unit]
+Description=Lock screen when going to sleep/suspend
+# We use 'Before' so it triggers early
+Before=sleep.target
+Before=suspend.target
+
+[Service]
+User=%I
+# Simple type doesn't wait for the process to exit to continue the 'suspend'
+Type=simple
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=/home/artemy/.Xauthority
+# Clear old settings
+ExecStart=
+ExecStartPost=
+# The key is to run it WITHOUT backgrounding it here, 
+# but allowing systemd to proceed to sleep immediately.
+ExecStart=/usr/bin/betterlockscreen --lock dimblur
+# This small delay ensures the GPU 'paints' the lock before power cuts
+ExecStartPost=/usr/bin/sleep 1
+
+[Install]
+# This ensures the service is linked to the sleep process correctly
+WantedBy=sleep.target
+WantedBy=suspend.target
+
 EOF
 
         sleep 3
