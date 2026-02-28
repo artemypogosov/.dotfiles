@@ -253,7 +253,8 @@
   '(org-level-3 :foreground "#9e7edf" :inherit outline-3 :height 1.05   :weight bold :extend t)
   '(org-level-4 :foreground "#5e8b4d" :inherit outline-4 :height 1.025  :weight bold :extend t)
   '(org-level-5 :foreground "#d44c3b" :inherit outline-5 :height 1.0125 :weight bold :extend t)
-  '(org-link    :foreground "#83a598"))
+  '(org-link    :foreground "#83a598")
+  '(bold :weight bold :foreground "#ebdbb2"))
 
 (setq org-deadline-warning-days 7
       org-agenda-skip-function-global
@@ -756,7 +757,7 @@ Chooses biome/prettierd/prettier based on project config files."
 
 (use-package! reverse-im
   :init
-  (setq reverse-im-input-methods '("ukrainian-computer" "russian-computer"))
+  (setq reverse-im-input-methods '("ukrainian-computer"))
   :config
   (reverse-im-mode 1))
 
@@ -939,6 +940,11 @@ If :keys is omitted, unbinds the prefix itself."
       :prefix "TAB"
       :desc "Delete workspace" "k" #'+workspace/kill
       :desc "Delete saved workspace" "K" #'+workspace/delete)
+
+;; LSP
+(map! :leader
+      :prefix "c"
+      :desc "LSP Remove known project" "z" #'lsp-workspace-folders-remove)
 
 ;; Help
 (map! :leader
