@@ -196,6 +196,12 @@ return {
       bashls = {}, -- Shell scripts
       dockerls = {}, -- Docker
       prismals = {}, -- Prisma schema
+      eslint = {
+        settings = {
+          -- This helps the server find your .eslintrc file more reliably
+          workingDirectories = { mode = "auto" },
+        },
+      },
       lua_ls = {
         settings = {
           Lua = {
