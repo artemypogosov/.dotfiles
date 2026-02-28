@@ -195,21 +195,19 @@ case "$choice" in
         echo "================================"
 
         cat <<EOF
-1. Add '--lock dimblur' (and optionally '--display 2') in: /usr/lib/systemd/system/betterlockscreen@.service
+1. Run 'lightdm-gtk-greeter-settings' and configure background
 
-2. Run 'lightdm-gtk-greeter-settings' and configure background
+2. Setup power management via applet icon (lid close suspend, etc.)
 
-3. Setup power management via applet icon (lid close suspend, etc.)
+3. Copy dictionary for Emacs (DOOM MUST BE ALREADY INSTALLED) : cp ~/.dotfiles/other/.pws $HOME/.config/emacs/.local/etc/ispell/.pws
 
-4. Copy dictionary for Emacs (DOOM MUST BE ALREADY INSTALLED) : cp ~/.dotfiles/other/.pws $HOME/.config/emacs/.local/etc/ispell/.pws
-
-5. Install dockfmt: go install github.com/jessfraz/dockfmt@latest
+4. Install dockfmt: go install github.com/jessfraz/dockfmt@latest
 Then move ~/go into ~/.config/go using XDG BASE DIRECTORY: https://wiki.archlinux.org/title/XDG_Base_Directory
 Then add new path to $PATH in .zshenv
 
-6. Configure Syncthing [sudo systemctl enable syncthing@service --now]
+5. Configure Syncthing [sudo systemctl enable syncthing@service --now]
 
-7. Setup betterlockscreen service by running: sudo -E systemctl edit betterlockscreen@artemy.service
+6. Setup betterlockscreen service by running: sudo -E systemctl edit betterlockscreen@$(whoami).service
 
 [Unit]
 Description=Lock screen when going to sleep/suspend
