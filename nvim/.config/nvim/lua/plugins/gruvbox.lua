@@ -15,6 +15,9 @@ return {
         MoreMsg = { fg = "#b8bb26", bg = "NONE" },
         MsgArea = { bg = "NONE", link = "Normal" },
 
+        -- vim-sneak
+        Sneak = { fg = "#282828", bg = "#fe8019", bold = true },
+
         -- Diagnostic icons
         DiagnosticSignError = { link = "SignColumn" },
         DiagnosticSignWarn = { link = "SignColumn" },
