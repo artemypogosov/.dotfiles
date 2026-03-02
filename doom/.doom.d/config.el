@@ -900,6 +900,7 @@ If :keys is omitted, unbinds the prefix itself."
 ;; Windows manipulation
 (map! :leader
       :prefix "w"
+      "F" #'ffap
       "M" #'maximize-window
       "C" #'delete-other-windows
       "z" #'windresize)
