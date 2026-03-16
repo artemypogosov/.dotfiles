@@ -39,7 +39,7 @@ return {
     {
       "<leader>xt",
       "<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME,WARN,WARNING}} win.size=15<cr>",
-      desc = "Todo List",
+      desc = "List TODO in project",
     },
   },
 }

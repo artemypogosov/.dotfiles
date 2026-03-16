@@ -23,6 +23,7 @@ return {
         "--column",
         "--hidden",
         "--glob=!.git/*",
+        "--glob=!**/node_modules/*",
       },
     },
     keywords = {
