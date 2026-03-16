@@ -1,4 +1,4 @@
-personal_ws-1.1 en 255
+personal_ws-1.1 en 256
 absofruitly
 adminer
 agda
@@ -98,6 +98,7 @@ grouche
 gunzip
 gzip
 hardcoded
+hardlink
 hasselblad
 healthcheck
 hostname

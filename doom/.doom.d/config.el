@@ -173,14 +173,17 @@
           ("t"  "~/.local/share/Trash/" "Trash")
           ("o" "~/Org" "Org")
           ("d" "~/Downloads" "Downloads")
+          (".d" "~/.dotfiles" "Dotfiles")
           ("pi" "~/Pictures" "Pictures")
           ("pr" "~/Projects" "Projects")))
   (dirvish-side-follow-mode 1))
 
 (add-hook 'window-configuration-change-hook
   (defun my/dired-force-omit-off ()
-    (when (derived-mode-p 'dired-mode)
-      (dired-omit-mode -1))))
+    (when (and (derived-mode-p 'dired-mode)
+               (not (active-minibuffer-window)))
+      (when (and (boundp 'dired-omit-mode) dired-omit-mode)
+        (dired-omit-mode -1)))))
 
 (after! dired-x
   (setq dired-omit-files
@@ -833,7 +836,7 @@ If :keys is omitted, unbinds the prefix itself."
          "q" "i" "R" "s" "S" "u" "W" "x" "<help>" "<f1>" "C-\\"))
  (:prefix "i"   :keys ("e" "p" "r" "u"))
  (:prefix "n"   :keys ("a" "l" "n" "N" "*" "y" "Y"))
- (:prefix "o"   :keys ("-" "P"))
+ (:prefix "o"   :keys ("-" "P" "l"))
  (:prefix "p"   :keys (">" "f" "F" "o"))
  (:prefix "s"   :keys ("e" "I" "j" "k" "K" "L" "m" "o" "O" "r" "t" "T"))
  (:prefix "t"   :keys ("g" "c" "I" "v")))
@@ -862,10 +865,25 @@ If :keys is omitted, unbinds the prefix itself."
 (map! :leader
       :desc "Toggle Minuet AI" "t m" #'my/toggle-minuet)
 
+;; LLM [Large Language Model
 (map! :leader
-      :desc "Toggle highlight mode" "o l h" #'gptel-highlight-mode
-      :desc "Toggle gptel mode" "o l g" #'gptel-mode
-      :desc "Remove all context" "o l R" #'gptel-context-remove-all)
+      :prefix ("l" . "llm")
+      :desc "Open gptel"            "l" #'gptel
+      :desc "Open gptel menu"       "o" #'gptel-menu
+      :desc "Send to gptel"         "s" #'gptel-send
+      :desc "Rewrite"               "r" #'gptel-rewrite
+      :desc "Explain"               "e" #'gptel-quick
+      :desc "Add text to context"   "a" #'gptel-add
+      :desc "Add file to context"   "f" #'gptel-add-file
+      :desc "Org: set topic"        "h" #'gptel-org-set-topic
+      :desc "Remove all context"    "R" #'gptel-context-remove-all
+      :desc "Toggle highlight mode" "h" #'gptel-highlight-mode
+      :desc "Toggle gptel mode"     "g" #'gptel-mode
+      
+      (:prefix ("c" . "commit message")
+       :map git-commit-mode-map
+       :desc "Generate commit message" "c" #'gptel-magit-generate-message
+       :desc "Explain diff" "e" #'gptel-magit-diff-explain))
 
 (map! :leader
       :prefix ("g" . "git")
@@ -880,9 +898,10 @@ If :keys is omitted, unbinds the prefix itself."
     (kbd "?") #'git-timemachine-help))
 
 ;; Tangle org-file
-(after! evil-org
+(after! org
   (map! :localleader
         :map org-mode-map
+        :desc "Sparse tree" "|" #'org-sparse-tree
         :desc "Tangle buffer" "s" #'org-babel-tangle
         :desc "Insert hline and move down" "+" #'org-table-hline-and-move))
 
@@ -896,6 +915,9 @@ If :keys is omitted, unbinds the prefix itself."
       :prefix ("n" . "notes")
       (:prefix ("r" . "roam")
        :desc "Open UI Graph" "o" #'org-roam-ui-open))
+
+;; Align regexp
+(map! :leader :desc "Align regexp" "=" #'align-regexp)
 
 ;; Windows manipulation
 (map! :leader
