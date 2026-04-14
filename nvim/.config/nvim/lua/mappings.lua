@@ -510,6 +510,14 @@ wk.add({
     mode = "n",
   },
   {
+    "<leader>qr",
+    function()
+      session.restart()
+    end,
+    desc = "Restart & Restore",
+    mode = "n",
+  },
+  {
     "<leader>qD",
     function()
       session.select("delete")
