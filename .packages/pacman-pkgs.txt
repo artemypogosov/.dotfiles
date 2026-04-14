@@ -71,7 +71,7 @@ tree-sitter
 ttf-sourcecodepro-nerd
 ttf-ubuntu-font-family
 udiskie
-ueberzug
+ueberzugpp
 unclutter
 unzip
 upower

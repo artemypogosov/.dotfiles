@@ -57,7 +57,7 @@ alias userlist='cut -d: -f1 /etc/passwd'
 alias psgrep='ps aux | grep -v grep | grep -i -e VSZ -e'
 
 ## OTHER
-alias cal='cal -m'
+alias cal='cal -m3'
 alias grep='grep --color=auto'
 alias wget="wget --hsts-file='$XDG_CACHE_HOME/wget-hsts'"
 # Test webcam

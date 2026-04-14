@@ -7,8 +7,10 @@ gruvbox-material-icon-theme-git
 htim
 markdown
 nitrogen
+onlyoffice
 otf-font-awesome-5
 picom-ftlabs-git
 selectdefaultapplication-fork-git
 syncthingtray-qt6
 trayer
+vacuumtube
