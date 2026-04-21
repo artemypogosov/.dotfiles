@@ -33,7 +33,7 @@
        window-select          ; visually switch windows
        indent-guides          ; highlighted indent columns
        (emoji +unicode)       ; 🙂
-       (popup +defaults)      ; tame sudden yet inevitable temporary windows
+       (popup +all)           ; tame sudden yet inevitable temporary windows
        (vc-gutter +pretty)    ; vcs diff in the fringe
        ;; tabs                   ; a tab bar for Emacs
        ;; (ligatures +extra)     ; ligatures and symbols to make your code pretty again

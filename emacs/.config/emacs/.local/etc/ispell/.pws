@@ -1,4 +1,4 @@
-personal_ws-1.1 en 258
+personal_ws-1.1 en 259
 absofruitly
 adminer
 agda
@@ -165,6 +165,7 @@ nvim
 objed
 onsave
 pacman
+param
 parinfer
 phpmyadmin
 plantuml

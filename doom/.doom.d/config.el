@@ -351,8 +351,26 @@
   :init (map! :i "M-i" 'minuet-show-suggestion)
   :config
   (setq minuet-provider 'gemini)
-  (plist-put minuet-gemini-options :model "gemini-2.0-flash")
+  (plist-put minuet-gemini-options :model "gemini-2.5-flash")
   (plist-put minuet-gemini-options :api-key "GEMINI_API_KEY")
+  (minuet-set-optional-options
+   minuet-gemini-options :generationConfig
+   '(:maxOutputTokens 256
+     :topP 0.9
+     ;; When using `gemini-2.5-flash`, it is recommended to entirely
+     ;; disable thinking for faster completion retrieval.
+     :thinkingConfig (:thinkingBudget 0)))
+
+  (minuet-set-optional-options
+   minuet-gemini-options :safetySettings
+   [(:category "HARM_CATEGORY_DANGEROUS_CONTENT"
+     :threshold "BLOCK_NONE")
+    (:category "HARM_CATEGORY_HATE_SPEECH"
+     :threshold "BLOCK_NONE")
+    (:category "HARM_CATEGORY_HARASSMENT"
+     :threshold "BLOCK_NONE")
+    (:category "HARM_CATEGORY_SEXUALLY_EXPLICIT"
+     :threshold "BLOCK_NONE")])
 
   (add-hook 'minuet-active-mode-hook #'evil-normalize-keymaps)
 
@@ -657,15 +675,15 @@ Chooses biome/prettierd/prettier based on project config files."
 (after! spell-fu
   (setq-default spell-fu-idle-delay 1
                 spell-fu-word-regexp "\\b\\([A-Za-z]+\\(['’][A-Za-z]+\\)?\\)\\b")
-
-  ;; Disable spell-fu in all programming modes
-  (add-hook! prog-mode-hook (spell-fu-mode -1))
-
-  ;; Extra safety for Lua modes
+  (defun my/spell-fu-check-comments-only ()
+    (setq-local spell-fu-faces-include
+                '(font-lock-comment-face
+                  font-lock-doc-face
+                  tree-sitter-hl-face:comment
+                  tree-sitter-hl-face:doc)))
+  (add-hook! prog-mode #'my/spell-fu-check-comments-only)
   (add-hook! (lua-mode lua-ts-mode) (spell-fu-mode -1))
-
-  ;; Enable spell-fu only in text-like modes
-  (add-hook! text-mode-hook #'spell-fu-mode))
+  (add-hook! text-mode #'spell-fu-mode))
 
 (add-hook! org-mode
   (setq-local prettify-symbols-alist
