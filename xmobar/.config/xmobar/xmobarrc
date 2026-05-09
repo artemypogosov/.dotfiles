@@ -4,8 +4,8 @@ Config {
        additionalFonts = ["Mononoki Nerd Font 10", "Font Awesome 5 Free Solid 10", "Font Awesome 5 Brands 10"],
        bgColor = "#282828",
        fgColor = "#928374",
-       alpha = 200,
-       position = Static { xpos = 15 , ypos = 8, width = 2530, height = 30 },
+       alpha = 180,
+       position = Static { xpos = 0 , ypos = 0, width = 2560, height = 35 },
 
        --- [GENERAL]
        lowerOnStart     = False,
