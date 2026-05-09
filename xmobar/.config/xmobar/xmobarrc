@@ -5,7 +5,7 @@ Config {
        bgColor = "#282828",
        fgColor = "#928374",
        alpha = 200,
-       position = Static { xpos = 11 , ypos = 8, width = 2538, height = 30 },
+       position = Static { xpos = 15 , ypos = 8, width = 2530, height = 30 },
 
        --- [GENERAL]
        lowerOnStart     = False,

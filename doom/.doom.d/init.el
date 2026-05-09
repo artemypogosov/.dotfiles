@@ -94,7 +94,9 @@
 
        :lang
        (web +lsp +tree-sitter)        ; the tubes
-       (javascript +lsp +tree-sitter) ; all(hope(abandon(ye(who(enter(here))))))
+       ;; (javascript +lsp +tree-sitter) ; all(hope(abandon(ye(who(enter(here))))))
+       ;; TEMPORALY remove +tree-sitter because of Emacs and tree-sitter arch package mismatch
+       (javascript +lsp) ; all(hope(abandon(ye(who(enter(here))))))
        (json +lsp +tree-sitter)       ; At least it ain't XML
        (org +roam +dragndrop)         ; organize your plain life in plain text
        (yaml +lsp)                    ; JSON, but readable

@@ -158,8 +158,8 @@ myGrid = renamed [Replace "grid"]
   $ mySpacing 10
   $ limitWindows 4
   Grid
-
-myLayoutHook = refocusLastLayoutHook $ avoidStruts $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) $ lessBorders Screen myLayouts
+ 
+myLayoutHook = refocusLastLayoutHook $ avoidStruts $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) $ smartBorders myLayouts
   where
     myLayouts = myTall ||| myMirror ||| myGrid
 
