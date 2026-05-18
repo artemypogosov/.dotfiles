@@ -1,12 +1,29 @@
 #!/bin/bash
-# Wait until display 2 is connected
-while ! xrandr | grep -q "HDMI-A-1 connected"; do
-    sleep 1
-done
 
-# Set monitor positions and resolution
-xrandr --output HDMI-A-0 --mode 2560x1440 --primary
-xrandr --output HDMI-A-1 --mode 2560x1440 --right-of HDMI-A-0
+# Laptop
+if [ -d /sys/class/power_supply/BAT0 ] || [ -d /sys/class/power_supply/BAT1 ]; then
+  INTERNAL=$(xrandr | grep -E "^eDP|^LVDS" | cut -d' ' -f1)
+  EXTERNAL=$(xrandr | grep " connected" | grep -v "^eDP" | cut -d' ' -f1)
 
-# Apply wallpaper with Nitrogen
+  if [ -n "$EXTERNAL" ]; then
+    xrandr --output "$INTERNAL" --auto --primary
+    xrandr --output "$EXTERNAL" --auto --right-of "$INTERNAL"
+  else
+    xrandr --output "$INTERNAL" --auto --primary
+  fi
+else
+  # Desktop
+  # Because monitors are always named without spaces
+  # shellcheck disable=SC2207
+  MONITORS=($(xrandr | grep " connected" | cut -d' ' -f1))
+
+  if [ ${#MONITORS[@]} -ge 2 ]; then
+    xrandr --output "${MONITORS[0]}" --auto --primary
+    xrandr --output "${MONITORS[1]}" --auto --right-of "${MONITORS[0]}"
+  else
+    xrandr --output "${MONITORS[0]}" --auto --primary
+  fi
+fi
+
+# Відновлюємо шпалери
 nitrogen --restore

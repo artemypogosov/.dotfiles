@@ -4,8 +4,8 @@ Config {
        additionalFonts = ["Mononoki Nerd Font 10", "Font Awesome 5 Free Solid 10", "Font Awesome 5 Brands 10"],
        bgColor = "#282828",
        fgColor = "#928374",
-       alpha = 200,
-       position = Static { xpos = 11 , ypos = 8, width = 1900, height = 30 },
+       alpha = 180,
+       position = Static { xpos = 0 , ypos = 0, width = 1920, height = 35 },
 
        --- [GENERAL]
        lowerOnStart     = False,
@@ -85,5 +85,5 @@ Config {
           ],
         sepChar  = "%",
         alignSep = "}{",
-        template = "   %UnsafeStdinReader% } %date% {%mpris2%   %default:Master%  B: %brightness%  |  %multicoretemp%  %cpu%  %memory%  |  U: <action=`alacritty -e sudo pacman -Syu`>%pacupdate%</action>  :  %kbd%  :  %battery%"
+        template = "   %UnsafeStdinReader% } %date% {%mpris2%   %default:Master%  B: %brightness%  |  %multicoretemp%  %cpu%  %memory%  |  U: <action=`alacritty -e sudo pacman -Syu`>%pacupdate%</action>  :  %kbd%  :  %battery% "
        }
