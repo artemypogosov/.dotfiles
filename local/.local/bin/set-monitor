@@ -1,5 +1,11 @@
 #!/bin/bash
 
+clean_disconnected_ports() {
+  for port in $(xrandr | grep "disconnected" | cut -d' ' -f1); do
+    xrandr --output "$port" --off
+  done
+}
+
 # Laptop
 if [ -d /sys/class/power_supply/BAT0 ] || [ -d /sys/class/power_supply/BAT1 ]; then
   INTERNAL=$(xrandr | grep -E "^eDP|^LVDS" | cut -d' ' -f1)
@@ -10,6 +16,7 @@ if [ -d /sys/class/power_supply/BAT0 ] || [ -d /sys/class/power_supply/BAT1 ]; t
     xrandr --output "$EXTERNAL" --auto --right-of "$INTERNAL"
   else
     xrandr --output "$INTERNAL" --auto --primary
+    clean_disconnected_ports
   fi
 else
   # Desktop
@@ -22,6 +29,7 @@ else
     xrandr --output "${MONITORS[1]}" --auto --right-of "${MONITORS[0]}"
   else
     xrandr --output "${MONITORS[0]}" --auto --primary
+    clean_disconnected_ports
   fi
 fi
 
