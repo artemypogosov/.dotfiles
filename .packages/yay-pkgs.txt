@@ -9,7 +9,6 @@ markdown
 nitrogen
 onlyoffice
 otf-font-awesome-5
-picom-ftlabs-git
 selectdefaultapplication-fork-git
 syncthingtray-qt6
 trayer

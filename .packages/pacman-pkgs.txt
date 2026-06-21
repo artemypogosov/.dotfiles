@@ -44,6 +44,8 @@ lxqt-powermanagement
 maim
 minikube
 mpv
+nemo
+nemo-fileroller
 neovim
 network-manager-applet
 nodejs
@@ -53,6 +55,7 @@ openvpn
 p7zip-gui
 pandoc-bin
 pavucontrol
+picom
 pulseaudio-alsa
 qbittorrent
 qutebrowser
@@ -64,7 +67,6 @@ spotify
 stow
 syncthing
 telegram-desktop
-thunar
 tidy
 tree
 tree-sitter
