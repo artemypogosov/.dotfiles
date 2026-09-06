@@ -590,10 +590,10 @@ Chooses biome/prettierd/prettier based on project config files."
   (add-hook! web-mode
     (sgml-electric-tag-pair-mode)
     ;; Only set defaults if no .editorconfig is active for this buffer
-    (unless my/has-editorconfig-p
-        (setq-local web-mode-markup-indent-offset 2
-                    web-mode-css-indent-offset    2
-                    web-mode-code-indent-offset   2))))
+    (unless (my/has-editorconfig-p)
+      (setq-local web-mode-markup-indent-offset 2
+                  web-mode-css-indent-offset    2
+                  web-mode-code-indent-offset   2))))
 
 ;; EMMET (html, css)
 (defun +web/indent-or-yas-or-emmet-expand ()
