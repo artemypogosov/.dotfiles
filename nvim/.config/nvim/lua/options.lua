@@ -1,17 +1,15 @@
----@diagnostic disable: undefined-global
 local opt = vim.opt
 local o = vim.o
 local g = vim.g
 
--- Make sure to setup `mapleader` and `maplocalleader` before
--- loading lazy.nvim so that mappings are correct.
+-- Setup `mapleader` and `maplocalleader`
 g.mapleader = " "
 g.maplocalleader = " "
 
 -- Use Nerd Font
 g.have_nerd_font = true
 
--- Make line numbers default
+-- Setup line numbers
 o.number = true
 o.relativenumber = true
 
@@ -19,12 +17,9 @@ o.relativenumber = true
 opt.whichwrap = "<,>,[,],b,s"
 
 -- Tabs and indentation
-opt.expandtab = true
 opt.shiftwidth = 2
 opt.tabstop = 2
 opt.softtabstop = 2
-opt.smarttab = true
-opt.smartindent = true
 opt.autoindent = true
 opt.breakindent = true
 
@@ -43,6 +38,9 @@ opt.undofile = true
 -- Enable mouse mode, can be handy for resizing splits
 opt.mouse = "a"
 
+-- Right-click extends current selection
+opt.mousemodel = "extend"
+
 -- Don't show the Vim mode, since it's already in the statusline
 opt.showmode = false
 
@@ -50,7 +48,7 @@ opt.showmode = false
 -- Schedule the setting after `UiEnter` because it can increase startup-time.
 -- Remove this option if you want your OS clipboard to remain independent.
 vim.schedule(function()
-  o.clipboard = "unnamedplus"
+	o.clipboard = "unnamedplus"
 end)
 
 -- If performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
@@ -63,7 +61,7 @@ opt.smartcase = true
 
 -- Verical inform column left to the line numbers
 opt.signcolumn = "yes"
-
+opt.statuscolumn = " %s%= %l  "
 -- Windows splitting strategy
 opt.splitright = true
 opt.splitbelow = true
@@ -71,6 +69,8 @@ opt.splitbelow = true
 -- Special chars for spaces, tabs etc.
 o.list = true
 opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
+
+-- Hides "~" at the end of buffer (eob)
 opt.fillchars = { eob = " " }
 
 -- Command preview for 'substitute'
@@ -83,4 +83,11 @@ opt.scrolloff = 5
 opt.laststatus = 3
 
 -- Copilot no <tab> map
-vim.g.copilot_no_tab_map = true
+g.copilot_no_tab_map = true
+
+-- Start with all folds open when open a file (so code isn't hidden by default)
+opt.foldlevel = 99
+
+-- Pair folding natively with Treesitter
+opt.foldmethod = "expr"
+opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
