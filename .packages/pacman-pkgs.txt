@@ -53,6 +53,7 @@ noto-fonts-emoji
 npm
 openvpn
 p7zip-gui
+pacman-contrib
 pandoc-bin
 pavucontrol
 picom
