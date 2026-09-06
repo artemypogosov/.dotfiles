@@ -21,7 +21,7 @@
        :ui
        doom                   ; what makes DOOM look the way it does
        doom-quit              ; DOOM quit-message prompts when you quit Emacs
-       doom-dashboard         ; a nifty splash screen for Emacs
+       dashboard              ; a nifty splash screen for Emacs
        zen                    ; distraction-free coding or writing
        ophints                ; highlight the region an operation acts on
        hl-todo                ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
@@ -94,9 +94,7 @@
 
        :lang
        (web +lsp +tree-sitter)        ; the tubes
-       ;; (javascript +lsp +tree-sitter) ; all(hope(abandon(ye(who(enter(here))))))
-       ;; TEMPORALY remove +tree-sitter because of Emacs and tree-sitter arch package mismatch
-       (javascript +lsp) ; all(hope(abandon(ye(who(enter(here))))))
+       (javascript +lsp +tree-sitter) ; all(hope(abandon(ye(who(enter(here))))))
        (json +lsp +tree-sitter)       ; At least it ain't XML
        (org +roam +dragndrop)         ; organize your plain life in plain text
        (yaml +lsp)                    ; JSON, but readable

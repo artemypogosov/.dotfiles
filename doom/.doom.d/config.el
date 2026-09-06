@@ -78,38 +78,18 @@
             (when (derived-mode-p 'prog-mode)
               (display-fill-column-indicator-mode 1))))
 
-(defvar my/dashboard-cache nil)
-
-(defun my/dashboard-render-banner ()
-  "Generate and cache the Doom dashboard banner only once."
-  (let* ((art '(" ███████ ███    ███  █████   ██████ ███████ " 
-                " ██      ████  ████ ██   ██ ██      ██      "
-                " █████   ██ ████ ██ ███████ ██      ███████ "
-                " ██      ██  ██  ██ ██   ██ ██           ██ "
-                " ███████ ██      ██ ██   ██  ██████ ███████ "
-                ""                                           
-                ""                                           
-                "     To see with eyes unclouded by hate."))
-         (longest-line (apply #'max (mapcar #'length art))))
-    (with-temp-buffer
-      (dolist (line art)
-        (insert
-         (+doom-dashboard--center
-          +doom-dashboard--width
-          (concat line (make-string (max 0 (- longest-line (length line))) 32)))
-         "\n"))
-      (buffer-string))))
-
-(defun my/generate-dashboard ()
-  (insert
-   (propertize
-    (or my/dashboard-cache (setq my/dashboard-cache (my/dashboard-render-banner)))
-    'face 'doom-dashboard-banner)))
-
-;; Adapt on theme change
-(add-hook 'doom-load-theme-hook (lambda () (setq my/dashboard-cache nil)))
-
-(setq +doom-dashboard-ascii-banner-fn #'my/generate-dashboard)
+(setq +dashboard-ascii-banner-fn
+      (lambda ()
+        (string-join
+         '(" ███████ ███    ███  █████   ██████ ███████ "
+           " ██      ████  ████ ██   ██ ██      ██      "
+           " █████   ██ ████ ██ ███████ ██      ███████ "
+           " ██      ██  ██  ██ ██   ██ ██           ██ "
+           " ███████ ██      ██ ██   ██  ██████ ███████ "
+           ""                                        
+           ""                                        
+           "      To see with eyes unclouded by hate.")
+         "\n")))
 
 (defun my/session-file-exists ()
   "Check if a session file exists based on workspace or desktop settings."
@@ -119,13 +99,11 @@
    ((require 'desktop nil t)
     (file-exists-p (desktop-full-file-name)))))
 
-(setq +doom-dashboard-menu-sections
-      '(("Load session" :action doom/quickload-session :when (my/session-file-exists))
-        ("Recent files" :action recentf-open-files)
-        ("Open project" :action projectile-switch-project)
-        ("Org-agenda"   :action org-agenda :when (fboundp 'org-agenda))))
+(setq +dashboard-menu-sections '())
 
-(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-footer)
+(setq +dashboard-functions '(+dashboard-widget-banner
+                              +dashboard-widget-shortmenu
+                              +dashboard-widget-loaded))
 
 (after! doom-modeline
   (remove-hook 'doom-first-buffer-hook #'doom-modeline-mode)
@@ -178,12 +156,14 @@
           ("pr" "~/Projects" "Projects")))
   (dirvish-side-follow-mode 1))
 
-(add-hook 'window-configuration-change-hook
-  (defun my/dired-force-omit-off ()
-    (when (and (derived-mode-p 'dired-mode)
-               (not (active-minibuffer-window)))
-      (when (and (boundp 'dired-omit-mode) dired-omit-mode)
-        (dired-omit-mode -1)))))
+(after! dired
+  (add-hook 'window-configuration-change-hook
+    ;; Always show hidden files
+    (defun my/dired-force-omit-off ()
+      (when (and (derived-mode-p 'dired-mode)
+                 (not (active-minibuffer-window)))
+        (when (and (boundp 'dired-omit-mode) dired-omit-mode)
+          (dired-omit-mode -1))))))
 
 (after! dired-x
   (setq dired-omit-files
@@ -199,6 +179,24 @@
 ;; Hide "." and ".." hard links
 (after! dired
   (setq dired-listing-switches "-Ahlv --group-directories-first"))
+
+;; (use-package! dirvish
+;;   :config
+;;   ;; 1. Force dirvish-side to open at the project (.git) root instead of current dir
+;;   (setq dirvish-side-auto-expand 'project)
+
+;;   ;; 2. Optional: Auto-follow the active buffer's file inside the project tree
+;;   (setq dirvish-side-auto-reveal t)
+
+;;   ;; 3. Optional: Match Treemacs visual width (default is usually 40)
+;;   (setq dirvish-side-width 35)
+
+;;   ;; 4. Define a custom function to always force project-scoped sidebar toggle
+;;   (defun +dirvish/toggle-project-sidebar ()
+;;     "Toggle Dirvish sidebar scoped strictly to the current project (.git) root."
+;;     (interactive)
+;;     (let ((default-directory (or (doom-project-root) default-directory)))
+;;       (dirvish-side))))
 
 (defconst my/org-root-dir (expand-file-name "~/Org"))
 
@@ -580,6 +578,11 @@ Chooses biome/prettierd/prettier based on project config files."
 
 (add-hook! 'ediff-prepare-buffer-hook (flycheck-mode -1))
 
+;; Helper predicate to check for active .editorconfig
+(defun my/has-editorconfig-p ()
+  (and (boundp 'editorconfig-properties-hash)
+       editorconfig-properties-hash))
+
 (after! web-mode
   ;; Enable auto-closing tags in web-mode (like html files)
   (require 'sgml-mode)
@@ -587,12 +590,10 @@ Chooses biome/prettierd/prettier based on project config files."
   (add-hook! web-mode
     (sgml-electric-tag-pair-mode)
     ;; Only set defaults if no .editorconfig is active for this buffer
-    (let ((has-editorconfig (and (boundp 'editorconfig-properties-hash)
-                                 editorconfig-properties-hash)))
-      (unless has-editorconfig
+    (unless my/has-editorconfig-p
         (setq-local web-mode-markup-indent-offset 2
                     web-mode-css-indent-offset    2
-                    web-mode-code-indent-offset   2)))))
+                    web-mode-code-indent-offset   2))))
 
 ;; EMMET (html, css)
 (defun +web/indent-or-yas-or-emmet-expand ()
@@ -616,6 +617,25 @@ Chooses biome/prettierd/prettier based on project config files."
 
 ;; Show vertical bars to visually indicate indentation levels
 (add-hook! yaml-mode #'indent-bars-mode)
+
+;; Shell script fallback: Hard tabs (Tab 2) when no .editorconfig is present
+(add-hook! sh-mode
+  (unless (my/has-editorconfig-p)
+    (setq-local indent-tabs-mode t
+                tab-width 2
+                sh-basic-offset 2)))
+
+;; Lua fallback: 2 spaces when no .editorconfig is present
+(add-hook! (lua-mode lua-ts-mode)
+  (unless (my/has-editorconfig-p)
+    (setq-local indent-tabs-mode nil
+                lua-indent-level 2)))
+
+;; Python fallback: 4 spaces (PEP 8 standard) when no .editorconfig is present
+(add-hook! (python-mode python-ts-mode)
+  (unless (my/has-editorconfig-p)
+    (setq-local indent-tabs-mode nil
+                python-indent-offset 4)))
 
 ;; Vim text-objects alternative for the lazy
 (use-package! expand-region
@@ -904,7 +924,7 @@ If :keys is omitted, unbinds the prefix itself."
        :desc "Explain diff" "e" #'gptel-magit-diff-explain))
 
 (map! :leader
-      :prefix ("g" . "git")
+      :prefix "g" 
       :desc "Rebase autosquash" "ca" #'magit-rebase-autosquash
       :desc "Diff current file" "d" #'vc-ediff)
 
@@ -925,19 +945,18 @@ If :keys is omitted, unbinds the prefix itself."
 
 ;; Calendar
 (map! :leader
-      (:prefix ("o" . "open")
-       :desc "Open calendar" "c" #'=calendar))
+      :prefix "o"
+      :desc "Open calendar" "c" #'=calendar)
 
 ;; Open ROAM Graph
-(map! :leader
-      :prefix ("n" . "notes")
-      (:prefix ("r" . "roam")
-       :desc "Open UI Graph" "o" #'org-roam-ui-open))
+(after! org
+  (map! :leader
+        :desc "Open UI Graph" "n r o" #'org-roam-ui-open))
 
 ;; Align regexp
 (map! :leader :desc "Align regexp" "=" #'align-regexp)
 
-;; Windows manipulation
+;; Windows
 (map! :leader
       :prefix "w"
       "F" #'ffap
@@ -951,30 +970,25 @@ If :keys is omitted, unbinds the prefix itself."
       :desc "Update recent files" "z" #'recentf-cleanup
       :desc "Find file at point" "a" #'find-file-at-point)
 
-;; Bookmarks
+;; Toggle
 (map! :leader
-      (:prefix ("o" . "open")
-       :desc "Bookmark manager" "b" #'list-bookmarks))
+      :prefix "t"
+      :desc "Toggle treemacs" "t" #'+treemacs/toggle
+      :desc "Focus treemacs" "T" #'treemacs-select-window)
 
-;; Markdown
-(after! markdown-mode
-  (map! :localleader
-        :map markdown-mode-map
-        :desc "Live preview" "l" #'markdown-live-preview-mode))
-
-;; Search 'TODO' keywords
-;; Also use ]t & [t to jump between pre/next 'TODO' keywords
-(after! hl-todo
-  (map! :leader
-        (:prefix ("s" . "search")
-         :desc "Search 'TODO'" "." #'hl-todo-occur
-         :desc "Search 'TODO' from dir" "," #'hl-todo-rgrep)))
-
-;; Toggle 
+;; Open
 (map! :leader
-      (:prefix ("t" . "toggle")
-       :desc "Toggle treemacs" "t" #'+treemacs/toggle
-       :desc "Focus treemacs" "T" #'treemacs-select-window))
+      :prefix "o"
+      :desc "Bookmark manager" "b" #'list-bookmarks
+      :desc "Toggle dirvish sidebar" "p" #'+dirvish/toggle-project-sidebar)
+
+;; Search
+(map! :leader
+      :prefix "s"
+      :desc "Man pages" "m" #'man
+      :after hl-todo
+      :desc "Search 'TODO'"          "." #'hl-todo-occur
+      :desc "Search 'TODO' from dir" "," #'hl-todo-rgrep)
 
 ;; Manage workspaces
 (map! :leader
@@ -997,6 +1011,12 @@ If :keys is omitted, unbinds the prefix itself."
 (map! :leader
       :prefix "q"
       :desc "Quit Emacs and ask to save" "Q" #'evil-quit-all)
+
+;; Markdown
+(after! markdown-mode
+  (map! :localleader
+        :map markdown-mode-map
+        :desc "Live preview" "l" #'markdown-live-preview-mode))
 
 ;; Complete file path
 (map! :i "M-p" #'cape-file)
