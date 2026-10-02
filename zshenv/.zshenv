@@ -40,4 +40,5 @@ export GTK2_RC_FILES="$HOME/.config/gtk-2.0/gtkrc"
 
 export PATH="$GOBIN:$XDG_CONFIG_HOME/emacs/bin:$PATH"
 
-[ -f "$HOME/.dotfiles/.secrets/.zshenv.local" ] && source "$HOME/.dotfiles/.secrets/.zshenv.local"
+SECRETS_FILE="$HOME/.dotfiles/.secrets/.zshenv.local"
+[[ -f "$SECRETS_FILE" ]] && . "$SECRETS_FILE"
