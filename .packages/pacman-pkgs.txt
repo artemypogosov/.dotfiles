@@ -71,6 +71,7 @@ telegram-desktop
 tidy
 tree
 tree-sitter
+tree-sitter-cli
 ttf-sourcecodepro-nerd
 ttf-ubuntu-font-family
 udiskie
