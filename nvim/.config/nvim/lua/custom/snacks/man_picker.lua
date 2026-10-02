@@ -2,20 +2,18 @@ local snacks = require("snacks")
 
 local M = {}
 
------------------------------------------------------------------------
 -- Lazy-loaded whatis cache (IMPORTANT for performance)
------------------------------------------------------------------------
 local WHATIS = nil
 
+--- Load and parse system man pages into a lookup map using the whatis command
+--- @return table A lookup table mapping command names to their section and description
 local function load_whatis_map()
 	local map = {}
-
 	-- Single bulk call (fast, no freeze)
 	local out = vim.fn.system("whatis -w '*'")
 	if vim.v.shell_error ~= 0 then
 		return map
 	end
-
 	for line in out:gmatch("[^\n]+") do
 		-- Example: ls, dir, vdir (1) - list directory contents
 		local names, section, desc = line:match("^(.-)%s+%(([%d%a]+)%)%s+%-%s+(.*)$")
@@ -26,10 +24,11 @@ local function load_whatis_map()
 			end
 		end
 	end
-
 	return map
 end
 
+--- Retrieve the cached whatis lookup map, initializing it if not already loaded
+--- @return table The cached lookup table mapping command names to their section and description
 local function get_whatis()
 	if WHATIS then
 		return WHATIS
@@ -38,9 +37,9 @@ local function get_whatis()
 	return WHATIS
 end
 
------------------------------------------------------------------------
--- Collect real command man pages (sections 1 and 8 only)
------------------------------------------------------------------------
+--- Collect real command man pages (sections 1 and 8 only)
+--- Scan system man directories to compile a sorted list of available commands with descriptions
+--- @return table[] A sorted list of table items containing command names, values, sections, and descriptions
 local function get_man_commands()
 	local dirs = {
 		"/usr/share/man/man1",
@@ -80,7 +79,6 @@ local function get_man_commands()
 	table.sort(items, function(a, b)
 		return a.text < b.text
 	end)
-
 	return items
 end
 

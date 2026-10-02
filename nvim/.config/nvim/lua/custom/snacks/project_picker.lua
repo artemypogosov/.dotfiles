@@ -2,41 +2,41 @@ local Snacks = require("snacks")
 
 local M = {}
 
+--- Retrieve and format all registered workspaces into a list of pickable items
+--- @return table[] A list of workspace items containing name, path, and text properties
 local function get_workspaces()
-  local workspaces = require("workspaces").get()
-  local items = {}
-
-  for _, ws in ipairs(workspaces) do
-    table.insert(items, {
-      name = ws.name,
-      path = ws.path,
-      text = ws.name,
-    })
-  end
-
-  return items
+	local workspaces = require("workspaces").get()
+	local items = {}
+	for _, ws in ipairs(workspaces) do
+		table.insert(items, {
+			name = ws.name,
+			path = ws.path,
+			text = ws.name,
+		})
+	end
+	return items
 end
 
 function M.open()
-  Snacks.picker({
-    title = "Projects",
-    layout = { preset = "select", layout = { height = 0.25 } },
-    finder = get_workspaces,
-    format = function(item)
-      return {
-        { item.name, "SnacksPickerLabel" },
-        { " ", "" },
-        { vim.fn.fnamemodify(item.path, ":~"), "SnacksPickerDesc" },
-      }
-    end,
+	Snacks.picker({
+		title = "Projects",
+		layout = { preset = "select", layout = { height = 0.25 } },
+		finder = get_workspaces,
+		format = function(item)
+			return {
+				{ item.name, "SnacksPickerLabel" },
+				{ " ", "" },
+				{ vim.fn.fnamemodify(item.path, ":~"), "SnacksPickerDesc" },
+			}
+		end,
 
-    actions = {
-      confirm = function(picker, item)
-        picker:close()
-        vim.cmd("WorkspacesOpen " .. item.name)
-      end,
-    },
-  })
+		actions = {
+			confirm = function(picker, item)
+				picker:close()
+				vim.cmd("WorkspacesOpen " .. item.name)
+			end,
+		},
+	})
 end
 
 return M

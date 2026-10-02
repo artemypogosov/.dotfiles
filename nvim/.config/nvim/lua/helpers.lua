@@ -1,12 +1,16 @@
---- @brief General Configuration Helpers
---- Provides vanilla engine modifications, maintenance utilities,
---- context-aware search tools, and lifecycle controllers for Neovim.
+-- General Configuration Helpers.
+-- Provides vanilla engine modifications, maintenance utilities,
+-- context-aware search tools, and lifecycle controllers for Neovim.
 
 local M = {}
 
---- @section Package & Macro Utilities
+--- Add a list of plugins to the package manager by resolving source URLs and specifications
+--- @param plugins (string|table)[] A list of plugin strings or configuration tables
+--- @param host? string Optional hosting provider key or custom base URL
+--- @return table The result of the package addition operation
 
--- Plugin Bootstrapping
+-- Example:
+-- add( { "nvim-lua/plenary.nvim", { src = "jake-stewart/multicursor.nvim", version = "1.0" }, }, "github")
 function M.add(plugins, host)
 	local hosts = {
 		github = "https://github.com/",
@@ -46,15 +50,19 @@ function M.add(plugins, host)
 	return vim.pack.add(full_specs)
 end
 
+--- Return an executable function that pre-fills the command-line with a specified command string
+--- @param command string The command string to pre-fill in the command-line
+--- @return function A closure callback for keymaps or triggers
 function M.prefill(command)
 	return function()
 		vim.api.nvim_feedkeys(":" .. command .. " ", "n", true)
 	end
 end
 
----Запускає Vim-команду та виконує колбек після неї.
----@param command string Клієнтська команда (наприклад, "wall")
----@param after function|nil Функція, яка запуститься після виконання команди
+--- Return an executable function that executes a Vim command and optionally runs a callback afterwards
+--- @param command string The Vim command to execute
+--- @param after? function Optional callback function to execute after the command runs
+--- @return function A closure callback for keymaps or triggers
 function M.execute(command, after)
 	return function()
 		vim.cmd(command)
@@ -64,9 +72,7 @@ function M.execute(command, after)
 	end
 end
 
---- @section Filesystem Maintenance
-
---- @block Delete temp files
+--- Prompt the user for confirmation to clear recent files and delete the shada history state file upon approval
 function M.delete_recent_files()
 	if vim.fn.input("Clear recent files? (yes/no): "):lower() == "yes" then
 		vim.fn.jobstart("rm -f ~/.local/state/nvim/shada/main.shada", {
@@ -77,6 +83,7 @@ function M.delete_recent_files()
 	end
 end
 
+--- Prompt the user for confirmation to delete all scratch files and remove them from the data directory upon approval
 function M.delete_scratch_files()
 	if vim.fn.input("Delete all scratch files? (yes/no): "):lower() == "yes" then
 		vim.fn.jobstart("rm -rf ~/.local/share/nvim/scratch/*", {
@@ -87,9 +94,8 @@ function M.delete_scratch_files()
 	end
 end
 
---- @section Text Modification
-
---- @block Contextual Search & Replace
+--- Initialize an interactive search-and-replace substitution command targeting the visual
+--- selection or the word under the cursor
 function M.search_replace()
 	local mode = vim.api.nvim_get_mode().mode
 	local range = "%"
@@ -112,8 +118,7 @@ function M.search_replace()
 	vim.api.nvim_feedkeys(keys, "n", false)
 end
 
----Displays a bottom menu to choose a buffer component under the cursor,
----then pre-fills the command-line with a global search-and-replace template.
+--- Open an interactive bottom floating menu to select a target type and initiate a search-and-replace substitution
 function M.search_replace_menu()
 	local options = {
 		{ key = "w", cmd = vim.fn.expand("<cword>") },
@@ -165,22 +170,19 @@ function M.search_replace_menu()
 	end
 end
 
---- @section Project Environment Management
-
+--- Prompt the user with a confirmation dialog and quit all Neovim windows if accepted
+--- @param message string The confirmation prompt message to display
 function M.quit(message)
-	-- Використовуємо нативний метод вибору Neovim
 	vim.ui.select({ "Yes", "No" }, {
 		prompt = message,
 	}, function(choice)
-		-- Якщо користувач обрав перший варіант ("Yes") — виходимо
 		if choice == "Yes" then
 			vim.cmd("qa")
 		end
 	end)
 end
 
----Prompts the user via an interactive UI input to name and save the current session.
----Provides a completely empty input field for manual text entry.
+--- Prompt the user to enter a name and save the current session using mini.sessions
 function M.prompt_session_save()
 	-- Open an interactive input field with no pre-filled text
 	vim.ui.input({
@@ -201,20 +203,18 @@ function M.prompt_session_save()
 	end)
 end
 
--------------------------------------------------------------
--------------------------------------------------------------
-
--------------------------------------------------------------
--------------------------------------------------------------
-
+--- Toggle the global background option between dark and light modes
 function M.toggle_background()
 	vim.o.background = vim.o.background == "dark" and "light" or "dark"
 end
 
+--- Trigger a jump or view for TODO, FIXME, and FIX items using the specified method
+--- @param method function The method function to execute with the keyword configuration table
 function M.todo_jump(method)
 	method({ keywords = { "TODO", "FIXME", "FIX" } })
 end
---- @brief Plugins Abstraction Layer
+
+--- Plugins Abstraction Layer
 --- Wraps proxy interfaces and dynamic lazy loaders around external plugins
 --- like Snacks.nvim and Bookmarks.nvim to power clean global mappings.
 
@@ -236,9 +236,8 @@ local project_picker = setmetatable({}, {
 	end,
 })
 
---- @section Snacks Picker Integrations
+-- Snacks Picker Integrations
 
---- @block File Discovery Utilities
 function M.find_files(opts)
 	opts = opts or {}
 	snacks.picker.files(opts)
@@ -262,7 +261,6 @@ function M.find_recent_files()
 	snacks.picker.recent()
 end
 
---- @block Buffer & Context Pickers
 function M.switch_buffers()
 	snacks.picker.buffers()
 end
@@ -275,7 +273,6 @@ function M.search_opened_buffers()
 	snacks.picker.grep_buffers({ title = "Search opened buffer" })
 end
 
---- @block Project Search Controllers
 function M.search_project()
 	snacks.picker.grep()
 end
@@ -284,9 +281,6 @@ function M.switch_project()
 	project_picker.open()
 end
 
---- @section Core Snacks Ecosystem Modules
-
---- @block Buffer Life Cycle
 function M.kill_buffer()
 	snacks.bufdelete()
 end
@@ -301,12 +295,10 @@ function M.kill_all_buffers_except_current()
 	end
 end
 
---- @block Scratchpads & Remote Tools
 function M.git_browse()
 	snacks.gitbrowse()
 end
 
---- @block File Explorer & Rendering
 function M.snacks_explorer_focus()
 	local picker = snacks.picker.get({ source = "explorer" })[1]
 	if picker then
@@ -327,9 +319,7 @@ function M.indent_lines()
 	end
 end
 
---- @section Bookmark Management
-
---- @block Maintenance & Sanitization
+--- Prompt the user for confirmation to delete all bookmarks and clear them upon approval
 function M.delete_all_bookmarks()
 	local answer = vim.fn.input("Delete all bookmarks? (yes/no): ")
 	if answer:lower() == "yes" then

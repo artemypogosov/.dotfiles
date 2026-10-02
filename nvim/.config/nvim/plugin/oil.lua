@@ -6,6 +6,7 @@ helpers.add({ "stevearc/oil.nvim" })
 
 require("oil").setup({
 	keymaps = {
+		-- Mimic dired
 		["g?"] = "actions.show_help",
 		["<CR>"] = "actions.select",
 		["l"] = "actions.select", -- Open file/directory (like Dired RET)

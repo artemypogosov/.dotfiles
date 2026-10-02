@@ -6,8 +6,10 @@ helpers.add({ "nvim-mini/mini.nvim" })
 
 -- Autopairs
 require("mini.pairs").setup()
+
 -- Icon provider
 require("mini.icons").setup()
+
 -- Comment lines
 require("mini.comment").setup({
 	mappings = {
@@ -17,16 +19,20 @@ require("mini.comment").setup({
 		textobject = "gc",
 	},
 })
+
 -- Move any selection in any direction
 require("mini.move").setup()
+
 -- Extend f, F, t, T to work on multiple lines.
 require("mini.jump").setup()
+
 -- Align text interactively
 require("mini.align").setup({
 	mappings = {
 		start = "<leader>=",
 	},
 })
+
 -- Add, delete, replace, find, highlight surrounding (like pair of parenthesis, quotes, etc.).
 require("mini.surround").setup({
 	silent = true,

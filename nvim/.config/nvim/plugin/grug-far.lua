@@ -1,28 +1,41 @@
 local helpers = require("helpers")
 local wk = require("which-key")
 
--- Find And Replace
-helpers.add({ "MagicDuck/grug-far.nvim" })
+local grug_far_loaded = false
 
-local grug_far = require("grug-far")
+local function get_grug_far()
+	if not grug_far_loaded then
+		-- Find And Replace plugin for neovim
+		helpers.add({ "MagicDuck/grug-far.nvim" })
 
-grug_far.setup({
-	engines = {
-		ripgrep = {
-			-- extraArgs = "--hidden",
-			defaults = {
-				flags = "--smart-case -g=!node_modules/*",
+		require("grug-far").setup({
+			engines = {
+				ripgrep = {
+					defaults = {
+						flags = "--smart-case -g=!node_modules/*",
+					},
+				},
 			},
-		},
-	},
-})
+		})
+
+		grug_far_loaded = true
+	end
+	return require("grug-far")
+end
 
 wk.add({
-	{ "<leader>rR", grug_far.open, desc = "Replace [project]", mode = "n" },
+	{
+		"<leader>rR",
+		function()
+			get_grug_far().open()
+		end,
+		desc = "Replace [project]",
+		mode = "n",
+	},
 	{
 		"<leader>rP",
 		function()
-			grug_far.open({ prefills = { search = vim.fn.expand("<cword>") } })
+			get_grug_far().open({ prefills = { search = vim.fn.expand("<cword>") } })
 		end,
 		desc = "Replace at point [project]",
 		mode = "n",
@@ -30,7 +43,7 @@ wk.add({
 	{
 		"<leader>rp",
 		function()
-			grug_far.open({ prefills = { paths = vim.fn.expand("%"), search = vim.fn.expand("<cword>") } })
+			get_grug_far().open({ prefills = { paths = vim.fn.expand("%"), search = vim.fn.expand("<cword>") } })
 		end,
 		desc = "Replace at point",
 		mode = "n",

@@ -79,8 +79,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 	end,
 })
 
---- Automatically updates Tree-sitter parsers upon "nvim-treesitter" plugin update
---- to prevent syntax breaking.
+--- Automatically updates Tree-sitter parsers upon "nvim-treesitter" plugin update to prevent syntax breaking.
 vim.api.nvim_create_autocmd("PackChanged", {
 	callback = function(ev)
 		local name, kind = ev.data.spec.name, ev.data.kind
@@ -93,9 +92,9 @@ vim.api.nvim_create_autocmd("PackChanged", {
 	end,
 })
 
+--- Clears SignColumn backgrounds and fixes diagnostic/Todo highlights on colorscheme change.
 local hl = vim.api.nvim_set_hl
 
---- Clears SignColumn backgrounds and fixes diagnostic/Todo highlights on colorscheme change.
 vim.api.nvim_create_autocmd("ColorScheme", {
 	group = vim.api.nvim_create_augroup("clear-signcolumn-bg", { clear = true }),
 	callback = function()
