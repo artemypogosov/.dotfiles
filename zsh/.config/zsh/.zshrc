@@ -1,6 +1,6 @@
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+	source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
 ~/.local/bin/cutefetch random
@@ -12,6 +12,8 @@ fi
 ## EDITORS
 alias vim='nvim'
 alias emacs="emacsclient -c -a 'emacs'"
+alias emacs-kill-daemon="emacsclient --eval '(kill-emacs)'"
+alias emacs-start-daemon="emacs --daemon"
 
 ## DEVELOPMENT
 alias k='kubectl'
@@ -26,7 +28,10 @@ alias update='sudo pacman -Syyu'
 alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -25 | nl"
 alias riplong="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -100 | nl"
 # Cleanup orphaned packages
-alias cleanup='sudo pacman -Rns $(pacman -Qtdq)'
+alias clear-orphans='pacman -Qtdq > /dev/null && sudo pacman -Rns $(pacman -Qtdq) || echo "No orphan packages to clean!"'
+# This will delete all old versions of packages but keep the latest 2
+alias clean-cache='sudo paccache -r'
+# 'sudo pacman -Scc' (remove all cached versions)
 
 ## NAVIGATION
 alias ..='cd ..'
@@ -69,8 +74,6 @@ alias update-fc='sudo fc-cache -fv'
 # fzf
 alias vfind='vim $(find . -type f | fzf)'
 alias fzf='find . -type f | fzf'
-# Rick Astley
-alias ra='curl -s -L https://raw.githubusercontent.com/keroserene/rickrollrc/master/roll.sh | bash'
 
 ###############
 ### HISTORY ###
@@ -97,34 +100,35 @@ _comp_options+=(globdots)
 bindkey -v
 export KEYTIMEOUT=1
 # Press ctrl+e to edit command in editor
-autoload edit-command-line; zle -N edit-command-line
+autoload edit-command-line
+zle -N edit-command-line
 bindkey '^e' edit-command-line
 
 ############################################
 ### CURSOR SHAPE FOR DIFFERENT VIM MODES ###
 ############################################
 function zle-keymap-select {
-  if [[ ${KEYMAP} == vicmd ]] ||
-     [[ $1 = 'block' ]]; then
-    echo -ne '\e[1 q'
-  elif [[ ${KEYMAP} == main ]] ||
-       [[ ${KEYMAP} == viins ]] ||
-       [[ ${KEYMAP} = '' ]] ||
-       [[ $1 = 'beam' ]]; then
-    echo -ne '\e[5 q'
-  fi
+	if [[ ${KEYMAP} == vicmd ]] ||
+		[[ $1 = 'block' ]]; then
+		echo -ne '\e[1 q'
+	elif [[ ${KEYMAP} == main ]] ||
+		[[ ${KEYMAP} == viins ]] ||
+		[[ ${KEYMAP} = '' ]] ||
+		[[ $1 = 'beam' ]]; then
+		echo -ne '\e[5 q'
+	fi
 }
 zle -N zle-keymap-select
 zle-line-init() {
- # Initiate `vi insert` as keymap (can be removed if `bindkey -V` has been set elsewhere)
-   zle -K viins
-   echo -ne "\e[5 q"
+	# Initiate `vi insert` as keymap (can be removed if `bindkey -V` has been set elsewhere)
+	zle -K viins
+	echo -ne "\e[5 q"
 }
 zle -N zle-line-init
 # Use beam shape cursor on startup.
 echo -ne '\e[5 q'
 # Use beam shape cursor for each new prompt.
-preexec() { echo -ne '\e[5 q' ;}
+preexec() { echo -ne '\e[5 q'; }
 
 #################
 ### FUNCTIONS ###
@@ -132,83 +136,84 @@ preexec() { echo -ne '\e[5 q' ;}
 
 # Create dir and cd into it
 mkcd() {
-  mkdir -p "$1" && cd "$1"
+	mkdir -p "$1" && cd "$1"
 }
 
 # Extract almost any type of archive
 ex() {
- if [ -z "$1" ]; then
-    # display usage if no parameters given
-    echo "Usage: ex <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
-    echo "       extract <path/file_name_1.ext> [path/file_name_2.ext] [path/file_name_3.ext]"
- else
-    for n in "$@"
-    do
-      if [ -f "$n" ] ; then
-          case "${n%,}" in
-            *.cbt|*.tar.bz2|*.tar.gz|*.tar.xz|*.tbz2|*.tgz|*.txz|*.tar)
-                         tar xvf "$n"       ;;
-            *.lzma)      unlzma ./"$n"      ;;
-            *.bz2)       bunzip2 ./"$n"     ;;
-            *.cbr|*.rar)       unrar x -ad ./"$n" ;;
-            *.gz)        gunzip ./"$n"      ;;
-            *.cbz|*.epub|*.zip)       unzip ./"$n"       ;;
-            *.z)         uncompress ./"$n"  ;;
-            *.7z|*.arj|*.cab|*.cb7|*.chm|*.deb|*.dmg|*.iso|*.lzh|*.msi|*.pkg|*.rpm|*.udf|*.wim|*.xar)
-                         7z x ./"$n"        ;;
-            *.xz)        unxz ./"$n"        ;;
-            *.exe)       cabextract ./"$n"  ;;
-            *.cpio)      cpio -id < ./"$n"  ;;
-            *.cba|*.ace)      unace x ./"$n"      ;;
-            *)
-                         echo "ex: '$n' - unknown archive method"
-                         return 1
-                         ;;
-          esac
-      else
-          echo "'$n' - file does not exist"
-          return 1
-      fi
-    done
-fi
+	if [ -z "$1" ]; then
+		# display usage if no parameters given
+		echo "Usage: ex <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
+		echo "       extract <path/file_name_1.ext> [path/file_name_2.ext] [path/file_name_3.ext]"
+	else
+		for n in "$@"; do
+			if [ -f "$n" ]; then
+				case "${n%,}" in
+				*.cbt | *.tar.bz2 | *.tar.gz | *.tar.xz | *.tbz2 | *.tgz | *.txz | *.tar)
+					tar xvf "$n"
+					;;
+				*.lzma) unlzma ./"$n" ;;
+				*.bz2) bunzip2 ./"$n" ;;
+				*.cbr | *.rar) unrar x -ad ./"$n" ;;
+				*.gz) gunzip ./"$n" ;;
+				*.cbz | *.epub | *.zip) unzip ./"$n" ;;
+				*.z) uncompress ./"$n" ;;
+				*.7z | *.arj | *.cab | *.cb7 | *.chm | *.deb | *.dmg | *.iso | *.lzh | *.msi | *.pkg | *.rpm | *.udf | *.wim | *.xar)
+					7z x ./"$n"
+					;;
+				*.xz) unxz ./"$n" ;;
+				*.exe) cabextract ./"$n" ;;
+				*.cpio) cpio -id <./"$n" ;;
+				*.cba | *.ace) unace x ./"$n" ;;
+				*)
+					echo "ex: '$n' - unknown archive method"
+					return 1
+					;;
+				esac
+			else
+				echo "'$n' - file does not exist"
+				return 1
+			fi
+		done
+	fi
 }
 
 # Load 'nvm' only after first run of 'nvm' command in terminal
 nvm() {
-  # Remove this wrapper so subsequent calls go directly to the real nvm
-  unset -f nvm
-  
-  # Source nvm scripts if they exist
-  [ -s "$HOME/.nvm/nvm.sh" ] && source "$HOME/.nvm/nvm.sh"
-  [ -s "$HOME/.nvm/bash_completion" ] && source "$HOME/.nvm/bash_completion"
-  
-  # Now call the actual nvm with all arguments
-  nvm "$@"
+	# Remove this wrapper so subsequent calls go directly to the real nvm
+	unset -f nvm
+
+	# Source nvm scripts if they exist
+	[ -s "$HOME/.nvm/nvm.sh" ] && source "$HOME/.nvm/nvm.sh"
+	[ -s "$HOME/.nvm/bash_completion" ] && source "$HOME/.nvm/bash_completion"
+
+	# Now call the actual nvm with all arguments
+	nvm "$@"
 }
 
 ################################################################
 ### USE 'RANGER' TO SWITCH DIRECTORIES AND BIND IT TO CTRL-R ###
 ################################################################
-rangercd () {
-    tmp="$(mktemp)"
-    ranger --choosedir="$tmp" "$@"
-    if [ -f "$tmp" ]; then
-        dir="$(cat "$tmp")"
-        rm -f "$tmp"
-        [ -d "$dir" ] && [ "$dir" != "$(pwd)" ] && cd "$dir"
-    fi
+rangercd() {
+	tmp="$(mktemp)"
+	ranger --choosedir="$tmp" "$@"
+	if [ -f "$tmp" ]; then
+		dir="$(cat "$tmp")"
+		rm -f "$tmp"
+		[ -d "$dir" ] && [ "$dir" != "$(pwd)" ] && cd "$dir"
+	fi
 }
 bindkey -s '^r' 'rangercd\n'
 
 ##############################################################
 ### ADD AVAILABILITY OF LOCAL SCRIPTS RIGHT FROM THE SHELL ###
 ##############################################################
-if [ -d "$HOME/.bin" ] ;
-  then PATH="$HOME/.bin:$PATH"
+if [ -d "$HOME/.bin" ]; then
+	PATH="$HOME/.bin:$PATH"
 fi
 
-if [ -d "$HOME/.local/bin" ] ;
-  then PATH="$HOME/.local/bin:$PATH"
+if [ -d "$HOME/.local/bin" ]; then
+	PATH="$HOME/.local/bin:$PATH"
 fi
 
 POWERLEVEL9K_CONFIG_FILE=~/.config/zsh/p10k.zsh
@@ -229,4 +234,3 @@ bindkey '^t' autosuggest-toggle
 
 # To customize prompt, run `p10k configure` or edit ~/p10k.zsh.
 [[ ! -f ~/.config/zsh/p10k.zsh ]] || source ~/.config/zsh/p10k.zsh
-

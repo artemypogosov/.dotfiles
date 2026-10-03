@@ -920,7 +920,7 @@ If :keys is omitted, unbinds the prefix itself."
       
       (:prefix ("c" . "commit message")
        :map git-commit-mode-map
-       :desc "Generate commit message" "c" #'gptel-magit-generate-message
+       :desc "Generate commit message" "g" #'gptel-magit-generate-message
        :desc "Explain diff" "e" #'gptel-magit-diff-explain))
 
 (map! :leader
